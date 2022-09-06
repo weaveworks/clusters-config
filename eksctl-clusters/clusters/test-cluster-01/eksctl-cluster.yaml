@@ -1,0 +1,35 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: test-cluster-01
+  # region: eu-north-1
+  region: us-east-1
+  version: "1.23"
+  tags:
+    environment: "test-cluster-01"
+
+managedNodeGroups:
+  - name: test-cluster-01-ng-1
+    instanceType: t3.medium
+    minSize: 2
+    maxSize: 2
+    desiredCapacity: 2
+    volumeSize: 10
+    tags:
+      environment: "test-cluster-01"
+    propagateASGTags: true
+    iam:
+      withAddonPolicies:
+        certManager: true
+
+gitops:
+  flux:
+    gitProvider: github
+    flags:
+      owner: "MohamedMSaeed"
+      repository: "wg-test"
+      private: "true"
+      branch: "main"
+      namespace: "flux-system"
+      path: "clusters/test-cluster-01/management"
