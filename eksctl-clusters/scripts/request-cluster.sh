@@ -75,6 +75,7 @@ then
   echo "A cluster with the same name is found. Please choose another name!"
   exit 1
 fi
+mkdir -p ${CLUSTER_DIR}
 
 # copy eksctl config to cluster dir
 echo "Coping eksctl config file..."
