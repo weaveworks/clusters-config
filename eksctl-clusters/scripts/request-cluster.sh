@@ -4,19 +4,23 @@
 
 blnk=$(echo "$0" | sed 's/./ /g')
 usage() {
-  echo "Usage: $0 [{--cluster-name} cluster-name] [{--cluster-version} cluster-version] \\"
+  echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"
+  echo "       $blnk [--cluster-version <CLUSTER_VERSION>] \\"
+  echo "       $blnk [--weave-mode <enterprise|core|none> {default core}]"
   echo "       $blnk [-h|--help]"
 
   echo
-  echo "  {--cluster-name} cluster-name        -- Set cluster name"
-  echo "  {--cluster-version} cluster-version  -- Set cluster version (default: 1.23)"
-  echo "  {-h|--help}                          -- Print this help message and exit"
+  echo "  --cluster-name CLUSTER_NAME           -- Set cluster name"
+  echo "  --cluster-version CLUSTER_VERSION     -- Set cluster version (default: 1.23)"
+  echo "  --weave-mode <enterprise|core|none>   -- Select between installing WW Enterprise, WW Core, or not install any (enterprise|core|none)"
+  echo "  -h|--help                             -- Print this help message and exit"
 
   exit 0
 }
 
 defaults(){
   export CLUSTER_VERSION="1.23"
+  export WW_MODE="core"
 }
 
 flags(){
@@ -31,6 +35,15 @@ flags(){
         shift
         export CLUSTER_VERSION="$1"
         ;;
+    --weave-mode)
+        shift
+        export WW_MODE="$1"
+        if [ $WW_MODE != "core" || $WW_MODE != "enterprise" || $WW_MODE != "none"]
+        then
+          echo "Invalid value of --weave-mode. Please select one of (enterprise, core or none)!"
+          exit 1
+        fi 
+        ;;
     -h|--help)
         usage;;
     *) usage;;
@@ -43,6 +56,10 @@ flags(){
 
 defaults
 flags "$@"
+export PARENT_DIR=${BASH_SOURCE%/scripts*}
+export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
+
+export EKS_CLUSTER_TEMP=${PARENT_DIR}/eks-cluster-tmp.yaml
 
 if [ -z $CLUSTER_NAME ]
 then
@@ -50,28 +67,39 @@ then
   exit 1
 fi
 
-echo "cluster name: $CLUSTER_NAME, cluster version: $CLUSTER_VERSION"
+echo "cluster name: $CLUSTER_NAME, cluster version: $CLUSTER_VERSION, weave mode: $WW_MODE"
 
 # check that the cluster dir is not exist:
-if [ -d "clusters/${CLUSTER_NAME}" ]
+if [ -d "${CLUSTER_DIR}" ]
 then 
   echo "A cluster with the same name is found. Please choose another name!"
   exit 1
 fi
 
-# create dir for the cluster
-mkdir -p clusters/${CLUSTER_NAME}/management
-
-# copy WGE files
-echo "Coping WGE templates..."
-cp -r wge-templates/* clusters/${CLUSTER_NAME}/management/
-
-
 # copy eksctl config to cluster dir
 echo "Coping eksctl config file..."
-cp eks-cluster-tmp.yaml clusters/${CLUSTER_NAME}/eksctl-cluster.yaml
-sed -i 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' clusters/${CLUSTER_NAME}/eksctl-cluster.yaml
-sed -i 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' clusters/${CLUSTER_NAME}/eksctl-cluster.yaml
+cp ${EKS_CLUSTER_TEMP} ${CLUSTER_DIR}/eksctl-cluster.yaml
+sed -i 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
+sed -i 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 
-echo "Cluster \"clusters/${CLUSTER_NAME}\" has been created"
+
+# copy WGE files
+case $WW_MODE in
+  core)
+    echo "Coping WW-Core templates..."
+    mkdir -p ${CLUSTER_DIR}/management
+    cp -r ${PARENT_DIR}/wg-core-templates/* ${CLUSTER_DIR}/management/
+    ;;
+  enterprise)
+    echo "Coping WGE templates..."
+    mkdir -p ${CLUSTER_DIR}/management
+    cp -r ${PARENT_DIR}/wge-templates/* ${CLUSTER_DIR}/management/
+    ;;
+  none)
+    echo "We will not install WW-core or WGE!"
+    ;;
+esac
+
+
+echo "Cluster \"${CLUSTER_DIR}\" has been created"
 echo "Please, commit the files and create a PR to provision the cluster"
