@@ -90,6 +90,14 @@ case $WW_MODE in
     echo "Coping WW-Core templates..."
     mkdir -p ${CLUSTER_DIR}/management
     cp -r ${PARENT_DIR}/wg-core-templates/* ${CLUSTER_DIR}/management/
+    
+    USERNAME="admin"
+    PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
+    
+    echo "username: $USERNAME, password: adminpass"
+    
+    sed -i 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
+    sed -i 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
     ;;
   enterprise)
     echo "Coping WGE templates..."
