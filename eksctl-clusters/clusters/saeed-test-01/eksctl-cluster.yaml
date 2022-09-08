@@ -29,6 +29,6 @@ gitops:
       owner: "weaveworks"
       repository: "clusters-config"
       private: "true"
-      branch: "main"
+      branch: "cluster-creation"
       namespace: "flux-system"
       path: "eksctl-clusters/clusters/saeed-test-01/management"
