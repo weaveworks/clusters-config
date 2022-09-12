@@ -1,0 +1,17 @@
+name: create-cluster
+
+on:
+  create:
+    branches: "*"
+
+jobs:
+  provision-cluster:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: get_branch
+      - name: Echo script
+        run: echo "Provisioning cluster ${{ steps.get_branch.outputs.branch }}..."
