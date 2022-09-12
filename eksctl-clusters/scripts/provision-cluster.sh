@@ -18,10 +18,10 @@ export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 CONFIG_FILE=${CLUSTER_DIR}/eksctl-cluster.yaml
 
 # Chech if GITHUB_TOKEN is set
-if [ -z $GITHUB_TOKEN ]; then
+if [ -z ${GITHUB_TOKEN} ]; then
   echo "Please export your GITHUB_TOKEN so flux can bootstrap!"
   exit 1
-else 
+fi
 
 # Check if the cluster exists from AWS
 export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION}| grep -i ${CLUSTER_NAME})
