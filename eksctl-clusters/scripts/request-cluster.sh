@@ -38,9 +38,9 @@ flags(){
     --weave-mode)
         shift
         export WW_MODE="$1"
-        if [ $WW_MODE != "core" || $WW_MODE != "enterprise" || $WW_MODE != "none"]
+        if [ "${WW_MODE}" != "core" ] && [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "none" ]
         then
-          echo "Invalid value of --weave-mode. Please select one of (enterprise, core or none)!"
+          echo "Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
           exit 1
         fi
         ;;
