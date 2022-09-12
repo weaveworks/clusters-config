@@ -3,8 +3,7 @@ kind: ClusterConfig
 
 metadata:
   name: test-cluster-01
-  # region: eu-north-1
-  region: us-east-1
+  region: eu-north-1
   version: "1.23"
   tags:
     environment: "test-cluster-01"
@@ -27,9 +26,9 @@ gitops:
   flux:
     gitProvider: github
     flags:
-      owner: "MohamedMSaeed"
-      repository: "wg-test"
+      owner: "weaveworks"
+      repository: "clusters-config"
       private: "true"
       branch: "main"
       namespace: "flux-system"
-      path: "clusters/test-cluster-01/management"
+      path: "eksctl-clusters/clusters/test-cluster-01/management"
