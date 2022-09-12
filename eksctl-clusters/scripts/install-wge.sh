@@ -8,4 +8,3 @@ curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.1.4/
 chmod +x ./clusterctl
 sudo mv ./clusterctl /usr/local/bin/clusterctl
 clusterctl versio
-
