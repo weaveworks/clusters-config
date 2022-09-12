@@ -8,10 +8,10 @@
       ./scripts/request-cluster.sh CLUSTER_NAME
     ```
     - The script will create the cluster directory under clusters directory.
-    - The eksctl cluster-config-file with default values will be created at `cluaters/CLUSTER_NAME/eksctl-cluster.yaml`, and default management cluster configuration files at `clusters/CLUSTER_NAME/management`. 
+    - The eksctl cluster-config-file with default values will be created at `cluaters/CLUSTER_NAME/eksctl-cluster.yaml`, and default management cluster configuration files at `clusters/CLUSTER_NAME/management`.
 
 ## Cluster config file:
-- All values are set and you shouldn't change any. 
+- All values are set and you shouldn't change any.
 
 ## Structure:
 - `Clusters` where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **clusters/CLUSTER_NAME** dir.

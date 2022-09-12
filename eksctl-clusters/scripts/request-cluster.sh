@@ -42,7 +42,7 @@ flags(){
         then
           echo "Invalid value of --weave-mode. Please select one of (enterprise, core or none)!"
           exit 1
-        fi 
+        fi
         ;;
     -h|--help)
         usage;;
@@ -71,7 +71,7 @@ echo "cluster name: $CLUSTER_NAME, cluster version: $CLUSTER_VERSION, weave mode
 
 # check that the cluster dir is not exist:
 if [ -d "${CLUSTER_DIR}" ]
-then 
+then
   echo "A cluster with the same name is found. Please choose another name!"
   exit 1
 fi
@@ -90,12 +90,12 @@ case $WW_MODE in
     echo "Coping WW-Core templates..."
     mkdir -p ${CLUSTER_DIR}/management
     cp -r ${PARENT_DIR}/wg-core-templates/* ${CLUSTER_DIR}/management/
-    
+
     USERNAME="admin"
     PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
-    
+
     echo "username: $USERNAME, password: adminpass"
-    
+
     sed -i 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
     sed -i 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
     ;;
