@@ -1,4 +1,4 @@
-name: create-cluster
+name: Provision EKS Cluster
 
 on:
   create:
@@ -12,12 +12,6 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v3
-      - name: Get branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: get_branch
-      - name: Echo script
-        run: echo "Provisioning cluster ${{ steps.get_branch.outputs.branch }}..."
 
       - name: Install aws-cli
         run: |
@@ -44,10 +38,14 @@ jobs:
           role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
           aws-region: eu-north-1
 
-      # - name: Create cluster
-      #   run: |
-      #     $GITHUB_WORKSPACE/eksctl-clusters/scripts/request-cluster.sh --cluster-name testme
-      #     $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name testme
+      - name: Get branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: get_branch
+      - name: Provision Cluster
+        run: |
+          echo "Provisioning ${{ steps.get_branch.outputs.branch }} cluster..."
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name ${{ steps.get_branch.outputs.branch }}
 
       - name: Test eksctl
         run: |

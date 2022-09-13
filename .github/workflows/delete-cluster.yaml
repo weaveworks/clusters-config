@@ -1,4 +1,4 @@
-name: delete-cluster
+name: Delete EKS Cluster
 
 on:
   delete:
