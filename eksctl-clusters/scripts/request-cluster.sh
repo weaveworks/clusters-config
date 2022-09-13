@@ -1,6 +1,7 @@
 #! /bin/bash
 
-# make-cluster.sh --cluster-name hamada --cluster-version 1.21
+# How to use:
+#      run ./request-cluster.sh --cluster-name CLUSTER_NAME --cluster-version 1.23 --weave-mode core
 
 set -e
 
@@ -65,7 +66,7 @@ export EKS_CLUSTER_TEMP=${PARENT_DIR}/eks-cluster-tmp.yaml
 
 if [ -z $CLUSTER_NAME ]
 then
-  echo "You have to enter the cluster name."
+  echo "You have to enter the cluster name. Use -h for help."
   exit 1
 fi
 
