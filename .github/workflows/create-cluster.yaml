@@ -38,6 +38,10 @@ jobs:
           role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
           aws-region: eu-north-1
 
+      - name: Create cluster
+        run: |
+          eksctl create cluster --region eu-north-1
+
       - name: Test eksctl
         run: |
           eksctl get clusters --region eu-north-1
