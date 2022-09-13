@@ -7,6 +7,9 @@ on:
 jobs:
   provision-cluster:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - name: Get branch name
@@ -15,3 +18,16 @@ jobs:
         id: get_branch
       - name: Echo script
         run: echo "Provisioning cluster ${{ steps.get_branch.outputs.branch }}..."
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
+          aws-region: eu-north-1
+
+      - name: Install eksctl
+        run: |
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+          sudo mv /tmp/eksctl /usr/local/bin
+          eksctl version
+          eksctl get clusters --region eu-north-1

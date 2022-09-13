@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Get branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "##[set-output name=branch;]$(echo ${{ github.event.ref }})"
         id: get_branch
       - name: Echo script
         run: echo "Deleting cluster ${{ steps.get_branch.outputs.branch }}..."
