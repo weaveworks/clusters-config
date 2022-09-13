@@ -104,7 +104,7 @@ case $WW_MODE in
 
     echo "username: $USERNAME, password: adminpass"
     ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml    
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
     ;;
   enterprise)
     echo "Coping WGE templates..."
