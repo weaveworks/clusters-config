@@ -19,15 +19,25 @@ jobs:
       - name: Echo script
         run: echo "Provisioning cluster ${{ steps.get_branch.outputs.branch }}..."
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
-          aws-region: eu-north-1
+      - name: Install aws-cli
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          aws --version
 
       - name: Install eksctl
         run: |
           curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
           sudo mv /tmp/eksctl /usr/local/bin
           eksctl version
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
+          aws-region: eu-north-1
+
+      - name: Test eksctl
+        run: |
           eksctl get clusters --region eu-north-1
