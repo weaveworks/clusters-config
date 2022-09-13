@@ -45,6 +45,7 @@ jobs:
       - name: Provision Cluster
         run: |
           echo "Provisioning ${{ steps.get_branch.outputs.branch }} cluster..."
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name ${{ steps.get_branch.outputs.branch }}
 
       - name: Test eksctl
