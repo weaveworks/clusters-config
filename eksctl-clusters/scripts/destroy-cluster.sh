@@ -14,9 +14,9 @@ export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 CONFIG_FILE=${CLUSTER_DIR}/eksctl-cluster.yaml
 
 
-export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION} | grep -iw ${CLUSTER_NAME})
+export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION} -n ${CLUSTER_NAME} >2 /dev/null)
 if [ -z $CLUSTER_EXISTS ]; then
-  echo "There is no cluster with the provided name"
+  echo "Could not find cluster '${CLUSTER_NAME}' to delete."
   exit 1
 else
   # Delete EKS cluster

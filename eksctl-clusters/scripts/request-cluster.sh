@@ -2,6 +2,8 @@
 
 # make-cluster.sh --cluster-name hamada --cluster-version 1.21
 
+set -e
+
 blnk=$(echo "$0" | sed 's/./ /g')
 usage() {
   echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"

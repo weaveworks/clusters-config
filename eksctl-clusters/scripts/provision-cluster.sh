@@ -24,12 +24,12 @@ if [ -z ${GITHUB_TOKEN} ]; then
 fi
 
 # Check if the cluster exists from AWS
-export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION}| grep -i ${CLUSTER_NAME})
+export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION} -n ${CLUSTER_NAME} >2 /dev/null)
 if [ -z $CLUSTER_EXISTS ]; then
   # Create EKS cluster
   eksctl create cluster -f ${CONFIG_FILE}
 else
-  echo "There is a cluster created with the same name"
+  echo "There is a cluster with the nane '${CLUSTER_NAME}'!"
   exit 1
 fi
 
