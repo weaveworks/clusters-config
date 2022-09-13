@@ -8,6 +8,12 @@ metadata:
   tags:
     environment: "${CLUSTER_NAME}"
 
+# Enable private access to the API server.
+vpc:
+  clusterEndpoints:
+    privateAccess: true
+    publicAccess: true
+
 managedNodeGroups:
   - name: ${CLUSTER_NAME}-ng-1
     instanceType: t3.medium
@@ -15,6 +21,7 @@ managedNodeGroups:
     maxSize: 2
     desiredCapacity: 2
     volumeSize: 10
+    privateNetworking: true
     tags:
       environment: "${CLUSTER_NAME}"
     propagateASGTags: true
