@@ -1,6 +1,9 @@
 #! /bin/bash
 
-# make-cluster.sh --cluster-name hamada --cluster-version 1.21
+# How to use:
+#      run ./request-cluster.sh --cluster-name CLUSTER_NAME --cluster-version 1.23 --weave-mode core
+
+set -e
 
 blnk=$(echo "$0" | sed 's/./ /g')
 usage() {
@@ -63,7 +66,7 @@ export EKS_CLUSTER_TEMP=${PARENT_DIR}/eks-cluster-tmp.yaml
 
 if [ -z $CLUSTER_NAME ]
 then
-  echo "You have to enter the cluster name."
+  echo "You have to enter the cluster name. Use -h for help."
   exit 1
 fi
 
@@ -77,12 +80,17 @@ then
 fi
 mkdir -p ${CLUSTER_DIR}
 
+if [ "$(uname -s)" == "Linux" ]; then
+  SED_="sed -i"
+elif [ "$(uname -s)" == "Darwin" ]; then
+  SED_="sed -i ''"
+fi
+
 # copy eksctl config to cluster dir
 echo "Coping eksctl config file..."
 cp ${EKS_CLUSTER_TEMP} ${CLUSTER_DIR}/eksctl-cluster.yaml
-sed -i 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-sed -i 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
+${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 
 # copy WGE files
 case $WW_MODE in
@@ -95,9 +103,8 @@ case $WW_MODE in
     PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
 
     echo "username: $USERNAME, password: adminpass"
-
-    sed -i 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-    sed -i 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
+    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml    
     ;;
   enterprise)
     echo "Coping WGE templates..."
