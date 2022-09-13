@@ -80,16 +80,17 @@ then
 fi
 mkdir -p ${CLUSTER_DIR}
 
+if [ "$(uname -s)" == "Linux" ]; then
+  SED_="sed -i"
+elif [ "$(uname -s)" == "Darwin" ]; then
+  SED_="sed -i ''"
+fi
+
 # copy eksctl config to cluster dir
 echo "Coping eksctl config file..."
 cp ${EKS_CLUSTER_TEMP} ${CLUSTER_DIR}/eksctl-cluster.yaml
-if [ "$(uname -s)" == "Linux" ]; then
-  sed -i 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-  sed -i 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-elif [ "$(uname -s)" == "Darwin" ]; then
-  sed -i '' 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-  sed -i '' 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-fi
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
+${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 
 # copy WGE files
 case $WW_MODE in
@@ -102,13 +103,8 @@ case $WW_MODE in
     PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
 
     echo "username: $USERNAME, password: adminpass"
-    if [ "$(uname -s)" == "Linux" ]; then
-      sed -i 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-      sed -i 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-    elif [ "$(uname -s)" == "Darwin" ]; then
-      sed -i '' 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-      sed -i '' 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-    fi
+    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml    
     ;;
   enterprise)
     echo "Coping WGE templates..."
