@@ -32,6 +32,12 @@ jobs:
           sudo mv /tmp/eksctl /usr/local/bin
           eksctl version
 
+      - name: Install flux
+        run: |
+          curl --silent --location https://github.com/fluxcd/flux2/releases/download/v0.32.0/flux_0.32.0_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
+          sudo mv /tmp/flux /usr/local/bin
+          flux version --client
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -40,7 +46,8 @@ jobs:
 
       - name: Create cluster
         run: |
-          eksctl create cluster --region eu-north-1
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/request-cluster.sh --cluster-name testme
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name testme
 
       - name: Test eksctl
         run: |
