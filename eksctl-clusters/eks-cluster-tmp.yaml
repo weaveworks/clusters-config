@@ -2,7 +2,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: sam-simple-test
+  name: a-simple-test
   region: eu-north-1
   tags:
     delete-after: "2022-09-05"
@@ -12,7 +12,7 @@ iam:
   serviceRoleArn: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
 
 nodeGroups:
-  - name: simple-test-private-a
+  - name: a-test-private-a
     instanceType: t4g.small
     desiredCapacity: 1
     privateNetworking: true
@@ -21,4 +21,4 @@ nodeGroups:
       delete-after: "2022-09-05"
       team: blazing-bonfire
     iam:
-      instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
+      serviceRoleARN: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
