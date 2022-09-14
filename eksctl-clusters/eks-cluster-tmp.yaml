@@ -9,7 +9,7 @@ metadata:
     team: blazing-bonfire
 
 iam:
-  serviceRoleArn: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
+  serviceRoleARN: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
 
 nodeGroups:
   - name: a-test-private-a
@@ -21,4 +21,4 @@ nodeGroups:
       delete-after: "2022-09-05"
       team: blazing-bonfire
     iam:
-      serviceRoleARN: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
+      instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
