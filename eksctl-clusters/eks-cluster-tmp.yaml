@@ -36,6 +36,6 @@ gitops:
       owner: "weaveworks"
       repository: "clusters-config"
       private: "true"
-      branch: "main"
+      branch: "${CLUSTER_NAME}"
       namespace: "flux-system"
       path: "eksctl-clusters/clusters/${CLUSTER_NAME}/management"

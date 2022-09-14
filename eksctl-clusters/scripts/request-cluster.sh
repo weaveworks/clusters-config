@@ -72,6 +72,19 @@ fi
 
 echo "cluster name: $CLUSTER_NAME, cluster version: $CLUSTER_VERSION, weave mode: $WW_MODE"
 
+# create new branch for the cluster:
+echo "Creating the cluster branch '${CLUSTER_NAME}'"
+git fetch --prune origin
+BRANCH_EXISTS=$(git branch -a -l ${CLUSTER_NAME})
+BRANCH_EXISTS="${BRANCH_EXISTS//\*}"
+if [ -z $BRANCH_EXISTS ]
+then
+  git branch -m ${CLUSTER_NAME}
+else
+  echo "A branch with name ${CLUSTER_NAME} is found. Please choose another name!"
+  exit 1
+fi
+
 # check that the cluster dir is not exist:
 if [ -d "${CLUSTER_DIR}" ]
 then
