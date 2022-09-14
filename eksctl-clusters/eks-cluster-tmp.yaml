@@ -8,6 +8,9 @@ metadata:
   tags:
     environment: "${CLUSTER_NAME}"
 
+iam:
+  serviceRoleArn: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
+
 managedNodeGroups:
   - name: ${CLUSTER_NAME}-ng-1
     instanceType: t3.medium
@@ -19,6 +22,7 @@ managedNodeGroups:
       environment: "${CLUSTER_NAME}"
     propagateASGTags: true
     iam:
+      instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
       withAddonPolicies:
         certManager: true
 
