@@ -23,8 +23,6 @@ nodeGroups:
     propagateASGTags: true
     iam:
       instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
-      withAddonPolicies:
-        certManager: true
 
 gitops:
   flux:
