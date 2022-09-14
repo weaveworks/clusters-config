@@ -11,7 +11,7 @@ metadata:
 iam:
   serviceRoleArn: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
 
-managedNodeGroups:
+nodeGroups:
   - name: ${CLUSTER_NAME}-ng-1
     instanceType: t3.medium
     minSize: 2
