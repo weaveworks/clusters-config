@@ -9,6 +9,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/core
+  path: ./eksctl-clusters/apps/core
   prune: true
   validation: client
