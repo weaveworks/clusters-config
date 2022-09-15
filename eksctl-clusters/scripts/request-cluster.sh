@@ -81,7 +81,7 @@ BRANCH_EXISTS=$(git branch -a -l ${BRANCH_NAME})
 BRANCH_EXISTS="${BRANCH_EXISTS//\*}"
 if [ -z $BRANCH_EXISTS ]
 then
-  git branch -m ${BRANCH_NAME}
+  git checkout -b ${BRANCH_NAME}
 else
   echo "A branch with name ${BRANCH_NAME} is found. Please choose another name!"
   exit 1
