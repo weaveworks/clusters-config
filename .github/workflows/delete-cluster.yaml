@@ -7,11 +7,57 @@ on:
 jobs:
   delete-cluster:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install aws-cli
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          aws --version
+
+      - name: Install eksctl
+        run: |
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+          sudo mv /tmp/eksctl /usr/local/bin
+          eksctl version
+
+      - name: Install helm
+        uses: azure/setup-helm@v2.0
+        with:
+          version: v3.8.2
+
+      - name: Install kubectl
+        uses: Azure/setup-kubectl@v2.0
+        with:
+          version: v1.23.7
+
+      - name: Install flux
+        run: |
+          curl --silent --location https://github.com/fluxcd/flux2/releases/download/v0.32.0/flux_0.32.0_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
+          sudo mv /tmp/flux /usr/local/bin
+          flux version --client
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
+          aws-region: eu-north-1
+
       - name: Get cluster name from branch
         shell: bash
         run: echo "##[set-output name=cluster;]$(echo ${GITHUB_REF#refs/heads/cluster-})"
         id: cluster_name
-      - name: Echo script
-        run: echo "Deleting cluster ${{ steps.cluster_name.outputs.cluster }}..."
+      - name: Delete Cluster
+        run: |
+          echo "Deleting ${{ steps.cluster_name.outputs.cluster }} cluster ..."
+          export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/delete-cluster.sh --cluster-name ${{ steps.cluster_name.outputs.cluster }}
+
+      - name: Test eksctl
+        run: |
+          eksctl get clusters --region eu-north-1

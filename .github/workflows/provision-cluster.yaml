@@ -26,6 +26,16 @@ jobs:
           sudo mv /tmp/eksctl /usr/local/bin
           eksctl version
 
+      - name: Install helm
+        uses: azure/setup-helm@v2.0
+        with:
+          version: v3.8.2
+
+      - name: Install kubectl
+        uses: Azure/setup-kubectl@v2.0
+        with:
+          version: v1.23.7
+
       - name: Install flux
         run: |
           curl --silent --location https://github.com/fluxcd/flux2/releases/download/v0.32.0/flux_0.32.0_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
@@ -44,8 +54,8 @@ jobs:
         id: cluster_name
       - name: Provision Cluster
         run: |
-          echo "Provisioning ${{ steps.cluster_name.outputs.cluster }} cluster..."
-          export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN }}
+          echo "Provisioning ${{ steps.cluster_name.outputs.cluster }} cluster ..."
+          export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
           $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name ${{ steps.cluster_name.outputs.cluster }}
 
       - name: Test eksctl
