@@ -2,16 +2,16 @@ name: Delete EKS Cluster
 
 on:
   delete:
-    branches: "*"
+    branches: "cluster-*"
 
 jobs:
   delete-cluster:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Get branch name
+      - name: Get cluster name from branch
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${{ github.event.ref }})"
-        id: get_branch
+        run: echo "##[set-output name=cluster;]$(echo ${GITHUB_REF#refs/heads/cluster-})"
+        id: cluster_name
       - name: Echo script
-        run: echo "Deleting cluster ${{ steps.get_branch.outputs.branch }}..."
+        run: echo "Deleting cluster ${{ steps.cluster_name.outputs.cluster }}..."
