@@ -44,7 +44,7 @@ flags "$@"
 
 if [ -z $CLUSTER_NAME ]
 then
-  echo "You have to enter the cluster name. Use -h for help."
+  echo "No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
   exit 1
 fi
 
@@ -52,19 +52,19 @@ export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 CONFIG_FILE=${CLUSTER_DIR}/eksctl-cluster.yaml
 
-# Chech if GITHUB_TOKEN is set
+# Check if GITHUB_TOKEN is set
 if [ -z ${GITHUB_TOKEN} ]; then
   echo "Please export your GITHUB_TOKEN so flux can bootstrap!"
   exit 1
 fi
 
-# Check if the cluster exists from AWS
+# Check if the cluster aleady exists in AWS
 export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION} -n ${CLUSTER_NAME} 2> /dev/null)
 if [ -z $CLUSTER_EXISTS ]; then
   # Create EKS cluster
   eksctl create cluster -f ${CONFIG_FILE}
 else
-  echo "There is a cluster with the nane '${CLUSTER_NAME}'!"
+  echo "Cluster with name '${CLUSTER_NAME}' already exists in AWS!"
   exit 1
 fi
 
