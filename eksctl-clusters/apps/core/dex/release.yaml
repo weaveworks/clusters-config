@@ -35,14 +35,22 @@ spec:
         - http://localhost:9001/oauth2/callback
         secret: B7Skl2cfSoOQgOhIkeqxx1uJjWxjCFoEEymk
       staticPasswords:
-      - email: alice@test.invalid
+      - email: admin@test.invalid
         hash: $2y$10$5b/iK/HHCyYRk7S0iNaqn.mb36QbC0sSNKR5Rnhh/cITPgdviwfcu
         userID: 1111240c-6f22-4da7-94e1-8d52d260f0bd
-        username: alice
-      - email: bob@test.invalid
+        username: admin
+      - email: admin-apps@test.invalid
+        hash: $2y$10$5b/iK/HHCyYRk7S0iNaqn.mb36QbC0sSNKR5Rnhh/cITPgdviwfcu
+        userID: 1111240c-6f22-4da7-94e1-8d52d260f0bd
+        username: admin-apps
+      - email: ro@test.invalid
+        hash: $2y$10$5b/iK/HHCyYRk7S0iNaqn.mb36QbC0sSNKR5Rnhh/cITPgdviwfcu
+        userID: 1111240c-6f22-4da7-94e1-8d52d260f0bd
+        username: ro
+      - email: ro-apps@test.invalid
         hash: $2y$10$5b/iK/HHCyYRk7S0iNaqn.mb36QbC0sSNKR5Rnhh/cITPgdviwfcu
         userID: fceaf51f-f8a7-4aff-809e-1b1568e96528
-        username: bob
+        username: ro-apps
       storage:
         type: memory
       web:

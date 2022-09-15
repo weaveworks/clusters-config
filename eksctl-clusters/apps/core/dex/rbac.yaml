@@ -1,34 +1,67 @@
-# No entry for 'no-permissions' as they don't have any permissions in the cluster
-# The podinfo rolebindings are in k8s/apps/core/podinfo
-#
-# readonly
-#
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: weave-gitops-readonly-ro
-roleRef:
-  kind: ClusterRole
-  name: weave-gitops-readonly
-  apiGroup: rbac.authorization.k8s.io
-subjects:
-  - kind: User
-    name: bob@test.invalid
-    apiGroup: rbac.authorization.k8s.io
----
 #
 # admin
 #
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: wego-admin-cluster-role-admin
+  name: wego-admin-cluster-role
 roleRef:
   kind: ClusterRole
-  name: wego-admin-cluster-role
+  name: wego-admin-cluster-role  # created by default.
   apiGroup: rbac.authorization.k8s.io
 subjects:
   - kind: User
-    name: alice@test.invalid
+    name: admin@test.invalid
     apiGroup: rbac.authorization.k8s.io
 ---
+#
+# readonly
+#
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: wego-readonly-cluster-role
+roleRef:
+  kind: ClusterRole
+  name: wego-readonly-role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: User
+    name: ro@test.invalid
+    apiGroup: rbac.authorization.k8s.io
+---
+#
+# namespace admin
+#
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: wego-admin-apps-rolebinding
+  namespace: apps
+subjects:
+  - kind: User
+    name: admin-apps@test.invalid
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  # Use the cluster role to set rules, just bind them in the team-a namespace
+  kind: ClusterRole
+  name: wego-admin-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+#
+# namespace readonly
+#
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: wego-ro-apps-rolebinding
+  namespace: apps
+roleRef:
+  kind: ClusterRole
+  name: wego-readonly-role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: User
+    name: ro-apps@test.invalid
+    apiGroup: rbac.authorization.k8s.io

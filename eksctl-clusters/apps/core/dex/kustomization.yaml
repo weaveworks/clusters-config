@@ -4,5 +4,5 @@ resources:
 - namespace.yaml
 - release.yaml
 - oidc-secret.yaml
-- weave-gitops-readonly.yaml
+- readonly-cluster-role.yaml
 - rbac.yaml
