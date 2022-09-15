@@ -113,14 +113,14 @@ case $WW_MODE in
   core)
     echo "Copying WG-Core templates..."
     mkdir -p ${CLUSTER_DIR}/management
-    cp -r ${PARENT_DIR}/wg-core-templates/* ${CLUSTER_DIR}/management/
+    cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/management/gitops-kustomization.yaml
 
     USERNAME="admin"
     PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
 
     echo "Username: $USERNAME, Password: adminpass"
-    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
+    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
     ;;
   enterprise)
     echo "Copying WGE templates..."
