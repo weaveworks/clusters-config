@@ -43,7 +43,7 @@ flags "$@"
 
 if [ -z $CLUSTER_NAME ]
 then
-  echo "You have to enter the cluster name. Use -h for help."
+  echo "No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
   exit 1
 fi
 
