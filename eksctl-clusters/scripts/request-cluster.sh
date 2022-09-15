@@ -133,7 +133,7 @@ case $WW_MODE in
 esac
 
 # Copy core apps to cluster dir
-cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml ${CLUSTER_DIR}/management/core-kustomization.yaml
+cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/management/core-kustomization.yaml
 
 echo "Cluster \"${CLUSTER_DIR}\" has been created"
 echo "Please, commit the files and create a PR to provision the cluster"
