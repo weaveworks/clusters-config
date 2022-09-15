@@ -72,6 +72,21 @@ fi
 
 echo "cluster name: $CLUSTER_NAME, cluster version: $CLUSTER_VERSION, weave mode: $WW_MODE"
 
+# create new branch for the cluster:
+echo "Creating the cluster branch '${CLUSTER_NAME}'"
+git fetch --prune origin
+
+BRANCH_NAME="cluster-${CLUSTER_NAME}"
+BRANCH_EXISTS=$(git branch -a -l ${BRANCH_NAME})
+BRANCH_EXISTS="${BRANCH_EXISTS//\*}"
+if [ -z $BRANCH_EXISTS ]
+then
+  git branch -m ${BRANCH_NAME}
+else
+  echo "A branch with name ${BRANCH_NAME} is found. Please choose another name!"
+  exit 1
+fi
+
 # check that the cluster dir is not exist:
 if [ -d "${CLUSTER_DIR}" ]
 then
@@ -91,6 +106,7 @@ echo "Coping eksctl config file..."
 cp ${EKS_CLUSTER_TEMP} ${CLUSTER_DIR}/eksctl-cluster.yaml
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 ${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
+${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 
 # copy WGE files
 case $WW_MODE in
@@ -104,7 +120,7 @@ case $WW_MODE in
 
     echo "username: $USERNAME, password: adminpass"
     ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
-    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml    
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
     ;;
   enterprise)
     echo "Coping WGE templates..."
