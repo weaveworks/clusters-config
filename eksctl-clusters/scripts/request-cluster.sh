@@ -81,7 +81,7 @@ BRANCH_EXISTS=$(git branch -a -l ${BRANCH_NAME})
 BRANCH_EXISTS="${BRANCH_EXISTS//\*}"
 if [ -z $BRANCH_EXISTS ]
 then
-  git branch -m ${BRANCH_NAME}
+  git checkout -b ${BRANCH_NAME}
 else
   echo "A branch with name ${BRANCH_NAME} already exists. Please choose another name!"
   exit 1
@@ -132,6 +132,8 @@ case $WW_MODE in
     ;;
 esac
 
+# Copy core apps to cluster dir
+cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/management/core-kustomization.yaml
 
 echo "Cluster \"${CLUSTER_DIR}\" has been created"
 echo "Please, commit the files and create a PR to provision the cluster"
