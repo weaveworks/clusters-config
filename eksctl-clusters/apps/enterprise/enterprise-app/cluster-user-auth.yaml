@@ -1,7 +1,7 @@
 apiVersion: v1
 data:
-  username: YWRtaW4K #admin
-  password: YS5haFN2MjJDNjZNMU9sQ0lmSFVSUko0VU05QksxdGN1Cg==  #adminpass
+  username: YWRtaW4= #admin
+  password: JDJhJDEwJHVuWDZ0c2RQNTFWNEl2aldqazhSMnVoOC9aMmR3ck5QUHdoZjNzU2Fkbkw5bTNTbFp1SzdX  #adminpass
 kind: Secret
 metadata:
   name: cluster-user-auth
