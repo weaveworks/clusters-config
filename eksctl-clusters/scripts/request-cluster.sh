@@ -125,7 +125,7 @@ case $WW_MODE in
   enterprise)
     echo "Copying WGE templates..."
     mkdir -p ${CLUSTER_DIR}/management
-    cp -r ${PARENT_DIR}/wge-templates/* ${CLUSTER_DIR}/management/
+    cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/management/enterprise-kustomization.yaml
     ;;
   none)
     echo "Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"

@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  username: YWRtaW4K #admin
+  password: YS5haFN2MjJDNjZNMU9sQ0lmSFVSUko0VU05QksxdGN1Cg==  #adminpass
+kind: Secret
+metadata:
+  name: cluster-user-auth
+  namespace: flux-system

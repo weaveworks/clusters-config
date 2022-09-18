@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  username: ""
+  password: ""
+  deploy-key: ""
+  entitlement: ""
+kind: Secret
+metadata:
+  # creationTimestamp: null
+  name: weave-gitops-enterprise-credentials
+  namespace: flux-system
+type: Opaque
