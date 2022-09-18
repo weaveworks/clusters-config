@@ -5,3 +5,4 @@ resources:
   - release.yaml
   - cluster-user-auth.yaml
   - wego-admin-cluster-role.yaml
+  - rbac.yaml

@@ -11,3 +11,16 @@
 #   name: wego-admin-cluster-role
 #   apiGroup: rbac.authorization.k8s.io
 # ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-cluster-role-binding
+subjects:
+  - kind: User
+    name: admin
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: wego-admin-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
