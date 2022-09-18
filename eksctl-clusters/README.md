@@ -5,16 +5,29 @@
 1. Clone the repo
 1. Run the following command to generate the cluster directory:
     ```bash
-      ./scripts/request-cluster.sh CLUSTER_NAME
+      ./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> 
     ```
-    - The script will create the cluster directory under clusters directory.
-    - The eksctl cluster-config-file with default values will be created at `cluaters/CLUSTER_NAME/eksctl-cluster.yaml`, and default management cluster configuration files at `clusters/CLUSTER_NAME/management`.
+    The script will do the following:
+      1. Check if the cluster is created before.
+      1. Create a branch for the cluster, the branch is prefixed with "cluster-".
+      1. Create the cluster directory `eksctl-clusters/cluaters/CLUSTER_NAME`.
+      1. Copy eksctl cluster-config-file with default values to `eksctl-clusters/cluaters/CLUSTER_NAME/eksctl-cluster.yaml`. 
+      1. Copy cluster configuration files "**core** or **enterprise** to `eksctl-clusters/clusters/CLUSTER_NAME/management`.
+
+### Notes on requesting a cluster:
+- 
 
 ## Cluster config file:
 - All values are set and you shouldn't change any.
 
 ## Structure:
-- `Clusters` where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **clusters/CLUSTER_NAME** dir.
-- `wge-templates` where we save all possible WGE templates like "profiles, clusters, policies ..etc". We copy them by default to all created clusters and let flux reconcile them.
-- `eks-cluster-tmp.yaml` is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
-- `scripts` where all of our scripts will live.
+- [apps](./apps/) where we keep apps config files.
+    - `core`
+        - Where we save several apps to be installed by default on all clusters, like, dex and podinfo.
+    - `enterprise`
+        - Containes WGE template yaml files to be reconsiled by fluxcd if you used `--weave-mode enterprise` option.
+    - `gitops`
+        - Containes gitops app yaml files. They will be installed if you used `--weave-mode core` option.
+- [Clusters](./clusters/) where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir.
+- [eks-cluster-tmp.yaml](./eks-cluster-tmp.yaml) is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
+- [scripts](./scripts/) where all of our scripts will live.
