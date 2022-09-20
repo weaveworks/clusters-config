@@ -15,3 +15,4 @@ It does 2 things:
       * `WeaveEksClusterRole` - role required by EKS to create and manage the cluster
       * `WeaveEksWorkerNodeRole` - a role (instance profile) required by node group instances
     + Service linked roles
+  - Creates KMS key and policies to enable encryption/decryption using it
