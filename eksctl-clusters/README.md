@@ -18,6 +18,7 @@
 
 ## Cluster config file:
 - All values are set and you shouldn't change any.
+- You can review the cluster's configuration before you push changes to the cluster branch. `./clusters/${CLUSTER_NAME}/eksctl-cluster.yaml`
 
 ## Structure:
 - [apps](./apps/) where we keep apps config files.
@@ -30,5 +31,6 @@
 - [Clusters](./clusters/) where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir.
 - [eks-cluster-tmp.yaml](./eks-cluster-tmp.yaml) is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
 - [scripts](./scripts/) where all of our scripts will live.
-- `flux-kustomization-tmp.yaml` is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
-- `secrets-kustomization-tmp.yaml` is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
+- [shared-secrets](./shared-secrets/) Where we save secrets that are shared for all clusters. like, entitlement-secret.yaml
+- [flux-kustomization-tmp.yaml](./flux-kustomization-tmp.yaml) is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
+- [secrets-kustomization-tmp.yaml](./secrets-kustomization-tmp.yaml) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
