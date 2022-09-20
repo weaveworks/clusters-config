@@ -1,3 +1,16 @@
+# # Copy secrets
+mkdir -p ${CLUSTER_DIR}/secrets
+cp -r ${PARENT_DIR}/secrets/* ${CLUSTER_DIR}/secrets
+cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/secrets-kustomization.yaml
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/secrets-kustomization.yaml
+
+# Setup SOPS decryption for flux kustomize-controller
+mkdir -p ${CLUSTER_DIR}/management/flux-system
+touch ${CLUSTER_DIR}/management/flux-system/gotk-components.yaml \
+    ${CLUSTER_DIR}/management/flux-system/gotk-sync.yaml
+cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
+
 #! /bin/bash
 
 # How to use:
@@ -147,6 +160,19 @@ touch ${CLUSTER_DIR}/management/flux-system/gotk-components.yaml \
 cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
 
+
+# # Copy secrets
+mkdir -p ${CLUSTER_DIR}/secrets
+cp -r ${PARENT_DIR}/secrets/* ${CLUSTER_DIR}/secrets
+cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/secrets-kustomization.yaml
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/secrets-kustomization.yaml
+
+# Setup SOPS decryption for flux kustomize-controller
+mkdir -p ${CLUSTER_DIR}/management/flux-system
+touch ${CLUSTER_DIR}/management/flux-system/gotk-components.yaml \
+    ${CLUSTER_DIR}/management/flux-system/gotk-sync.yaml
+cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
 
 echo "Cluster \"${CLUSTER_DIR}\" has been created"
 echo "Please, commit the files and create a PR to provision the cluster"
