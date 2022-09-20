@@ -138,10 +138,7 @@ esac
 cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/management/core-kustomization.yaml
 
 # Copy secrets
-mkdir -p ${CLUSTER_DIR}/secrets
-cp -r ${PARENT_DIR}/secrets/* ${CLUSTER_DIR}/secrets
 cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/secrets-kustomization.yaml
-${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/secrets-kustomization.yaml
 
 # Setup SOPS decryption for flux kustomize-controller
 mkdir -p ${CLUSTER_DIR}/management/flux-system
