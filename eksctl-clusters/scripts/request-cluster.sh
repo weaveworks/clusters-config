@@ -63,6 +63,8 @@ export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 
 export EKS_CLUSTER_TEMP=${PARENT_DIR}/eks-cluster-tmp.yaml
+export FLUX_KUSTOMIZATION_TEMP=${PARENT_DIR}/flux-kustomization-tmp.yaml
+export SECRETS_KUSTOMIZATION_TEMP=${PARENT_DIR}/secrets-kustomization-tmp.yaml
 
 if [ -z $CLUSTER_NAME ]
 then
@@ -81,7 +83,7 @@ BRANCH_EXISTS=$(git branch -a -l ${BRANCH_NAME})
 BRANCH_EXISTS="${BRANCH_EXISTS//\*}"
 if [ -z $BRANCH_EXISTS ]
 then
-  git checkout -b ${BRANCH_NAME}
+  git branch -m ${BRANCH_NAME}
 else
   echo "A branch with name ${BRANCH_NAME} already exists. Please choose another name!"
   exit 1
@@ -113,14 +115,14 @@ case $WW_MODE in
   core)
     echo "Copying WG-Core templates..."
     mkdir -p ${CLUSTER_DIR}/management
-    cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/management/gitops-kustomization.yaml
+    cp -r ${PARENT_DIR}/wg-core-templates/* ${CLUSTER_DIR}/management/
 
     USERNAME="admin"
     PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
 
     echo "Username: $USERNAME, Password: adminpass"
-    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
-    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
+    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/ww-gitops.yaml
     ;;
   enterprise)
     echo "Copying WGE templates..."
@@ -132,8 +134,19 @@ case $WW_MODE in
     ;;
 esac
 
-# Copy core apps to cluster dir
-cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/management/core-kustomization.yaml
+# # Copy secrets
+mkdir -p ${CLUSTER_DIR}/secrets
+cp -r ${PARENT_DIR}/secrets/* ${CLUSTER_DIR}/secrets
+cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/secrets-kustomization.yaml
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/secrets-kustomization.yaml
+
+# Setup SOPS decryption for flux kustomize-controller
+mkdir -p ${CLUSTER_DIR}/management/flux-system
+touch ${CLUSTER_DIR}/management/flux-system/gotk-components.yaml \
+    ${CLUSTER_DIR}/management/flux-system/gotk-sync.yaml
+cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
+
 
 echo "Cluster \"${CLUSTER_DIR}\" has been created"
 echo "Please, commit the files and create a PR to provision the cluster"
