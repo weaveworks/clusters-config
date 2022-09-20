@@ -1,6 +1,5 @@
 # eksctl-clusters
 
-
 ## Request a cluster:
 1. Clone the repo
 1. Run the following command to generate the cluster directory:
@@ -31,3 +30,5 @@
 - [Clusters](./clusters/) where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir.
 - [eks-cluster-tmp.yaml](./eks-cluster-tmp.yaml) is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
 - [scripts](./scripts/) where all of our scripts will live.
+- `flux-kustomization-tmp.yaml` is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
+- `secrets-kustomization-tmp.yaml` is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
