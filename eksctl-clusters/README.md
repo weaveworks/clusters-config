@@ -17,5 +17,5 @@
 - `wge-templates` where we save all possible WGE templates like "profiles, clusters, policies ..etc". We copy them by default to all created clusters and let flux reconcile them.
 - `eks-cluster-tmp.yaml` is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
 - `flux-kustomization-tmp.yaml` is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
-- `secrets-kustomization-tmp.yaml` is the secrets kustomization template that references the encrypted secrets dir. It will be copied under each cluster dir.
+- `secrets-kustomization-tmp.yaml` is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
 - `scripts` where all of our scripts will live.
