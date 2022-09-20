@@ -1,6 +1,10 @@
 # clusters-config
 Configuration for engineering's ephemeral clusters
 
+## Repo Layout:
+- [terraform](./terraform/) contains terraform for provisioning the Engineering Sandbox Account.
+- [eksctl-clusters](./eksctl-clusters/) contians scripts, templates, flux configuration, and clusters created by eksctl.
+
 ## Using SOPS to encrypt secrets
 We use [SOPS](https://github.com/mozilla/sops) to encrypt our secrets. Shared secrets under `eksctl-clusters/shared-secrets` are encrypted using AWS KMS key that's configured in `.sops.yaml` config. They are then decrypted into the cluster directly using flux kustomize-controller.
 

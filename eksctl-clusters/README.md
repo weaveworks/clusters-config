@@ -1,20 +1,23 @@
 # eksctl-clusters
 
+This directory contians scripts, templates, flux configuration, and clusters created by eksctl.
+
 ## Request a cluster:
 1. Clone the repo
 1. Run the following command to generate the cluster directory:
     ```bash
       ./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> 
     ```
-    The script will do the following:
-      1. Check if the cluster is created before.
-      1. Create a branch for the cluster, the branch is prefixed with "cluster-".
-      1. Create the cluster directory `eksctl-clusters/cluaters/CLUSTER_NAME`.
-      1. Copy eksctl cluster-config-file with default values to `eksctl-clusters/cluaters/CLUSTER_NAME/eksctl-cluster.yaml`. 
-      1. Copy cluster configuration files "**core** or **enterprise** to `eksctl-clusters/clusters/CLUSTER_NAME/management`.
 
 ### Notes on requesting a cluster:
 - 
+
+## How do we manage clusters?
+1. Each cluster/envirinment has its own branch.
+1. The cluster directory contains: 
+    - eksctl cluster configurations.
+    - management directory, where all flux, gitops, other apps files will live.
+1. Clusters branch and directory will be created automatically after a user request a cluster.
 
 ## Cluster config file:
 - All values are set and you shouldn't change any.
