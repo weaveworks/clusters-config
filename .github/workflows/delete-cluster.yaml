@@ -56,7 +56,7 @@ jobs:
         run: |
           echo "Deleting ${{ steps.cluster_name.outputs.cluster }} cluster ..."
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
-          $GITHUB_WORKSPACE/eksctl-clusters/scripts/delete-cluster.sh --cluster-name ${{ steps.cluster_name.outputs.cluster }}
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/destroy-cluster.sh --cluster-name ${{ steps.cluster_name.outputs.cluster }}
 
       - name: Check running clusters
         run: |
