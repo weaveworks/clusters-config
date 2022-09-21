@@ -37,3 +37,34 @@ This directory contians scripts, templates, flux configuration, and clusters cre
 - [shared-secrets](./shared-secrets/) Where we save secrets that are shared for all clusters. like, entitlement-secret.yaml
 - [flux-kustomization-tmp.yaml](./flux-kustomization-tmp.yaml) is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
 - [secrets-kustomization-tmp.yaml](./secrets-kustomization-tmp.yaml) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
+
+## Access UI:
+In order to access the UI, you need to port-farword `clusters-service` in case you deployed WGE app, or `weave-gitops` service for gitops app.
+
+To authenticate using dex:
+  1. Add dex to your `/etc/hosts`.
+      ```bash
+      127.0.0.1 dex-dex.dex.svc.cluster.local
+      ```
+  1. Port-farword dex service:
+      ```bash
+      kubectl port-forward -n dex svc/dex-dex 5556:5556
+      ```
+
+Access the UI using one of the follwoing users:
+1. Basic auth:
+    ```bash
+    username = wego-admin
+    password = password
+    ```
+    User have admin permission to all namespaces.
+
+1. Dex users:
+The following static users are created by default:
+
+    | User                    | password | Permission                             |
+    |--                       |--        |--                                      |
+    | admin@test.invalid      | password | full access to all resources           |
+    | admin-apps@test.invalid | password | full access to **apps** namespace only |
+    | ro@test.invalid         | password | read-only access to all namespaces     |
+    | ro-apps@test.invalid    | password | read-only access to **apps** namespace |
