@@ -110,6 +110,7 @@ ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.
 ${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 
+mkdir -p ${CLUSTER_DIR}/management
 # Copy core apps to cluster dir
 echo "Copying apps-core templates..."
 cp -r ${PARENT_DIR}/apps/core/* ${CLUSTER_DIR}/management/
@@ -118,7 +119,6 @@ cp -r ${PARENT_DIR}/apps/core/* ${CLUSTER_DIR}/management/
 case $WW_MODE in
   core)
     echo "Copying WeaveGitops templates..."
-    mkdir -p ${CLUSTER_DIR}/management
     cp -r ${PARENT_DIR}/apps/gitops/* ${CLUSTER_DIR}/management/
 
     USERNAME="admin"
@@ -130,7 +130,6 @@ case $WW_MODE in
     ;;
   enterprise)
     echo "Copying WGE templates..."
-    mkdir -p ${CLUSTER_DIR}/management
     cp -r ${PARENT_DIR}/apps/enterprise/* ${CLUSTER_DIR}/management/
     ;;
   none)
