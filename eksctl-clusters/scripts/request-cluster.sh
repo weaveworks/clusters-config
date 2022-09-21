@@ -110,12 +110,16 @@ ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.
 ${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 
+# Copy core apps to cluster dir
+echo "Copying apps-core templates..."
+cp -r ${PARENT_DIR}/apps/core/* ${CLUSTER_DIR}/management/
+
 # Copy WGE/WG-Core files
 case $WW_MODE in
   core)
-    echo "Copying WG-Core templates..."
+    echo "Copying WeaveGitops templates..."
     mkdir -p ${CLUSTER_DIR}/management
-    cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/management/gitops-kustomization.yaml
+    cp -r ${PARENT_DIR}/apps/gitops/* ${CLUSTER_DIR}/management/
 
     USERNAME="admin"
     PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
@@ -127,7 +131,7 @@ case $WW_MODE in
   enterprise)
     echo "Copying WGE templates..."
     mkdir -p ${CLUSTER_DIR}/management
-    cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/management/enterprise-kustomization.yaml
+    cp -r ${PARENT_DIR}/apps/enterprise/* ${CLUSTER_DIR}/management/
     ;;
   none)
     echo "Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"
@@ -135,7 +139,7 @@ case $WW_MODE in
 esac
 
 # Copy core apps to cluster dir
-cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/management/core-kustomization.yaml
+cp -r ${PARENT_DIR}/apps/core/* ${CLUSTER_DIR}/management/
 
 # Copy secrets
 cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/secrets-kustomization.yaml
