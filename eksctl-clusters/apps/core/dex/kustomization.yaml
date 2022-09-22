@@ -3,6 +3,5 @@ kind: Kustomization
 resources:
 - namespace.yaml
 - release.yaml
-- oidc-secret.yaml
 - readonly-cluster-role.yaml
 - rbac.yaml
