@@ -23,7 +23,7 @@ jobs:
 
       - name: Install eksctl
         run: |
-          curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v0.111.0//eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v0.109.0//eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
           sudo mv /tmp/eksctl /usr/local/bin
           eksctl version
 
@@ -39,7 +39,7 @@ jobs:
 
       - name: Install flux
         run: |
-          curl --silent --location https://github.com/fluxcd/flux2/releases/download/v0.30.2/flux_0.30.2_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
+          curl --silent --location https://github.com/fluxcd/flux2/releases/download/v0.33.0/flux_0.33.0_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
           sudo mv /tmp/flux /usr/local/bin
           flux version --client
 
