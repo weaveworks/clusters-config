@@ -8,7 +8,12 @@ Configuration for engineering's ephemeral clusters
 ## Getting Started
 ### Getting access to Engineering Sandbox AWS Account
 
-(TBD)
+- Follow [Accessing AWS Resources](https://www.notion.so/weaveworks/Accessing-AWS-Resources-600faa584fec4c6ba5b0f2ef27be309e) to get access to the Engineering Sandbox AWS Account from the cli
+- Assume `WeaveEksEditor` role using:
+    ```bash
+    aws sts assume-role --role-arn "arn:aws:iam::894516026745:role/WeaveEksEditor" --role-session-name <SESSION_NAME>
+
+    ```
 
 ### How do we manage clusters?
 - Each cluster/environment has its own branch.

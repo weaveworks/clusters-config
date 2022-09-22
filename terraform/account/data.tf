@@ -17,6 +17,16 @@ data "aws_iam_policy_document" "gsuite_trust_policy" {
       values   = ["https://signin.aws.amazon.com/saml"]
     }
   }
+
+  statement {
+    sid     = "TrustAdmin"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AdministratorAccess"]
+    }
+  }
 }
 
 data "aws_iam_policy_document" "github_trust_policy" {
