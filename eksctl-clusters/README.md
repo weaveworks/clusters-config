@@ -1,27 +1,5 @@
 # eksctl-clusters
-
 This directory contians scripts, templates, flux configuration, and clusters created by eksctl.
-
-## Request a cluster:
-1. Clone the repo
-1. Run the following command to generate the cluster directory:
-    ```bash
-      ./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> 
-    ```
-
-### Notes on requesting a cluster:
-- 
-
-## How do we manage clusters?
-1. Each cluster/envirinment has its own branch.
-1. The cluster directory contains: 
-    - eksctl cluster configurations.
-    - management directory, where all flux, gitops, other apps files will live.
-1. Clusters branch and directory will be created automatically after a user request a cluster.
-
-## Cluster config file:
-- All values are set and you shouldn't change any.
-- You can review the cluster's configuration before you push changes to the cluster branch. `./clusters/${CLUSTER_NAME}/eksctl-cluster.yaml`
 
 ## Structure:
 - [apps](./apps/) where we keep apps config files.
@@ -38,39 +16,18 @@ This directory contians scripts, templates, flux configuration, and clusters cre
 - [flux-kustomization-tmp.yaml](./flux-kustomization-tmp.yaml) is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
 - [secrets-kustomization-tmp.yaml](./secrets-kustomization-tmp.yaml) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
 
-## Access UI:
-In order to access the UI, you need to port-farword `clusters-service` in case you deployed WGE app, or `weave-gitops` service for gitops app.
+## Using SOPS to encrypt secrets
+We use [SOPS](https://github.com/mozilla/sops) to encrypt our secrets. Shared secrets in the `shared-secrets` dir are encrypted using AWS KMS key that's configured in `.sops.yaml` config. They are then decrypted into the cluster directly using flux kustomize-controller.
 
-To authenticate using dex:
-  1. Add dex to your `/etc/hosts`.
-      ```bash
-      127.0.0.1 dex-dex.dex.svc.cluster.local
-      ```
-  1. Port-farword dex service:
-      ```bash
-      kubectl port-forward -n dex svc/dex-dex 5556:5556
-      ```
-
-Access the UI using one of the follwoing users:
-1. Basic auth:
-    ```bash
-    username = wego-admin
-    password = password
+To encrypt secrets using SOPS:
+- Install SOPS:
     ```
-    User have admin permission to all namespaces.
-
-1. Dex users:
-The following static users are created by default:
-
-    | User                    | password | Permission                             |
-    |--                       |--        |--                                      |
-    | admin@test.invalid      | password | full access to all resources           |
-    | admin-apps@test.invalid | password | full access to **apps** namespace only |
-    | ro@test.invalid         | password | read-only access to all namespaces     |
-    | ro-apps@test.invalid    | password | read-only access to **apps** namespace |
-
-
-### Get kubecofig file:
-```bash
-eksctl utils write-kubeconfig --region eu-north-1 -n $CLUSTER_NAME --kubeconfig=$HOME/.kube/config
-```
+    curl --silent --location "https://github.com/mozilla/sops/releases/download/v3.7.3/sops-v3.7.3.$(uname -s).amd64" --output sops
+    chmod +x ./sops
+    mv ./sops /usr/local/bin
+    sops -v
+    ```
+- Add a new creation_rule entry in `.sops.yaml` in the root of the repo. Change the `path_regex` to match your secrets location
+- Encrypt the secret using sops: `sops -e -i PATH-TO-YOUR-SECRET`
+- Add your encrypted secrets under your cluster dir so that they're reconciled by flux
+- Add a kustomization that point to your encrypted secrets path. Make sure you enable SOPS decryption in your kustomization. See [secrets-kustomization-tmp.yaml](eksctl-clusters/secrets-kustomization-tmp.yaml)
