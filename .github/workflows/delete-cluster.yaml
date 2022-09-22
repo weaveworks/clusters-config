@@ -1,0 +1,62 @@
+name: Delete EKS Cluster
+
+on:
+  delete:
+    branches:
+      - 'cluster-*'
+
+jobs:
+  delete-cluster:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install aws-cli
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          aws --version
+
+      - name: Install eksctl
+        run: |
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v0.111.0//eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+          sudo mv /tmp/eksctl /usr/local/bin
+          eksctl version
+
+      - name: Install helm
+        uses: azure/setup-helm@v2.0
+        with:
+          version: v3.8.2
+
+      - name: Install kubectl
+        uses: Azure/setup-kubectl@v2.0
+        with:
+          version: v1.23.7
+
+      - name: Install flux
+        run: |
+          curl --silent --location https://github.com/fluxcd/flux2/releases/download/v0.30.2/flux_0.30.2_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
+          sudo mv /tmp/flux /usr/local/bin
+          flux version --client
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
+          aws-region: eu-north-1
+
+      - name: Delete Cluster
+        run: |
+          export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
+          export BRANCH_NAME=${{ github.event.ref }}
+          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
+          echo "Deleting $CLUSTER_NAME cluster ..."
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/destroy-cluster.sh --cluster-name $CLUSTER_NAME
+
+      - name: Check running clusters
+        run: |
+          eksctl get clusters --region eu-north-1
