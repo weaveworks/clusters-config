@@ -50,7 +50,7 @@ jobs:
 
       - name: Get cluster name from branch
         shell: bash
-        run: echo "##[set-output name=cluster;]$(echo ${GITHUB_REF#refs/heads/cluster-})"
+        run: echo "##[set-output name=cluster;]$(echo ${{ github.event.ref#refs/heads/cluster- }})"
         id: cluster_name
       - name: Delete Cluster
         run: |
