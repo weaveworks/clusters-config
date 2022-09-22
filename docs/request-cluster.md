@@ -16,7 +16,7 @@
       1. Create a branch for the cluster, the branch is prefixed with "cluster-".
       1. Create the cluster directory `eksctl-clusters/clusters/<CLUSTER_NAME>`.
       1. Copy eksctl cluster-config-file with default values to `eksctl-clusters/cluaters/<CLUSTER_NAME>/eksctl-cluster.yaml`.
-      1. Copy cluster configuration files "**core** or **enterprise** to `eksctl-clusters/clusters/<CLUSTER_NAME>/management`.
+      1. Copy cluster configuration files **core** or **enterprise** to `eksctl-clusters/clusters/<CLUSTER_NAME>/management`.
 
 1. Add and commit your cluster directory then push the new branch
 
@@ -34,6 +34,7 @@ kubectl port-forward -n flux-system svc/clusters-service 9001:8000
 # Weave Gitops Core
 kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
 ```
+**WARNING: Please don't change port 9001 because this is the port used by dex for authentication.**
 
 ### Authenticate using dex:
   1. Add dex to your `/etc/hosts`.
