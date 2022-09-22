@@ -3,7 +3,7 @@ name: Provision EKS Cluster
 on:
   create:
     branches:
-    - "cluster-*"
+      - 'cluster-*'
 
 jobs:
   provision-cluster:
@@ -53,7 +53,7 @@ jobs:
         run: |
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
           export BRANCH_NAME=${{ github.event.ref }}
-          export CLUSTER_NAME=${BRANCH_NAME#refs/heads/cluster-}
+          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
           echo "Provisioning $CLUSTER_NAME cluster ..."
           $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
 
