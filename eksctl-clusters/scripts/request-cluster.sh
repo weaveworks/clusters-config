@@ -55,6 +55,7 @@ flags(){
   done
 }
 
+source ${BASH_SOURCE%/*}/colors.sh
 # -------------------------------------------------------------------
 
 defaults
@@ -68,7 +69,7 @@ export SECRETS_KUSTOMIZATION_TEMP=${PARENT_DIR}/secrets-kustomization-tmp.yaml
 
 if [ -z $CLUSTER_NAME ]
 then
-  echo "No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
+  echo -e "${ERROR} No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
   exit 1
 fi
 
@@ -84,18 +85,22 @@ BRANCH_EXISTS="${BRANCH_EXISTS//\*}"
 if [ -z $BRANCH_EXISTS ]
 then
   git checkout -b ${BRANCH_NAME}
+  echo -e "${SUCCESS} ${BRANCH_NAME} branch is created successfully."
 else
-  echo "A branch with name ${BRANCH_NAME} already exists. Please choose another name!"
+  echo -e "${ERROR} A branch with name ${BRANCH_NAME} already exists. Please choose another name!"
   exit 1
 fi
 
 # Check that the cluster dir does not exist:
 if [ -d "${CLUSTER_DIR}" ]
 then
-  echo "A cluster with name ${CLUSTER_NAME} already exists. Please choose another name!"
+  echo -e "${ERROR} A cluster with name ${CLUSTER_NAME} already exists. Please choose another name!"
   exit 1
 fi
-mkdir -p ${CLUSTER_DIR}
+
+# Creating cluster directory
+mkdir -p ${CLUSTER_DIR}/management
+echo -e "${SUCCESS} '${CLUSTER_DIR}' created successfully."
 
 if [ "$(uname -s)" == "Linux" ]; then
   SED_="sed -i"
@@ -109,8 +114,8 @@ cp ${EKS_CLUSTER_TEMP} ${CLUSTER_DIR}/eksctl-cluster.yaml
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 ${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
 ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
+echo -e "${SUCCESS} '${CLUSTER_DIR}/eksctl-cluster.yaml' is created successfully."
 
-mkdir -p ${CLUSTER_DIR}/management
 # Copy core apps to cluster dir
 echo "Copying apps-core templates..."
 cp -r ${PARENT_DIR}/apps/core/* ${CLUSTER_DIR}/management/
@@ -133,12 +138,9 @@ case $WW_MODE in
     cp -r ${PARENT_DIR}/apps/enterprise/* ${CLUSTER_DIR}/management/
     ;;
   none)
-    echo "Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"
+    echo -e "${WARNING} Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"
     ;;
 esac
-
-# Copy core apps to cluster dir
-cp -r ${PARENT_DIR}/apps/core/* ${CLUSTER_DIR}/management/
 
 # Copy secrets
 cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/secrets-kustomization.yaml
@@ -150,5 +152,5 @@ touch ${CLUSTER_DIR}/management/flux-system/gotk-components.yaml \
 cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
 
-echo "Cluster \"${CLUSTER_DIR}\" has been created"
-echo "Please, commit the files and create a PR to provision the cluster"
+echo -e "${SUCCESS} Cluster directory \"${CLUSTER_DIR}\" has been created"
+echo -e "          Please, commit the files and create a PR to provision the cluster"

@@ -37,13 +37,14 @@ flags(){
   done
 }
 
+source ${BASH_SOURCE%/*}/colors.sh
 # -------------------------------------------------------------------
 defaults
 flags "$@"
 
 if [ -z $CLUSTER_NAME ]
 then
-  echo "No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
+  echo -e "${ERROR} No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
   exit 1
 fi
 
@@ -54,10 +55,12 @@ CONFIG_FILE=${CLUSTER_DIR}/eksctl-cluster.yaml
 
 export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION} -n ${CLUSTER_NAME} 2> /dev/null)
 if [ -z $CLUSTER_EXISTS ]; then
-  echo "Could not find cluster '${CLUSTER_NAME}' to delete."
+  echo -e "${ERROR} Could not find cluster '${CLUSTER_NAME}' to delete."
   exit 1
 else
   # Delete EKS cluster
   echo "Deleting ${CLUSTER_NAME} cluster"
   eksctl delete cluster -f ${CONFIG_FILE}
+
+  echo -e "${SUCCESS} ${CLUSTER_NAME} cluster is deleted successfully."
 fi
