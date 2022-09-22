@@ -8,7 +8,7 @@ Configuration for engineering's ephemeral clusters
 ## Getting Started
 ### Getting access to Engineering Sandbox AWS Account
 
-(TBD)
+Use https://accounts.google.com/o/saml2/initsso?idpid=C0203uytv&spid=656726301855&forceauthn=false
 
 ### How do we manage clusters?
 - Each cluster/environment has its own branch.
