@@ -26,7 +26,14 @@
     ```
 
 ## Accessing UI:
-In order to access the UI, you need to port-farword `clusters-service` in case you deployed WGE app, or `weave-gitops` service for gitops app.
+In order to access the UI, you need to port-farword `clusters-service` in case you deployed WGE app, or `weave-gitops` service for gitops app:
+```bash
+# WGE
+kubectl port-forward -n flux-system svc/clusters-service 9001:8000
+
+# Weave Gitops Core
+kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
+```
 
 ### Authenticate using dex:
   1. Add dex to your `/etc/hosts`.
