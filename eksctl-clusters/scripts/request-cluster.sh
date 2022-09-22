@@ -135,10 +135,8 @@ case $WW_MODE in
     PASSWORDHASH='$2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a' # password
 
     echo "Username: $USERNAME, Password: adminpass"
-    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/gitops-app/gitops.yaml
-    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/gitops-app/gitops.yaml
-
-    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/core-kustomization.yaml
+    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/gitops/gitops-app/gitops.yaml
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/gitops/gitops-app/gitops.yaml
     ;;
   enterprise)
     echo "Copying WGE templates..."
