@@ -2,11 +2,11 @@ name: Delete EKS Cluster
 
 on:
   delete:
-    branches:
-      - 'cluster-*'
+    branches: '**'
 
 jobs:
   delete-cluster:
+    if: startsWith(github.event.ref, 'cluster-')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
