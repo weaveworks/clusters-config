@@ -118,13 +118,18 @@ echo -e "${SUCCESS} '${CLUSTER_DIR}/eksctl-cluster.yaml' is created successfully
 
 # Copy core apps to cluster dir
 echo "Copying apps-core templates..."
-cp -r ${PARENT_DIR}/apps/core/* ${CLUSTER_DIR}/management/
+cp -r ${PARENT_DIR}/apps/core ${CLUSTER_DIR}/management/
+cp -r ${PARENT_DIR}/apps/core-kustomization.yaml ${CLUSTER_DIR}/management/
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/core-kustomization.yaml
+
 
 # Copy WGE/WG-Core files
 case $WW_MODE in
   core)
     echo "Copying WeaveGitops templates..."
-    cp -r ${PARENT_DIR}/apps/gitops/* ${CLUSTER_DIR}/management/
+    cp -r ${PARENT_DIR}/apps/gitops ${CLUSTER_DIR}/management/
+    cp -r ${PARENT_DIR}/apps/gitops-kustomization.yaml ${CLUSTER_DIR}/management/
+    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
 
     USERNAME="wego-admin"
     PASSWORDHASH='$2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a' # password
@@ -132,10 +137,14 @@ case $WW_MODE in
     echo "Username: $USERNAME, Password: adminpass"
     ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/gitops-app/gitops.yaml
     ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/gitops-app/gitops.yaml
+
+    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/core-kustomization.yaml
     ;;
   enterprise)
     echo "Copying WGE templates..."
-    cp -r ${PARENT_DIR}/apps/enterprise/* ${CLUSTER_DIR}/management/
+    cp -r ${PARENT_DIR}/apps/enterprise ${CLUSTER_DIR}/management/
+    cp -r ${PARENT_DIR}/apps/enterprise-kustomization.yaml ${CLUSTER_DIR}/management/
+    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/enterprise-kustomization.yaml
     ;;
   none)
     echo -e "${WARNING} Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"
