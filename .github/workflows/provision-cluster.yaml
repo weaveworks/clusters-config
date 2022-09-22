@@ -2,11 +2,11 @@ name: Provision EKS Cluster
 
 on:
   create:
-    branches:
-      - 'cluster-*'
+    branches: '**'
 
 jobs:
   provision-cluster:
+    if: startsWith(github.event.ref, 'cluster-')
     runs-on: ubuntu-latest
     permissions:
       id-token: write

@@ -60,7 +60,7 @@ if [ -z $CLUSTER_EXISTS ]; then
 else
   # Delete EKS cluster
   echo "Deleting ${CLUSTER_NAME} cluster"
-  eksctl delete cluster -f ${CONFIG_FILE}
+  eksctl delete cluster --region ${AWS_REGION} --name ${CLUSTER_NAME}
 
   echo -e "${SUCCESS} ${CLUSTER_NAME} cluster is deleted successfully."
 fi
