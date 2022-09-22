@@ -121,8 +121,8 @@ case $WW_MODE in
     echo "Copying WeaveGitops templates..."
     cp -r ${PARENT_DIR}/apps/gitops/* ${CLUSTER_DIR}/management/
 
-    USERNAME="admin"
-    PASSWORDHASH='$2a$10$IkS7eytRKSQewngdRn9fY.ahSv22C66M1OlCIfHURRJ4UM9BK1tcu' # adminpass
+    USERNAME="wego-admin"
+    PASSWORDHASH='$2a$10$zro7niJ73Z.OZ0JiLkQyJOIkfM.hpNGIm.7fCR1sVbKwY/ReX6Wci' # password
 
     echo "Username: $USERNAME, Password: adminpass"
     ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/gitops-app/gitops.yaml
