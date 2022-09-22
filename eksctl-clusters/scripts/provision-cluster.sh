@@ -66,7 +66,7 @@ if [ -z $CLUSTER_EXISTS ]; then
   # Create EKS cluster
   eksctl create cluster -f ${CONFIG_FILE}
 else
-  echo "${ERROR} Cluster with name '${CLUSTER_NAME}' already exists in AWS!"
+  echo -e "${ERROR} Cluster with name '${CLUSTER_NAME}' already exists in AWS!"
   exit 1
 fi
 
@@ -74,3 +74,4 @@ fi
 echo "Add weaveworks roles to aws-auth"
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_ADMIN_ARN} --group system:masters --username admin
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_EDITOR_ARN} --group system:masters --username admin
+echo -e "${SUCCESS} The cluster is ready."
