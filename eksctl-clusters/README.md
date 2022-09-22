@@ -17,7 +17,7 @@ This directory contians scripts, templates, flux configuration, and clusters cre
 - [secrets-kustomization-tmp.yaml](./secrets-kustomization-tmp.yaml) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
 
 ## Using SOPS to encrypt secrets
-We use [SOPS](https://github.com/mozilla/sops) to encrypt our secrets. Shared secrets in the `shared-secrets` dir are encrypted using AWS KMS key that's configured in `.sops.yaml` config. They are then decrypted into the cluster directly using flux kustomize-controller.
+We use [SOPS](https://github.com/mozilla/sops) to encrypt our secrets. Shared secrets in the `shared-secrets` dir are encrypted using AWS KMS key that's configured in `.sops.yaml` config (in the root of the repo). They are then decrypted into the cluster directly using flux kustomize-controller.
 
 To encrypt secrets using SOPS:
 - Install SOPS:
@@ -27,7 +27,7 @@ To encrypt secrets using SOPS:
     mv ./sops /usr/local/bin
     sops -v
     ```
-- Add a new creation_rule entry in `.sops.yaml` in the root of the repo. Change the `path_regex` to match your secrets location
+- Add a new creation_rule entry in `.sops.yaml`. Change the `path_regex` to match your secrets location
 - Encrypt the secret using sops: `sops -e -i PATH-TO-YOUR-SECRET`
 - Add your encrypted secrets under your cluster dir so that they're reconciled by flux
 - Add a kustomization that point to your encrypted secrets path. Make sure you enable SOPS decryption in your kustomization. See [secrets-kustomization-tmp.yaml](eksctl-clusters/secrets-kustomization-tmp.yaml)
