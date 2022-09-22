@@ -1,21 +1,33 @@
 # eksctl-clusters
-
-## Request a cluster:
-1. Clone the repo
-1. Run the following command to generate the cluster directory:
-    ```bash
-      ./scripts/request-cluster.sh --cluster-name CLUSTER_NAME
-    ```
-    - The script will create the cluster directory under clusters directory.
-    - The eksctl cluster-config-file with default values will be created at `cluaters/CLUSTER_NAME/eksctl-cluster.yaml`, and default management cluster configuration files at `clusters/CLUSTER_NAME/management`.
-
-## Cluster config file:
-- All values are set and you shouldn't change any.
+This directory contians scripts, templates, flux configuration, and clusters created by eksctl.
 
 ## Structure:
-- `Clusters` where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **clusters/CLUSTER_NAME** dir.
-- `wge-templates` where we save all possible WGE templates like "profiles, clusters, policies ..etc". We copy them by default to all created clusters and let flux reconcile them.
-- `eks-cluster-tmp.yaml` is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
-- `flux-kustomization-tmp.yaml` is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
-- `secrets-kustomization-tmp.yaml` is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
-- `scripts` where all of our scripts will live.
+- [apps](./apps/) where we keep apps config files.
+    - `core`
+        - Where we save several apps to be installed by default on all clusters, like, dex and podinfo.
+    - `enterprise`
+        - Containes WGE template yaml files to be reconsiled by fluxcd if you used `--weave-mode enterprise` option.
+    - `gitops`
+        - Containes gitops app yaml files. They will be installed if you used `--weave-mode core` option.
+- [Clusters](./clusters/) where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir.
+- [eks-cluster-tmp.yaml](./eks-cluster-tmp.yaml) is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
+- [scripts](./scripts/) where all of our scripts will live.
+- [shared-secrets](./shared-secrets/) Where we save secrets that are shared for all clusters. like, entitlement-secret.yaml
+- [flux-kustomization-tmp.yaml](./flux-kustomization-tmp.yaml) is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
+- [secrets-kustomization-tmp.yaml](./secrets-kustomization-tmp.yaml) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
+
+## Using SOPS to encrypt secrets
+We use [SOPS](https://github.com/mozilla/sops) to encrypt our secrets. Shared secrets in the `shared-secrets` dir are encrypted using AWS KMS key that's configured in `.sops.yaml` config (in the root of the repo). They are then decrypted into the cluster directly using flux kustomize-controller.
+
+To encrypt secrets using SOPS:
+- Install SOPS:
+    ```
+    curl --silent --location "https://github.com/mozilla/sops/releases/download/v3.7.3/sops-v3.7.3.$(uname -s).amd64" --output sops
+    chmod +x ./sops
+    mv ./sops /usr/local/bin
+    sops -v
+    ```
+- Add a new creation_rule entry in `.sops.yaml`. Change the `path_regex` to match your secrets location
+- Encrypt the secret using sops: `sops -e -i PATH-TO-YOUR-SECRET`
+- Add your encrypted secrets under your cluster dir so that they're reconciled by flux
+- Add a kustomization that point to your encrypted secrets path. Make sure you enable SOPS decryption in your kustomization. See [secrets-kustomization-tmp.yaml](eksctl-clusters/secrets-kustomization-tmp.yaml)
