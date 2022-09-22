@@ -68,3 +68,9 @@ The following static users are created by default:
     | admin-apps@test.invalid | password | full access to **apps** namespace only |
     | ro@test.invalid         | password | read-only access to all namespaces     |
     | ro-apps@test.invalid    | password | read-only access to **apps** namespace |
+
+
+### Get kubecofig file:
+```bash
+eksctl utils write-kubeconfig --region eu-north-1 -n $CLUSTER_NAME --kubeconfig=$HOME/.kube/config
+```
