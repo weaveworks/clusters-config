@@ -8,6 +8,8 @@ Configuration for engineering's ephemeral clusters
 ## Getting Started
 ### Getting access to Engineering Sandbox AWS Account
 
+(TBD)
+
 ### How do we manage clusters?
 - Each cluster/environment has its own branch.
 - Clusters are provisioned by creating a new `cluster-<CLUSTER_NAME>` branch and destroyed by deleting the branch.
