@@ -2,7 +2,8 @@ name: Delete EKS Cluster
 
 on:
   delete:
-    branches: "cluster-*"
+    branches:
+    - "cluster-*"
 
 jobs:
   delete-cluster:
@@ -48,15 +49,13 @@ jobs:
           role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
           aws-region: eu-north-1
 
-      - name: Get cluster name from branch
-        shell: bash
-        run: echo "##[set-output name=cluster;]$(echo ${{ github.event.ref#refs/heads/cluster- }})"
-        id: cluster_name
       - name: Delete Cluster
         run: |
-          echo "Deleting ${{ steps.cluster_name.outputs.cluster }} cluster ..."
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
-          $GITHUB_WORKSPACE/eksctl-clusters/scripts/destroy-cluster.sh --cluster-name ${{ steps.cluster_name.outputs.cluster }}
+          export BRANCH_NAME=${{ github.event.ref }}
+          export CLUSTER_NAME=${BRANCH_NAME#refs/heads/cluster-}
+          echo "Deleting $CLUSTER_NAME cluster ..."
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/destroy-cluster.sh --cluster-name $CLUSTER_NAME
 
       - name: Check running clusters
         run: |
