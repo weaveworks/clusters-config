@@ -36,9 +36,13 @@ spec:
     ingress:
       enabled: false
     config:
-    #   capi:
-    #     clusters:
-    #       namespace: flux-system
+      capi:
+        clusters:
+          namespace: flux-system
+        repositoryURL: https://github.com/weaveworks/clusters-config
+        repositoryPath: ./eksctl-clusters/clusters/saeed-test-01/management/clusters
+        repositoryClustersPath: ./eksctl-clusters/clusters/saeed-test-01/management
+        baseBranch: cluster-saeed-test-01
       oidc:
         enabled: true
         issuerURL: http://dex-dex.dex.svc.cluster.local:5556
