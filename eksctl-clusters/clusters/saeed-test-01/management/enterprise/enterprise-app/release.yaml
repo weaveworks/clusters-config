@@ -33,6 +33,10 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
+    rbac:
+      userRoles:
+        roleAggregation:
+          enabled: true
     ingress:
       enabled: false
     config:
