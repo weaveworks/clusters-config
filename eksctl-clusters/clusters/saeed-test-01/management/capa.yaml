@@ -1,10 +1,10 @@
 apiVersion: capi.weave.works/v1alpha1
 kind: CAPITemplate
 metadata:
-  name: capa-template-development-{{.Count}}
+  name: capa-template-development
   namespace: default
 spec:
-  description: This is the std. CAPA template {{.Count}}
+  description: This is the std. CAPA template
   params:
     - name: CLUSTER_NAME
       description: This is used for the cluster naming.
