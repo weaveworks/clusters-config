@@ -1,0 +1,97 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"head_branch":"create-clusters-branch-2qgglo","title":"Creates
+      cluster hamada","description":"This PR creates a new cluster","template_name":"aws-eks-dev","parameter_values":{"AWS_REGION":"eu-north-1","CLUSTER_NAME":"hamada","KUBERNETES_VERSION":"v1.22.10","OWNER_EMAIL":"mohamed.saeed@weave.works","WORKER_MACHINE_COUNT":"2"},"commit_message":"Creates
+      capi cluster","credentials":{}}'
+  labels:
+    weave.works/capi: bootstrap
+  name: hamada
+  namespace: default
+spec:
+  capiClusterRef:
+    name: hamada
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: hamada
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 10.120.0.0/20
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: hamada-control-plane
+  infrastructureRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: hamada-control-plane
+
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: AWSManagedControlPlane
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  name: hamada-control-plane
+  namespace: default
+spec:
+  additionalTags:
+    creator: mohamed.saeed@weave.works
+    deployed: capa
+    environment: hamada
+    projectGid: "99999"
+  addons:
+  - conflictResolution: overwrite
+    name: vpc-cni
+    version: v1.11.3-eksbuild.1
+  bastion:
+    enabled: true
+  eksClusterName: hamada
+  region: eu-north-1
+  sshKeyName: sademo
+  version: v1.22.10
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  name: hamada-pool-0
+  namespace: default
+spec:
+  clusterName: hamada
+  replicas: 2
+  template:
+    spec:
+      bootstrap:
+        dataSecretName: ""
+      clusterName: hamada
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AWSManagedMachinePool
+        name: hamada-pool-0
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AWSManagedMachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  name: hamada-pool-0
+  namespace: default
+spec:
+  remoteAccess:
+    public: true
+  scaling:
+    maxSize: 3
+    minSize: 1
+  updateConfig:
+    maxUnavailable: 1
