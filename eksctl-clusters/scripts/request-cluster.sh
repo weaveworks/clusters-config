@@ -101,7 +101,7 @@ then
 fi
 
 # Creating cluster directory
-mkdir -p ${CLUSTER_DIR}/management
+mkdir -p ${CLUSTER_DIR}
 echo -e "${SUCCESS} '${CLUSTER_DIR}' created successfully."
 
 if [ "$(uname -s)" == "Linux" ]; then
@@ -120,7 +120,7 @@ echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 
 # Copy core apps to cluster dir
 echo "Copying apps-core templates..."
-cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/management/core-kustomization.yaml
+cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/core-kustomization.yaml
 
 # Copy WGE/WG-Core files
 case $WW_MODE in
@@ -129,15 +129,15 @@ case $WW_MODE in
     PASSWORDHASH='$2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a' # password
 
     echo "Copying WeaveGitops templates..."
-    cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/management/gitops-kustomization.yaml
-    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
+    cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/gitops-kustomization.yaml
+    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
 
-    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
-    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/management/gitops-kustomization.yaml
+    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
     ;;
   enterprise)
     echo "Copying WGE templates..."
-    cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/management/enterprise-kustomization.yaml
+    cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ;;
   none)
     echo -e "${WARNING} Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"
@@ -145,14 +145,14 @@ case $WW_MODE in
 esac
 
 # Copy secrets
-cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/secrets-kustomization.yaml
+cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/secrets-kustomization.yaml
 
 # Setup SOPS decryption for flux kustomize-controller
-mkdir -p ${CLUSTER_DIR}/management/flux-system
-touch ${CLUSTER_DIR}/management/flux-system/gotk-components.yaml \
-    ${CLUSTER_DIR}/management/flux-system/gotk-sync.yaml
-cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
-${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/management/flux-system/kustomization.yaml
+mkdir -p ${CLUSTER_DIR}/flux-system
+touch ${CLUSTER_DIR}/flux-system/gotk-components.yaml \
+    ${CLUSTER_DIR}/flux-system/gotk-sync.yaml
+cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/flux-system/kustomization.yaml
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/flux-system/kustomization.yaml
 
 echo -e "${SUCCESS} Cluster directory \"${CLUSTER_DIR}\" has been created"
 echo -e "          Please, commit the files and create a PR to provision the cluster"
