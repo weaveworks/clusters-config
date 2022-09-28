@@ -64,6 +64,8 @@ export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 
 export EKS_CLUSTER_TEMP=${PARENT_DIR}/eks-cluster-tmp.yaml
+export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-cluster.yaml
+
 export FLUX_KUSTOMIZATION_TEMP=${PARENT_DIR}/flux-kustomization-tmp.yaml
 export SECRETS_KUSTOMIZATION_TEMP=${PARENT_DIR}/secrets-kustomization-tmp.yaml
 
@@ -110,11 +112,11 @@ fi
 
 # Copy eksctl config to cluster dir
 echo "Copying eksctl config file..."
-cp ${EKS_CLUSTER_TEMP} ${CLUSTER_DIR}/eksctl-cluster.yaml
-${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/eksctl-cluster.yaml
-echo -e "${SUCCESS} '${CLUSTER_DIR}/eksctl-cluster.yaml' is created successfully."
+cp ${EKS_CLUSTER_TEMP} ${EKS_CLUSTER_CONFIG_FILE}
+${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 
 # Copy core apps to cluster dir
 echo "Copying apps-core templates..."

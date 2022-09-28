@@ -52,7 +52,7 @@ fi
 
 export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
-CONFIG_FILE=${CLUSTER_DIR}/eksctl-cluster.yaml
+export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-cluster.yaml
 
 # Check if GITHUB_TOKEN is set
 if [ -z ${GITHUB_TOKEN} ]; then
@@ -64,7 +64,7 @@ fi
 export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION} -n ${CLUSTER_NAME} 2> /dev/null)
 if [ -z $CLUSTER_EXISTS ]; then
   # Create EKS cluster
-  eksctl create cluster -f ${CONFIG_FILE}
+  eksctl create cluster -f ${EKS_CLUSTER_CONFIG_FILE}
 else
   echo -e "${ERROR} Cluster with name '${CLUSTER_NAME}' already exists in AWS!"
   exit 1
