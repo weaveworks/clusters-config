@@ -9,6 +9,10 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./eksctl-clusters/clusters/${CLUSTER_NAME}/management/gitops
+  path: ./eksctl-clusters/apps/gitops
   prune: true
   validation: client
+  postBuild:
+    substitute:
+      USERNAME: ${USERNAME}
+      PASSWORDHASH: ${PASSWORDHASH}

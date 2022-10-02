@@ -21,7 +21,7 @@ Configuration for engineering's ephemeral clusters
 - Clusters branches and directories are created automatically after a user [request a cluster](./docs/request-cluster.md). All values are set and user shouldn't need to add anything (unless he wants to customize his environment). The user can review the files before pushing the new branch in order to provision his cluster
 - The cluster directory `./eksctl-clusters/<CLUSTER_NAME>` contains:
     - Eksctl cluster configurations.
-    - `management` directory, where all flux, gitops, other apps files will live.
+    - flux, gitops, other apps files.
 
 ### Requesting a new cluster
 To request a new cluster, follow the [requesting a new cluster](./docs/request-cluster.md) doc

@@ -49,4 +49,4 @@ gitops:
       private: "true"
       branch: "${BRANCH_NAME}"
       namespace: "flux-system"
-      path: "eksctl-clusters/clusters/${CLUSTER_NAME}/management"
+      path: "eksctl-clusters/clusters/${CLUSTER_NAME}"
