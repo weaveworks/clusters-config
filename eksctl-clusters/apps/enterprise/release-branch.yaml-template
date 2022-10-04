@@ -1,0 +1,106 @@
+
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: weave-gitops-enterprise-charts
+  namespace: flux-system
+spec:
+  interval: 60m
+  secretRef:
+    name: weave-gitops-enterprise-credentials
+  url: https://charts.dev.wkp.weave.works/charts-v3
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: weave-gitops-enterprise
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: mccp
+      version: "0.9.5"
+      sourceRef:
+        kind: HelmRepository
+        name: weave-gitops-enterprise-charts
+        namespace: flux-system
+  interval: 10m0s
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+  values:
+    images:
+      clustersService: docker.io/weaveworks/weave-gitops-enterprise-clusters-service:<BRANCH_NAME>_<COMMIT_COUNT>_cd7edeae # {"$imagepolicy": "flux-system:clusters-service"}
+      uiServer: docker.io/weaveworks/weave-gitops-enterprise-ui-server:<BRANCH_NAME>_<COMMIT_COUNT>_cd7edeae # {"$imagepolicy": "flux-system:ui-server"}
+    ingress:
+      enabled: false
+    config:
+    #   capi:
+    #     clusters:
+    #       namespace: flux-system
+      oidc:
+        enabled: true
+        issuerURL: http://dex-dex.dex.svc.cluster.local:5556
+        redirectURL: http://localhost:9001/oauth2/callback
+        clientCredentialsSecret: oidc-auth
+    tls:
+      enabled: false
+    # enablePipelines: true
+    # enableTerraformUI: true
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: clusters-service
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  image: docker.io/weaveworks/weave-gitops-enterprise-clusters-service
+  secretRef:
+    name: regsecret
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: ui-server
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  image: docker.io/weaveworks/weave-gitops-enterprise-ui-server
+  secretRef:
+    name: regsecret
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: ui-server
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: clusters-service
+    namespace: flux-system
+  filterTags:
+    pattern: '^${WEAVE_BRANCH}_(?P<count>[0-9]+)_[a-fA-F0-9]+'
+    extract: '$count'
+  policy:
+    numerical:
+      order: asc
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: clusters-service
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: ui-server
+    namespace: flux-system
+  filterTags:
+    pattern: '^${WEAVE_BRANCH}_(?P<count>[0-9]+)_[a-fA-F0-9]+'
+    extract: '$count'
+  policy:
+    numerical:
+      order: asc

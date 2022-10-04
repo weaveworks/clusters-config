@@ -10,12 +10,16 @@ usage() {
   echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"
   echo "       $blnk [--cluster-version <CLUSTER_VERSION>] \\"
   echo "       $blnk [--weave-mode <enterprise|core|none> {default core}]"
+  echo "       $blnk [--weave-version <CHART_VERSION> ]"
+  echo "       $blnk [--weave-branch <BRANCH_NAME> ]"
   echo "       $blnk [-h|--help]"
 
   echo
   echo "  --cluster-name CLUSTER_NAME           -- Set cluster name"
   echo "  --cluster-version CLUSTER_VERSION     -- Set cluster version (default: 1.23)"
   echo "  --weave-mode <enterprise|core|none>   -- Select between installing WGE, WG-Core, or not install any (enterprise|core|none)"
+  echo "  --weave-version CHART_VERSION         -- Select a specific helm chart version (currently supports enterprise charts only)"
+  echo "  --weave-branch BRANCH_NAME            -- Select a specific git branch for installation (currently supports enterprise branches only)"
   echo "  -h|--help                             -- Print this help message and exit"
 
   exit 0
@@ -24,6 +28,40 @@ usage() {
 defaults(){
   export CLUSTER_VERSION="1.23"
   export WW_MODE="core"
+}
+
+validateFlags(){
+  if [ $WEAVE_VERSION ] && [ $WEAVE_BRANCH ]
+  then
+    echo -e "${ERROR} --weave-version cannot be used with --weave-branch. You should only use one!"
+    exit 1
+  fi
+
+  if [ $WEAVE_VERSION ]
+  then
+    if [ "${WW_MODE}" == "core" ]
+    then
+      echo -e "${ERROR} --weave-version is currently supported for enterprise only"
+      exit 1
+    elif [ "${WW_MODE}" == "none" ]
+    then
+      echo -e "${ERROR} --weave-version cannot be used with --weave-mode none!"
+      exit 1
+    fi
+  fi
+
+  if [ $WEAVE_BRANCH ]
+  then
+    if [ "${WW_MODE}" == "core" ]
+    then
+      echo "-e ${ERROR} --weave-branch is currently supported for enterprise only"
+      exit 1
+    elif [ "${WW_MODE}" == "none" ]
+    then
+      echo "-e ${ERROR} --weave-branch cannot be used with --weave-mode none!"
+      exit 1
+    fi
+  fi
 }
 
 flags(){
@@ -43,9 +81,17 @@ flags(){
         export WW_MODE="$1"
         if [ "${WW_MODE}" != "core" ] && [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "none" ]
         then
-          echo "Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
+          echo "-e ${ERROR} Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
           exit 1
         fi
+        ;;
+    --weave-version)
+        shift
+        export WEAVE_VERSION="$1"
+        ;;
+    --weave-branch)
+        shift
+        export WEAVE_BRANCH="$1"
         ;;
     -h|--help)
         usage;;
@@ -60,6 +106,8 @@ source ${BASH_SOURCE%/*}/colors.sh
 
 defaults
 flags "$@"
+validateFlags
+
 export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 
@@ -137,6 +185,17 @@ case $WW_MODE in
     ;;
   enterprise)
     echo "Copying WGE templates..."
+    if [ $WEAVE_BRANCH ]
+    then
+      cp -r ${PARENT_DIR}/apps/enterprise/release-branch.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
+      ${SED_} 's/${WEAVE_BRANCH}/'"${WEAVE_BRANCH}"'/g' ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
+    elif [ $WEAVE_VERSION ]
+    then
+      cp -r ${PARENT_DIR}/apps/enterprise/release.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
+      ${SED_} 's/version: "0.9.5"/version: "'"${WEAVE_VERSION}"'"/g' ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
+    else
+      cp -r ${PARENT_DIR}/apps/enterprise/release.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
+    fi
     cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ;;
   none)
