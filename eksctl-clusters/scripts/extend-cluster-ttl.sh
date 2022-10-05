@@ -70,16 +70,17 @@ if ! [[ $DAYS =~ $re ]] ; then
 fi
 
 CLUSTER_ARN=$(aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.arn" --output text)
-TTL=$(aws eks list-tags-for-resource --resource-arn $CLUSTER_ARN --query "tags.ttl" --output text)
-EXTENDED_TTL=$(($TTL + $DAYS))
+DELETE_AFTER=$(aws eks list-tags-for-resource --resource-arn $CLUSTER_ARN --query 'tags."delete-after"' --output text)
+EXTENDED_DELETE_AFTER=$(($DELETE_AFTER + $DAYS))
 
-if grep -q "ttl: $TTL" $EKS_CLUSTER_CONFIG_FILE; then # ttl tag exists?
-    ${SED_} 's/ttl: '${TTL}'/ttl: '${EXTENDED_TTL}'/g' ${EKS_CLUSTER_CONFIG_FILE} # modify ttl tag
+if grep -q "delete-after: $DELETE_AFTER" $EKS_CLUSTER_CONFIG_FILE; then # delete-after tag exists?
+    ${SED_} 's/delete-after: '${DELETE_AFTER}'/delete-after: '${EXTENDED_DELETE_AFTER}'/g' ${EKS_CLUSTER_CONFIG_FILE} # modify delete-after tag
 else
-    ${SED_} 's/  tags:/  tags:\n\t\tttl: '${EXTENDED_TTL}'/g' ${EKS_CLUSTER_CONFIG_FILE} # add ttl tag
+    echo -e "${WARNING} delete-after tag does not exist in cluster config: ${EKS_CLUSTER_CONFIG_FILE}"
+    echo -e "          Please, add it to your eksctl cluster config file and push to your cluster branch. You can get it's value from the AWS Console."
 fi
 
-aws eks tag-resource --resource-arn $CLUSTER_ARN --tags ttl=$EXTENDED_TTL
+aws eks tag-resource --resource-arn $CLUSTER_ARN --tags delete-after=$EXTENDED_DELETE_AFTER
 
-echo -e "${SUCCESS} Cluster TTL has been updated to be ${EXTENDED_TTL} days."
+echo -e "${SUCCESS} Cluster delete-after tag has been updated to be ${EXTENDED_DELETE_AFTER} days."
 echo -e "          Please, commit your updated eksctl cluster config file and push it to your cluster branch"
