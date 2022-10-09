@@ -10,7 +10,7 @@ env:
 jobs:
   Check-delete-after-for-running-clusters:
     runs-on: ubuntu-latest
-    outputs: 
+    outputs:
       deleteClusters: ${{ steps.deleteClusters.outputs.deleteClusters }}
     permissions:
       id-token: write
@@ -144,7 +144,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v3
-        with: 
+        with:
           token: ${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
 
       - name: delete clusters' branch
