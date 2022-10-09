@@ -63,3 +63,10 @@ kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
     | admin-apps@test.invalid | password | full access to **apps** namespace only | wego-admin | wego-admin + gitops-reader "apps namespace only" |
     | ro@test.invalid         | password | read-only access to all namespaces     | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) |
     | ro-apps@test.invalid    | password | read-only access to **apps** namespace | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) "apps namespace only" | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) "apps namespace only" |
+
+## Extending your cluster TTL (time to live):
+
+Every cluster created by the `request-cluster` script runs for 15 days by default, then it's auto deleted. You can extend your cluster TTL by running:
+```bash
+  ./eksctl-clusters/scripts/extend-cluster-ttl.sh --cluster-name <CLUSTER_NAME> --extend <NUMBER_OF_DAYS_TO_EXTEND>
+```
