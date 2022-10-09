@@ -7,6 +7,7 @@ metadata:
   version: "${CLUSTER_VERSION}"
   tags:
     environment: "${CLUSTER_NAME}"
+    delete-after: "${DELETE_AFTER}"
 
 iam:
   withOIDC: true
@@ -36,6 +37,7 @@ nodeGroups:
     privateNetworking: true
     tags:
       environment: "${CLUSTER_NAME}"
+      delete-after: "${DELETE_AFTER}"
     propagateASGTags: true
     iam:
       instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
