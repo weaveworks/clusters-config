@@ -26,6 +26,7 @@ usage() {
 defaults(){
   export CLUSTER_VERSION="1.23"
   export WW_MODE="core"
+  export DELETE_AFTER="15"
 }
 
 flags(){
