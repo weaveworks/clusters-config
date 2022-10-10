@@ -135,7 +135,6 @@ jobs:
         with:
           payload: |
             {
-              "text": "Deleting Clusters",
               "blocks": [
                 {
                   "type": "header",
@@ -149,7 +148,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Clusters:\n ${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
                   }
                 }
               ]
@@ -169,7 +168,6 @@ jobs:
         with:
           payload: |
             {
-              "text": "Clusters that do't have delete-after tag:",
               "blocks": [
                 {
                   "type": "header",
@@ -183,7 +181,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Clusters:\n ${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
                   }
                 }
               ]
@@ -198,7 +196,6 @@ jobs:
         with:
           payload: |
             {
-              "text": "The following clusters will be deleted tomorrow:",
               "blocks": [
                 {
                   "type": "header",
@@ -212,7 +209,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Clusters:\n ${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
                   }
                 }
               ]
