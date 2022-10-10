@@ -164,6 +164,7 @@ jobs:
       - Check-delete-after-for-running-clusters
     steps:
       - name: noTTL-slack-notification
+        if: needs.Check-delete-after-for-running-clusters.outputs.noTTL != ''
         uses: slackapi/slack-github-action@v1.22.0
         with:
           payload: |
@@ -192,6 +193,7 @@ jobs:
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: zeroDaysClusters-slack-notification
+        if: needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters != ''
         uses: slackapi/slack-github-action@v1.22.0
         with:
           payload: |
