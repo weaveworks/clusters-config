@@ -45,11 +45,11 @@ jobs:
       - name: Check delete-after tag for running clusters
         id: checkClusters
         run: |
-          fiveDaysClusters=()
-          threeDaysClusters=()
-          zeroDaysClusters=()
-          deleteClusters=()
-          noTTL=()
+          declare -a fiveDaysClusters
+          declare -a threeDaysClusters
+          declare -a zeroDaysClusters
+          declare -a deleteClusters
+          declare -a noTTL
 
           for clusterName in `eksctl get clusters --region ${AWS_REGION} -o json | jq -r '.[] | .Name'`
           do
@@ -102,6 +102,7 @@ jobs:
           echo "::set-output name=threeDaysClusters::${threeDaysClusters}"
 
   delete-clusters:
+    # if: needs.Check-delete-after-for-running-clusters.outputs.deleteClusters
     runs-on: ubuntu-latest
     needs:
       - Check-delete-after-for-running-clusters
