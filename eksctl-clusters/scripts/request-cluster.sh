@@ -43,7 +43,7 @@ flags(){
         export WW_MODE="$1"
         if [ "${WW_MODE}" != "core" ] && [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "none" ]
         then
-          echo "Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
+          echo -e "${ERROR} Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
           exit 1
         fi
         ;;
@@ -63,11 +63,11 @@ flags "$@"
 export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 
-export EKS_CLUSTER_TEMP=${PARENT_DIR}/eks-cluster-tmp.yaml
+export EKS_CLUSTER_TEMPLATE=${PARENT_DIR}/eks-cluster.yaml-template
 export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-cluster.yaml
 
-export FLUX_KUSTOMIZATION_TEMP=${PARENT_DIR}/flux-kustomization-tmp.yaml
-export SECRETS_KUSTOMIZATION_TEMP=${PARENT_DIR}/secrets-kustomization-tmp.yaml
+export FLUX_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/flux-kustomization.yaml-template
+export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/secrets-kustomization.yaml-template
 
 if [ -z $CLUSTER_NAME ]
 then
@@ -112,7 +112,7 @@ fi
 
 # Copy eksctl config to cluster dir
 echo "Copying eksctl config file..."
-cp ${EKS_CLUSTER_TEMP} ${EKS_CLUSTER_CONFIG_FILE}
+cp ${EKS_CLUSTER_TEMPLATE} ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
@@ -145,13 +145,13 @@ case $WW_MODE in
 esac
 
 # Copy secrets
-cp ${SECRETS_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/secrets-kustomization.yaml
+cp ${SECRETS_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/secrets-kustomization.yaml
 
 # Setup SOPS decryption for flux kustomize-controller
 mkdir -p ${CLUSTER_DIR}/flux-system
 touch ${CLUSTER_DIR}/flux-system/gotk-components.yaml \
     ${CLUSTER_DIR}/flux-system/gotk-sync.yaml
-cp ${FLUX_KUSTOMIZATION_TEMP} ${CLUSTER_DIR}/flux-system/kustomization.yaml
+cp ${FLUX_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/flux-system/kustomization.yaml
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/flux-system/kustomization.yaml
 
 echo -e "${SUCCESS} Cluster directory \"${CLUSTER_DIR}\" has been created"

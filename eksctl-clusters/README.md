@@ -10,11 +10,11 @@ This directory contians scripts, templates, flux configuration, and clusters cre
     - `gitops`
         - Containes gitops app yaml files. They will be installed if you used `--weave-mode core` option.
 - [Clusters](./clusters/) where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir.
-- [eks-cluster-tmp.yaml](./eks-cluster-tmp.yaml) is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
+- [eks-cluster.yaml-template](./eks-cluster.yaml-template) is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
 - [scripts](./scripts/) where all of our scripts will live.
 - [shared-secrets](./shared-secrets/) Where we save secrets that are shared for all clusters. like, entitlement-secret.yaml
-- [flux-kustomization-tmp.yaml](./flux-kustomization-tmp.yaml) is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
-- [secrets-kustomization-tmp.yaml](./secrets-kustomization-tmp.yaml) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
+- [flux-kustomization.yaml-template](./flux-kustomization.yaml-template) is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
+- [secrets-kustomization.yaml-template](./secrets-kustomization.yaml-template) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
 
 ## Using SOPS to encrypt secrets
 We use [SOPS](https://github.com/mozilla/sops) to encrypt our secrets. Shared secrets in the `shared-secrets` dir are encrypted using AWS KMS key that's configured in `.sops.yaml` config (in the root of the repo). They are then decrypted into the cluster directly using flux kustomize-controller.
@@ -30,4 +30,4 @@ To encrypt secrets using SOPS:
 - Add a new creation_rule entry in `.sops.yaml`. Change the `path_regex` to match your secrets location
 - Encrypt the secret using sops: `sops -e -i PATH-TO-YOUR-SECRET`
 - Add your encrypted secrets under your cluster dir so that they're reconciled by flux
-- Add a kustomization that point to your encrypted secrets path. Make sure you enable SOPS decryption in your kustomization. See [secrets-kustomization-tmp.yaml](eksctl-clusters/secrets-kustomization-tmp.yaml)
+- Add a kustomization that point to your encrypted secrets path. Make sure you enable SOPS decryption in your kustomization. See [secrets-kustomization.yaml-template](./secrets-kustomization.yaml-template)
