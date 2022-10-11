@@ -68,12 +68,14 @@ jobs:
               noTTL+=("${clusterName}")
             else
               echo "delete-after: ${DELETE_AFTER} days"
-              DELETION_TIME=`date -d "${CREATION_TIME} ${DELETE_AFTER} days"`
-              echo "DeleteAt: ${DELETION_TIME}"
+              DELETION_DATE=`date -d "${CREATION_TIME} ${DELETE_AFTER} days"`
+              echo "DeleteAt: ${DELETION_DATE}"
 
               DELETION_TIME=`date -d "${CREATION_TIME} ${DELETE_AFTER} days" +%s`
               TODAY=`date +%s`
-              let remainingDays=(${DELETION_TIME} - ${TODAY})/86400
+              SECS=$(($DELETION_TIME - $TODAY))
+              remainingDays=$((${SECS} / 86400))
+              echo "remainindDays: ${remainingDays} day"
               case ${remainingDays} in
               0)
                 echo "[WARNING] Cluster will be deleted tomorrow!"
