@@ -4,7 +4,7 @@ metadata:
   name: aws-eks
   namespace: default
 spec:
-  description: AWS EKS Cluster 
+  description: AWS EKS Cluster
   params:
     - name: CLUSTER_NAME
       description: The name for this cluster.
@@ -19,7 +19,7 @@ spec:
     - name: INSTANCE_TYPE
       description: Tpye of worker nodes
       options: ['t3.medium','t3.large']
-    - name: OWNER_EMAIL 
+    - name: OWNER_EMAIL
       description: E-Mail of Cluster Owner
     - name: SSH_KEY_NAME
       description: AWS ssh key name
@@ -45,7 +45,7 @@ spec:
       clusterNetwork:
         pods:
           cidrBlocks:
-          - 10.120.0.0/20 
+          - 10.120.0.0/20
       controlPlaneRef:
         apiVersion: controlplane.cluster.x-k8s.io/v1beta1
         kind: AWSManagedControlPlane
@@ -54,19 +54,19 @@ spec:
         apiVersion: controlplane.cluster.x-k8s.io/v1beta1
         kind: AWSManagedControlPlane
         name: ${CLUSTER_NAME}-control-plane
-    
+
   - apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: AWSManagedControlPlane
     metadata:
       name: ${CLUSTER_NAME}-control-plane
       namespace: default
     spec:
-      additionalTags: 
+      additionalTags:
         creator: ${OWNER_EMAIL}
       region: ${AWS_REGION}
       sshKeyName: ${SSH_KEY_NAME}
       version: ${KUBERNETES_VERSION}
-    
+
   - apiVersion: cluster.x-k8s.io/v1beta1
     kind: MachinePool
     metadata:
@@ -84,13 +84,13 @@ spec:
             apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
             kind: AWSManagedMachinePool
             name: ${CLUSTER_NAME}-pool-0
-    
+
   - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
     kind: AWSManagedMachinePool
     metadata:
       name: ${CLUSTER_NAME}-pool-0
       namespace: default
     spec:
-      additionalTags: 
+      additionalTags:
         creator: ${OWNER_EMAIL}
       instanceType: ${INSTANCE_TYPE}
