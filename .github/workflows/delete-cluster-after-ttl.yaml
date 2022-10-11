@@ -1,11 +1,8 @@
 name: Delete EKS Cluster After TTL
 
 on:
-  # schedule:
-  #   - cron:  '0 0 * * *'
-  push:
-    branches:
-      - "cluster-ttl"
+  schedule:
+    - cron:  '0 0 * * *'
 env:
   AWS_REGION: "eu-north-1"
 
@@ -68,12 +65,14 @@ jobs:
               noTTL+=("${clusterName}")
             else
               echo "delete-after: ${DELETE_AFTER} days"
-              DELETION_TIME=`date -d "${CREATION_TIME} ${DELETE_AFTER} days"`
-              echo "DeleteAt: ${DELETION_TIME}"
+              DELETION_DATE=`date -d "${CREATION_TIME} ${DELETE_AFTER} days"`
+              echo "DeleteAt: ${DELETION_DATE}"
 
               DELETION_TIME=`date -d "${CREATION_TIME} ${DELETE_AFTER} days" +%s`
               TODAY=`date +%s`
-              let remainingDays=(${DELETION_TIME} - ${TODAY})/86400
+              SECS=$(($DELETION_TIME - $TODAY))
+              remainingDays=$((${SECS} / 86400))
+              echo "remainindDays: ${remainingDays} day"
               case ${remainingDays} in
               0)
                 echo "[WARNING] Cluster will be deleted tomorrow!"
@@ -173,7 +172,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "The following clusters do't have delete-after tag:",
+                    "text": "The following clusters don't have delete-after tag:",
                     "emoji": true
                   }
                 },
@@ -210,6 +209,34 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: threeDaysClusters-slack-notification
+        if: needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters != ''
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "The following clusters will be deleted in 3 days:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters}}"
                   }
                 }
               ]
