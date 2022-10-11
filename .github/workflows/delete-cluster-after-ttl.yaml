@@ -172,7 +172,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "The following clusters do't have delete-after tag:",
+                    "text": "The following clusters don't have delete-after tag:",
                     "emoji": true
                   }
                 },
