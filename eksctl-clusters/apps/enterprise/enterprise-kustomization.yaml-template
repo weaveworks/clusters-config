@@ -12,3 +12,7 @@ spec:
   path: ./eksctl-clusters/apps/enterprise
   prune: true
   validation: client
+  postBuild:
+    substitute:
+      CLUSTER_NAME: ${CLUSTER_NAME}
+      BRANCH_NAME: ${BRANCH_NAME}
