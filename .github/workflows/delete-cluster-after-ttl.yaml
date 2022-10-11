@@ -1,11 +1,8 @@
 name: Delete EKS Cluster After TTL
 
 on:
-  # schedule:
-  #   - cron:  '0 0 * * *'
-  push:
-    branches:
-      - "cluster-ttl"
+  schedule:
+    - cron:  '0 0 * * *'
 env:
   AWS_REGION: "eu-north-1"
 
