@@ -81,7 +81,7 @@ jobs:
         run: |
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
           export BRANCH_NAME=${{ github.event.ref }}
-          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
+          export CLUSTER_NAME=${BRANCH_NAME#*cluster-}
           echo "Provisioning $CLUSTER_NAME cluster ..."
           $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
 
@@ -91,8 +91,11 @@ jobs:
 
       - name: kubeconfig
         run: |
-          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
+          export BRANCH_NAME=${{ github.event.ref }}
+          export CLUSTER_NAME=${BRANCH_NAME#*cluster-}
+          echo $CLUSTER_NAME
           eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${CLUSTER_NAME} --kubeconfig=$HOME/.kube/config
+          kubectl get nodes
 
       - name: clusterctl init --infrastructure aws => connect using the cluster user.
         run: |
@@ -103,4 +106,4 @@ jobs:
           export EXP_CLUSTER_RESOURCE_SET=true
 
           clusterctl init --infrastructure aws
-          kubectl get po -A
+          kubectl get deploy -A
