@@ -3,10 +3,10 @@ apiVersion: bootstrap.aws.infrastructure.cluster.x-k8s.io/v1beta1
 kind: AWSIAMConfiguration
 spec:
   stackName: wge-capi-cluster-api-provider-aws-sigs-k8s-io
+  namePrefix: "wge-capi-"
   eks:
     disable: false
     fargate:
       disable: true
     managedMachinePool:
       disable: false
-  nameSuffix: .wge-capi-cluster-api-provider-aws.sigs.k8s.io
