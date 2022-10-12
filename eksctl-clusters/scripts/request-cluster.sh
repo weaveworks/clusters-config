@@ -152,6 +152,7 @@ case $WW_MODE in
   enterprise)
     echo "Copying WGE templates..."
     cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
+    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${PARENT_DIR}/apps/enterprise/policies.yaml
     ;;
   none)
     echo -e "${WARNING} Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"

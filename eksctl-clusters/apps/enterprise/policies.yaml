@@ -1,0 +1,67 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  labels:
+    weave.works/applied-layer: layer-1
+  name: weave-policy-agent
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: weave-policy-agent
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.5.2
+  dependsOn:
+  - name: cert-manager
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    policy-agent:
+      failurePolicy: Ignore
+
+      # If you don't want to use cert-manager, set useCertManager to false and provide your own certs
+      useCertManager: true
+      certificate: ""
+      key: ""
+      caCertificate: ""
+
+      persistence:
+        enabled: false
+        # claimStorage: 1Gi
+        # sinkDir: /tmp
+        # storageClassName: standard
+
+      config:
+        accountId: "policy-user"
+        clusterId: "policy"
+
+        audit:
+          # Disable audit functionality
+          enabled: false
+
+        admission:
+          # Enable admission functionality
+          enabled: true
+          sinks:
+            # Enable writing violations as K8s events
+            k8sEventsSink:
+              enabled: true
+
+    policySource:
+      enabled: false
+      # url: ssh://git@github.com/weaveworks/policy-library
+      # tag: v1.0.0
+      # branch:
+      # path: ./  # Could be a path to the policies dir or a kustomization.yaml file
+      # secretRef: policy-library-auth  # (Optional): Name of the K8s secret with private repo auth credentials
+      # sourceRef: # Could specify a name for an existing GitSource reference instead of creating a new one
+      #   kind: GitRepository
+      #   name: policy-library
+      #   namespace: flux-system
