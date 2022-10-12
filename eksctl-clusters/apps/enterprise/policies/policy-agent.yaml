@@ -39,10 +39,10 @@ spec:
         # storageClassName: standard
 
       config:
-        accountId: "policy-user"
-        clusterId: "policy"
+        accountId: "${CLUSTER_NAME}-user"
+        clusterId: "${CLUSTER_NAME}"
 
-        audit:
+        aupolicydit:
           # Disable audit functionality
           enabled: false
 
