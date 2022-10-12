@@ -1,0 +1,32 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  labels:
+    weave.works/applied-layer: layer-0
+  name: metallb
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: metallb
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.3
+  install:
+    crds: CreateReplace
+    createNamespace: true
+  interval: 1m0s
+  targetNamespace: metallb-system
+  upgrade:
+    crds: CreateReplace
+  values:
+    metallb:
+      configInline:
+        address-pools:
+        - addresses:
+          - 172.16.30.232/32
+          name: default
+          protocol: layer2
