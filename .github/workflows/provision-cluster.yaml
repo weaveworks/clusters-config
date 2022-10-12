@@ -1,12 +1,21 @@
 name: Provision EKS Cluster
 
 on:
-  create:
-    branches: '**'
+  # create:
+  #   branches: '**'
+  push:
+    branches:
+      - "enable-capi"
+
+env:
+  AWS_REGION: "eu-north-1"
+  CLUSTERCTL_VERSION: "v1.2.0"
+  CLUSTER_AWS_ADM_VERSION: "v1.5.0"
+  EKSCTL_VERSION: "v0.109.0"
 
 jobs:
   provision-cluster:
-    if: startsWith(github.event.ref, 'cluster-')
+    # if: startsWith(github.event.ref, 'cluster-')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -20,10 +29,15 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
           aws --version
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Install eksctl
         run: |
-          curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v0.109.0//eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/${{ env.EKSCTL_VERSION }}/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
           sudo mv /tmp/eksctl /usr/local/bin
           eksctl version
 
@@ -43,20 +57,51 @@ jobs:
           sudo mv /tmp/flux /usr/local/bin
           flux version --client
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
-          aws-region: eu-north-1
-
-      - name: Provision Cluster
+      - name: Install clusterctl
         run: |
-          export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
-          export BRANCH_NAME=${{ github.event.ref }}
-          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
-          echo "Provisioning $CLUSTER_NAME cluster ..."
-          $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
+          curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/${{ env.CLUSTERCTL_VERSION }}/clusterctl-linux-amd64 -o clusterctl
+          chmod +x ./clusterctl
+          sudo mv ./clusterctl /usr/local/bin/clusterctl
+          clusterctl version
 
-      - name: Check running clusters
+      - name: install clusterawsadm
         run: |
-          eksctl get clusters --region eu-north-1
+          curl -L https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/download/${{ env.CLUSTER_AWS_ADM_VERSION }}/clusterawsadm-linux-amd64 -o clusterawsadm
+          chmod +x clusterawsadm
+          sudo mv clusterawsadm /usr/local/bin
+          clusterawsadm version
+
+      - name: install clusterawsadm stack
+        run: |
+          STACK=$(aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --region ${{ env.AWS_REGION }} | grep wge-capi-cluster-api-provider-aws-sigs-k8s-io || true)
+          echo "Stack: $STACK"
+          if [ -z "$STACK" ]; then
+            echo "Create clusterawsadm stack"
+            clusterawsadm bootstrap iam create-cloudformation-stack --config ./eksctl-clusters/aws_bootstrap_config.yaml --region=${{ env.AWS_REGION }}
+          fi
+
+      # - name: Provision Cluster
+      #   run: |
+      #     export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
+      #     export BRANCH_NAME=${{ github.event.ref }}
+      #     export CLUSTER_NAME=${BRANCH_NAME#cluster-}
+      #     echo "Provisioning $CLUSTER_NAME cluster ..."
+      #     $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
+
+      # - name: Check running clusters
+      #   run: |
+      #     eksctl get clusters --region ${{ env.AWS_REGION }}
+
+      # - name: kubeconfig
+      #   run: |
+      #     echo
+
+      # - name: clusterctl init --infrastructure aws => connect using the cluster user.
+      #   run: |
+      #     export AWS_B64ENCODED_CREDENTIALS=$(clusterawsadm bootstrap credentials encode-as-profile --region ${{ env.AWS_REGION }})
+      #     export EXP_EKS=true
+      #     export EXP_MACHINE_POOL=true
+      #     export CAPA_EKS_IAM=true
+      #     export EXP_CLUSTER_RESOURCE_SET=true
+
+      #     clusterctl init --infrastructure aws
