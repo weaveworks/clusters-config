@@ -1,11 +1,8 @@
 name: Provision EKS Cluster
 
 on:
-  # create:
-  #   branches: '**'
-  push:
-    branches:
-      - "enable-capi"
+  create:
+    branches: '**'
 
 env:
   AWS_REGION: "eu-north-1"
@@ -15,7 +12,7 @@ env:
 
 jobs:
   provision-cluster:
-    # if: startsWith(github.event.ref, 'cluster-')
+    if: startsWith(github.event.ref, 'cluster-')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -80,28 +77,30 @@ jobs:
             clusterawsadm bootstrap iam create-cloudformation-stack --config ./eksctl-clusters/aws_bootstrap_config.yaml --region=${{ env.AWS_REGION }}
           fi
 
-      # - name: Provision Cluster
-      #   run: |
-      #     export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
-      #     export BRANCH_NAME=${{ github.event.ref }}
-      #     export CLUSTER_NAME=${BRANCH_NAME#cluster-}
-      #     echo "Provisioning $CLUSTER_NAME cluster ..."
-      #     $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
+      - name: Provision Cluster
+        run: |
+          export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
+          export BRANCH_NAME=${{ github.event.ref }}
+          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
+          echo "Provisioning $CLUSTER_NAME cluster ..."
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
 
-      # - name: Check running clusters
-      #   run: |
-      #     eksctl get clusters --region ${{ env.AWS_REGION }}
+      - name: Check running clusters
+        run: |
+          eksctl get clusters --region ${{ env.AWS_REGION }}
 
-      # - name: kubeconfig
-      #   run: |
-      #     echo
+      - name: kubeconfig
+        run: |
+          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
+          eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${CLUSTER_NAME} --kubeconfig=$HOME/.kube/config
 
-      # - name: clusterctl init --infrastructure aws => connect using the cluster user.
-      #   run: |
-      #     export AWS_B64ENCODED_CREDENTIALS=$(clusterawsadm bootstrap credentials encode-as-profile --region ${{ env.AWS_REGION }})
-      #     export EXP_EKS=true
-      #     export EXP_MACHINE_POOL=true
-      #     export CAPA_EKS_IAM=true
-      #     export EXP_CLUSTER_RESOURCE_SET=true
+      - name: clusterctl init --infrastructure aws => connect using the cluster user.
+        run: |
+          export AWS_B64ENCODED_CREDENTIALS=$(clusterawsadm bootstrap credentials encode-as-profile --region ${{ env.AWS_REGION }})
+          export EXP_EKS=true
+          export EXP_MACHINE_POOL=true
+          export CAPA_EKS_IAM=true
+          export EXP_CLUSTER_RESOURCE_SET=true
 
-      #     clusterctl init --infrastructure aws
+          clusterctl init --infrastructure aws
+          kubectl get po -A
