@@ -10,12 +10,14 @@ usage() {
   echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"
   echo "       $blnk [--cluster-version <CLUSTER_VERSION>] \\"
   echo "       $blnk [--weave-mode <enterprise|core|none> {default core}]"
+  echo "       $blnk [--delete-after {default 15}]"
   echo "       $blnk [-h|--help]"
 
   echo
   echo "  --cluster-name CLUSTER_NAME           -- Set cluster name"
   echo "  --cluster-version CLUSTER_VERSION     -- Set cluster version (default: 1.23)"
   echo "  --weave-mode <enterprise|core|none>   -- Select between installing WGE, WG-Core, or not install any (enterprise|core|none)"
+  echo "  --delete-after                        -- Cluster will be auto deleted after this number of days (default: 15)"
   echo "  -h|--help                             -- Print this help message and exit"
 
   exit 0
@@ -24,6 +26,7 @@ usage() {
 defaults(){
   export CLUSTER_VERSION="1.23"
   export WW_MODE="core"
+  export DELETE_AFTER="15"
 }
 
 flags(){
@@ -45,6 +48,16 @@ flags(){
         then
           echo -e "${ERROR} Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
           exit 1
+        fi
+        ;;
+    --delete-after)
+        shift
+        export DELETE_AFTER="$1"
+        # Check that delete-after is only numbers
+        if [[ ! "${DELETE_AFTER}" =~ ^[0-9]+$ ]]
+        then
+            echo "Invalid value of --delete-after. It should containes only numbers"
+            exit 1
         fi
         ;;
     -h|--help)
@@ -116,6 +129,7 @@ cp ${EKS_CLUSTER_TEMPLATE} ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+${SED_} 's/${DELETE_AFTER}/'"${DELETE_AFTER}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 
 # Copy core apps to cluster dir

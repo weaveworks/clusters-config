@@ -1,0 +1,246 @@
+name: Delete EKS Cluster After TTL
+
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+env:
+  AWS_REGION: "eu-north-1"
+
+jobs:
+  Check-delete-after-for-running-clusters:
+    runs-on: ubuntu-latest
+    outputs:
+      noTTL: ${{ steps.checkClusters.outputs.noTTL }}
+      deleteClusters: ${{ steps.checkClusters.outputs.deleteClusters }}
+      zeroDaysClusters: ${{ steps.checkClusters.outputs.zeroDaysClusters }}
+      threeDaysClusters: ${{ steps.checkClusters.outputs.threeDaysClusters }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install aws-cli
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+          aws --version
+
+      - name: Install eksctl
+        run: |
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v0.109.0//eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+          sudo mv /tmp/eksctl /usr/local/bin
+          eksctl version
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
+          aws-region: eu-north-1
+
+      - name: Check delete-after tag for running clusters
+        id: checkClusters
+        run: |
+          declare -a fiveDaysClusters
+          declare -a threeDaysClusters
+          declare -a zeroDaysClusters
+          declare -a deleteClusters
+          declare -a noTTL
+
+          for clusterName in `eksctl get clusters --region ${AWS_REGION} -o json | jq -r '.[] | .Name'`
+          do
+            echo "Checking delete-after for cluster '${clusterName}'"
+
+            CLUSTER=`eksctl get cluster --region ${AWS_REGION} -n $clusterName -o json`
+            CREATION_TIME=`echo $CLUSTER | jq -r '.[] | .CreatedAt'`
+            CREATION_TIME=`date -d "${CREATION_TIME}"`
+            echo "CreatedAt: ${CREATION_TIME}"
+
+            DELETE_AFTER=`echo $CLUSTER | jq -r '.[] | .Tags | ."delete-after" // empty'`
+
+            if [ -z $DELETE_AFTER ]
+            then
+              echo -e "[WARNING] delete-after tag is not configured for cluster '${clusterName}'"
+              noTTL+=("${clusterName}")
+            else
+              echo "delete-after: ${DELETE_AFTER} days"
+              DELETION_DATE=`date -d "${CREATION_TIME} ${DELETE_AFTER} days"`
+              echo "DeleteAt: ${DELETION_DATE}"
+
+              DELETION_TIME=`date -d "${CREATION_TIME} ${DELETE_AFTER} days" +%s`
+              TODAY=`date +%s`
+              SECS=$(($DELETION_TIME - $TODAY))
+              remainingDays=$((${SECS} / 86400))
+              echo "remainindDays: ${remainingDays} day"
+              case ${remainingDays} in
+              0)
+                echo "[WARNING] Cluster will be deleted tomorrow!"
+                zeroDaysClusters+=("${clusterName}")
+                ;;
+              3)
+                echo "[WARNING] Cluster will be deleted in ${remainingDays} days!"
+                threeDaysClusters+=("${clusterName}")
+                ;;
+              5)
+                echo "[WARNING] Cluster will be deleted in ${remainingDays} days!"
+                fiveDaysClusters+=("${clusterName}")
+                ;;
+              -[1-9]*)
+                echo "[Alert] The cluster will be deleted now!"
+                deleteClusters+=("${clusterName}")
+                ;;
+              esac
+            fi
+            echo -e
+          done
+
+          echo "::set-output name=noTTL::${noTTL}"
+          echo "::set-output name=deleteClusters::${deleteClusters}"
+          echo "::set-output name=zeroDaysClusters::${zeroDaysClusters}"
+          echo "::set-output name=threeDaysClusters::${threeDaysClusters}"
+
+  delete-clusters:
+    if: needs.Check-delete-after-for-running-clusters.outputs.deleteClusters != ''
+    runs-on: ubuntu-latest
+    needs:
+      - Check-delete-after-for-running-clusters
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
+
+      - name: delete clusters' branch
+        run: |
+          git config --global user.email "weave-gitops-bot@weave.works"
+          git config --global user.name "weave-gitops-bot"
+
+          deleteClusters=${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}
+          echo "The following clusters are being deleted:"
+          echo ${deleteClusters[@]}
+
+          for cluster in "${deleteClusters[@]}"
+          do
+            export BRANCH_NAME=cluster-${cluster}
+            echo "Deleting cluster ${cluster} by deleting its branch ${BRANCH_NAME}!"
+            git push origin --delete ${BRANCH_NAME}
+          done
+
+      - name: deleteClusters-slack-notification
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "The following clusters are being deleted:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  slack-notifications:
+    runs-on: ubuntu-latest
+    needs:
+      - Check-delete-after-for-running-clusters
+    steps:
+      - name: noTTL-slack-notification
+        if: needs.Check-delete-after-for-running-clusters.outputs.noTTL != ''
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "The following clusters don't have delete-after tag:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: zeroDaysClusters-slack-notification
+        if: needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters != ''
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "The following clusters will be deleted tomorrow:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: threeDaysClusters-slack-notification
+        if: needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters != ''
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "The following clusters will be deleted in 3 days:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters}}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
