@@ -15,7 +15,7 @@ spec:
       description: EKS Kubernetes version to use
       options: ['v1.22.10','v1.23.7']
     - name: WORKER_MACHINE_COUNT
-      c: Number of worker nodes to create.
+      description: Number of worker nodes to create.
     - name: INSTANCE_TYPE
       description: Tpye of worker nodes
       options: ['t3.medium','t3.large']
