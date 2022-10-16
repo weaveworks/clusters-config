@@ -39,8 +39,8 @@ spec:
         # storageClassName: standard
 
       config:
-        accountId: "${CLUSTER_NAME}-user"
-        clusterId: "${CLUSTER_NAME}"
+        accountId: "testme-user"
+        clusterId: "testme"
 
         aupolicydit:
           # Disable audit functionality
