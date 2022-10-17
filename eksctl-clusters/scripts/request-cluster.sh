@@ -10,6 +10,7 @@ usage() {
   echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"
   echo "       $blnk [--cluster-version <CLUSTER_VERSION>] \\"
   echo "       $blnk [--weave-mode <enterprise|core|none> {default core}]"
+  echo "       $blnk [--enable-flagger]"
   echo "       $blnk [--delete-after {default 15}]"
   echo "       $blnk [-h|--help]"
 
@@ -17,6 +18,7 @@ usage() {
   echo "  --cluster-name CLUSTER_NAME           -- Set cluster name"
   echo "  --cluster-version CLUSTER_VERSION     -- Set cluster version (default: 1.23)"
   echo "  --weave-mode <enterprise|core|none>   -- Select between installing WGE, WG-Core, or not install any (enterprise|core|none)"
+  echo "  --enable-flagger                      -- Flagger will be installed on the cluster"
   echo "  --delete-after                        -- Cluster will be auto deleted after this number of days (default: 15)"
   echo "  -h|--help                             -- Print this help message and exit"
 
@@ -26,6 +28,7 @@ usage() {
 defaults(){
   export CLUSTER_VERSION="1.23"
   export WW_MODE="core"
+  export ENABLE_FLAGGER="false"
   export DELETE_AFTER="15"
 }
 
@@ -50,13 +53,16 @@ flags(){
           exit 1
         fi
         ;;
+    --enable-flagger)
+        export ENABLE_FLAGGER="true"
+        ;;
     --delete-after)
         shift
         export DELETE_AFTER="$1"
         # Check that delete-after is only numbers
         if [[ ! "${DELETE_AFTER}" =~ ^[0-9]+$ ]]
         then
-            echo "Invalid value of --delete-after. It should containes only numbers"
+            echo -e "${ERROR} Invalid value of --delete-after. It should contain only numbers"
             exit 1
         fi
         ;;
@@ -132,9 +138,9 @@ ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${DELETE_AFTER}/'"${DELETE_AFTER}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 
-# Copy core apps to cluster dir
-echo "Copying apps-core templates..."
-cp -r ${PARENT_DIR}/apps/core/core-kustomization.yaml-template ${CLUSTER_DIR}/core-kustomization.yaml
+# Copy common apps to cluster dir
+echo "Copying apps-common templates..."
+cp -r ${PARENT_DIR}/apps/common/common-kustomization.yaml-template ${CLUSTER_DIR}/common-kustomization.yaml
 
 # Copy WGE/WG-Core files
 case $WW_MODE in
@@ -152,7 +158,10 @@ case $WW_MODE in
   enterprise)
     echo "Copying WGE templates..."
     cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
-    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${PARENT_DIR}/apps/enterprise/policy-agent/policy-agent.yaml
+    if [ $ENABLE_FLAGGER == "true" ]
+    then
+      cp -r ${PARENT_DIR}/apps/flagger/flagger-kustomization.yaml-template ${CLUSTER_DIR}/flagger-kustomization.yaml
+    fi
     ;;
   none)
     echo -e "${WARNING} Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"
