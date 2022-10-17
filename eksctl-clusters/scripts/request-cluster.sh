@@ -18,7 +18,7 @@ usage() {
   echo "  --cluster-name CLUSTER_NAME           -- Set cluster name"
   echo "  --cluster-version CLUSTER_VERSION     -- Set cluster version (default: 1.23)"
   echo "  --weave-mode <enterprise|core|none>   -- Select between installing WGE, WG-Core, or not install any (enterprise|core|none)"
-  echo "  --enable-flagger                      -- Flagger will be installed on the cluster"
+  echo "  --enable-flagger                      -- Flagger will be installed on the cluster (only available when --weave-mode=enterprise)"
   echo "  --delete-after                        -- Cluster will be auto deleted after this number of days (default: 15)"
   echo "  -h|--help                             -- Print this help message and exit"
 
@@ -91,6 +91,12 @@ export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/secrets-kustomization.yaml-t
 if [ -z $CLUSTER_NAME ]
 then
   echo -e "${ERROR} No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
+  exit 1
+fi
+
+if [ $ENABLE_FLAGGER == "true" ] && [ "${WW_MODE}" != "enterprise" ]
+then
+  echo -e "${ERROR} --enable-flagger can only be used with --weave-mode=enterprise."
   exit 1
 fi
 
