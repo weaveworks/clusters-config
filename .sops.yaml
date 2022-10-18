@@ -2,3 +2,6 @@ creation_rules:
   - path_regex: eksctl-clusters\/shared-secrets\/.+\.yaml
     encrypted_regex: ^(data|stringData)$
     kms: arn:aws:kms:eu-north-1:894516026745:alias/sops-key
+  - path_regex: eksctl-clusters\/clusters\/pentest-enterprise\/clusters\/pentest-leaf-secret.yaml
+    encrypted_regex: ^(data|stringData)$
+    kms: arn:aws:kms:eu-north-1:894516026745:alias/sops-key
