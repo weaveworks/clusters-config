@@ -1,6 +1,6 @@
 # Enable CAPA
 
-By default, capa is enbled and configured to be used. 
+By default, capa is enbled and configured to be used.
 
 ## Templates:
 
