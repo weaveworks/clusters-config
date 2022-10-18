@@ -99,7 +99,7 @@ jobs:
           eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${CLUSTER_NAME} --kubeconfig=$HOME/.kube/config
           kubectl get nodes
 
-      - name: clusterctl init --infrastructure aws => connect using the cluster user.
+      - name: clusterctl init --infrastructure aws
         run: |
           export AWS_B64ENCODED_CREDENTIALS=$(clusterawsadm bootstrap credentials encode-as-profile --region ${{ env.AWS_REGION }})
           export EXP_EKS=true
