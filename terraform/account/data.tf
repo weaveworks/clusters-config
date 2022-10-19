@@ -130,7 +130,11 @@ data "aws_iam_policy_document" "eks_editor" {
       "arn:aws:iam::894516026745:policy/eksctl-*",
       "arn:aws:iam::894516026745:oidc-provider/*",
       "arn:aws:iam::894516026745:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup",
-      "arn:aws:iam::894516026745:role/eksctl-managed-*"
+      "arn:aws:iam::894516026745:role/eksctl-managed-*",
+      "arn:aws:iam::894516026745:instance-profile/wge-capi-*",
+      "arn:aws:iam::894516026745:role/wge-capi-*",
+      "arn:aws:iam::894516026745:policy/wge-capi-*",
+      "arn:aws:iam::894516026745:role/eks-*"
     ]
   }
 
