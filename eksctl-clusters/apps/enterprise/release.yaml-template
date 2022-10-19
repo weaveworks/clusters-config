@@ -35,9 +35,15 @@ spec:
     ingress:
       enabled: false
     config:
-    #   capi:
-    #     clusters:
-    #       namespace: flux-system
+      capi:
+        templates:
+          namespace: default
+        clusters:
+          namespace: ""
+        repositoryURL: "https://github.com/weaveworks/clusters-config"
+        repositoryPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}/clusters"
+        repositoryClustersPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}"
+        baseBranch: "${BRANCH_NAME}"
       oidc:
         enabled: true
         issuerURL: http://dex-dex.dex.svc.cluster.local:5556
