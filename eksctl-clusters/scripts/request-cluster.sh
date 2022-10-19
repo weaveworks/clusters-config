@@ -218,7 +218,7 @@ case $WW_MODE in
     elif [ $WEAVE_VERSION ]
     then
       cp -r ${PARENT_DIR}/apps/enterprise/release.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
-      ${SED_} 's/version: "0.9.5"/version: "'"${WEAVE_VERSION}"'"/g' ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
+      ${SED_} 's/version: .*$/version: "'"${WEAVE_VERSION}"'"/g' ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
     else
       cp -r ${PARENT_DIR}/apps/enterprise/release.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
     fi
