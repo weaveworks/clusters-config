@@ -29,14 +29,14 @@
 By default, flux will deploy the latest version of WGE and will reconcile new versions once released. To deploy specific release, use the `--weave-version` option.
 
 ```bash
-    ./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION> 
+./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION>
 ```
 
 ## Develop and test your code!
 You can deploy WGE from a feature branch and renconcile changes automatically. Use `--weave-branch` option while you are requesting the cluster.
 
 ```bash
-    ./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME> 
+./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME>
 ```
 
 ## Accessing UI:
