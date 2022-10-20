@@ -4,3 +4,4 @@ resources:
 - gitrepository.yaml
 - namespace.yaml
 - release.yaml
+- canary.yaml
