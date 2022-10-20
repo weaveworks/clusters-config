@@ -10,7 +10,21 @@ Configuration for engineering's ephemeral clusters
 - [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 - [eksctl](https://eksctl.io/introduction/#installation)
 - [gsts](https://github.com/ruimarinho/gsts)
-- [pre-commit](README.md#pre-commit-hooks)
+- pre-commit: This repository uses [pre-commit hooks](https://pre-commit.com/) to run quick
+checks against it. They can be installed and run using:
+
+    ```bash
+    $ pip3 install pre-commit
+    # or
+    $ brew install pre-commit
+    # Then
+    $ pre-commit install
+    # The hooks can be run with
+    $ pre-commit run --all
+    # Otherwise they'll run automatically on commit
+    # they can be skipped with
+    $ git commit -n
+    ```
 
 ### Getting access to Engineering Sandbox AWS Account
 
@@ -34,21 +48,3 @@ Configuration for engineering's ephemeral clusters
 
 ### Requesting a new cluster
 To request a new cluster, follow the [requesting a new cluster](./docs/cluster.md#requesting-a-cluster) doc
-
-### Pre-Commit hooks
-
-This repository uses [pre-commit hooks](https://pre-commit.com/) to run quick
-checks against it. They can be installed and run using:
-
-```bash
-$ pip3 install pre-commit
-# or
-$ brew install pre-commit
-# Then
-$ pre-commit install
-# The hooks can be run with
-$ pre-commit run --all
-# Otherwise they'll run automatically on commit
-# they can be skipped with
-$ git commit -n
-```
