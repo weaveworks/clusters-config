@@ -61,8 +61,8 @@ kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
     |--                       |--        |--                                      |--           |--               |
     | admin@test.invalid      | password | full access to all resources           | wego-admin | [wego-admin](https://docs.gitops.weave.works/docs/cluster-management/getting-started/#add-common-rbac-to-the-repo) + [gitops-reader](https://github.com/weaveworks/weave-gitops-enterprise/blob/97c08e97abaafd8fd5a3781fa0c07ddf3607fce7/charts/mccp/templates/rbac/user_roles.yaml#L4-L14) |
     | admin-apps@test.invalid | password | full access to **apps** namespace only | wego-admin | wego-admin + gitops-reader "apps namespace only" |
-    | ro@test.invalid         | password | read-only access to all namespaces     | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) |
-    | ro-apps@test.invalid    | password | read-only access to **apps** namespace | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) "apps namespace only" | [wego-readonly-role](../eksctl-clusters/apps/core/dex/readonly-cluster-role.yaml) "apps namespace only" |
+    | ro@test.invalid         | password | read-only access to all namespaces     | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) |
+    | ro-apps@test.invalid    | password | read-only access to **apps** namespace | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) "apps namespace only" | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) "apps namespace only" |
 
 ## Cluster TTL (time to live):
 Every cluster created by the `request-cluster` script runs for 15 days by default, then it will be auto deleted. To define the TTL in days, use `--delete-after` option while requesting the cluster. If you already provisioned your cluster, you can [extend TTL](#extending-your-cluster-ttl).
