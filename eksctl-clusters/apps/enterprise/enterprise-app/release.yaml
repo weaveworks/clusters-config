@@ -5,7 +5,7 @@ metadata:
   name: weave-gitops-enterprise-charts
   namespace: flux-system
 spec:
-  interval: 60m
+  interval: 10m
   secretRef:
     name: weave-gitops-enterprise-credentials
   url: ${CHART_REPO}
