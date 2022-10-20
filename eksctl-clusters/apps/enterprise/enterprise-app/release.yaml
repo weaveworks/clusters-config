@@ -33,12 +33,13 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
+    enablePipelines: true
     ingress:
       enabled: false
     config:
-    #   capi:
-    #     clusters:
-    #       namespace: flux-system
+      git:
+        type: github
+        hostname: "github.com"
       oidc:
         enabled: true
         issuerURL: http://dex-dex.dex.svc.cluster.local:5556
@@ -46,5 +47,4 @@ spec:
         clientCredentialsSecret: oidc-auth
     tls:
       enabled: false
-      enablePipelines: true
     # enableTerraformUI: true
