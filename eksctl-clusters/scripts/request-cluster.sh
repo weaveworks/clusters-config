@@ -211,20 +211,20 @@ case $WW_MODE in
     ;;
   enterprise)
     echo "Copying WGE templates..."
-    if [ $WEAVE_BRANCH ]
+    WGE_RELEASE_FILE="${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml"
+    DEFAULT_CHART_REPO="https://charts.dev.wkp.weave.works/releases/charts-v3"
+    if [ "${WEAVE_BRANCH}" ]
     then
-      cp -r ${PARENT_DIR}/apps/enterprise/release-branch.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
-      ${SED_} 's/${WEAVE_BRANCH}/'"${WEAVE_BRANCH}"'/g' ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
-    elif [ $WEAVE_VERSION ]
+      CHART_REPO="https://charts.dev.wkp.weave.works/dev/branches/${WEAVE_BRANCH}"
+    elif [ "${WEAVE_VERSION}" ]
     then
-      cp -r ${PARENT_DIR}/apps/enterprise/release.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
-      ${SED_} 's/version: .*$/version: "'"${WEAVE_VERSION}"'"/g' ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
-    else
-      cp -r ${PARENT_DIR}/apps/enterprise/release.yaml-template ${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml
+      CHART_REPO=${DEFAULT_CHART_REPO}
+      ${SED_} 's/version: .*/version: "'"${WEAVE_VERSION}"'"/g' ${WGE_RELEASE_FILE}
     fi
     cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
+    ${SED_} 's#${CHART_REPO}#'"${CHART_REPO}"'#g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
 
     # cp -r ${PARENT_DIR}/templates/* ${CLUSTER_DIR}/
     # ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/templates-kustomization.yaml
