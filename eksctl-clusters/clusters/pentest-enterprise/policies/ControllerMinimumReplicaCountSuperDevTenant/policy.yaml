@@ -1,0 +1,84 @@
+apiVersion: pac.weave.works/v2beta1
+kind: Policy
+metadata:
+  name: weave.policies.tenancy.containers-minimum-replica-count
+  labels:
+    toolkit.fluxcd.io/tenant: superdevs
+spec:
+  id: weave.policies.tenancy.containers-minimum-replica-count
+  name: superdevs Containers Minimum Replica Count
+  enabled: true
+  description: "Use this Policy to to check the replica count of your workloads. The value set in the Policy is greater than or equal to the amount desired, so if the replica count is lower than what is specified, the Policy will be in violation. \n"
+  how_to_solve: |
+    The replica count should be a value equal or greater than what is set in the Policy.
+    ```
+    spec:
+      replicas: <replica_count>
+    ```
+    https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#scaling-a-deployment
+  category: weave.categories.reliability
+  severity: medium
+  targets: {kinds: [Deployment], namespaces: [superdevs]}
+  standards:
+    - id: weave.standards.soc2-type-i
+      controls:
+        - weave.controls.soc2-type-i.2.1.1
+  tags: [soc2-type1, tenancy]
+  parameters:
+    - name: replica_count
+      type: integer
+      required: true
+      value: 2
+    - name: exclude_namespaces
+      type: array
+      required: false
+      value: [flux-system, kube-system]
+    - name: exclude_label_key
+      type: string
+      required: false
+      value:
+    - name: exclude_label_value
+      type: string
+      required: false
+      value:
+  code: |
+    package weave.advisor.pods.replica_count
+
+    import future.keywords.in
+
+    replica_count := input.parameters.replica_count
+    exclude_namespaces := input.parameters.exclude_namespaces
+    exclude_label_key := input.parameters.exclude_label_key
+    exclude_label_value := input.parameters.exclude_label_value
+
+    violation[result] {
+      isExcludedNamespace == false
+      not exclude_label_value == controller_input.metadata.labels[exclude_label_key]
+      not controller_input.spec.replicas >= replica_count
+      result = {
+        "issue detected": true,
+        "msg": sprintf("Replica count must be greater than or equal to '%v'; found '%v'.", [replica_count, controller_input.spec.replicas]),
+        "violating_key": "spec.replicas",
+        "recommended_value": replica_count
+      }
+    }
+
+    controller_input = input.review.object
+
+    # controller_container acts as an iterator to get containers from the template
+    controller_spec = controller_input.spec.template.spec {
+      contains_kind(controller_input.kind, {"StatefulSet" , "DaemonSet", "Deployment", "Job", "ReplicaSet"})
+    } else = controller_input.spec {
+      controller_input.kind == "Pod"
+    } else = controller_input.spec.jobTemplate.spec.template.spec {
+      controller_input.kind == "CronJob"
+    }
+
+    contains_kind(kind, kinds) {
+      kinds[_] = kind
+    }
+
+    isExcludedNamespace = true {
+    	controller_input.metadata.namespace
+    	controller_input.metadata.namespace in exclude_namespaces
+    } else = false
