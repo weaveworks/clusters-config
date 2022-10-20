@@ -46,5 +46,5 @@ spec:
         clientCredentialsSecret: oidc-auth
     tls:
       enabled: false
-    # enablePipelines: true
+      enablePipelines: true
     # enableTerraformUI: true
