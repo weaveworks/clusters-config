@@ -212,13 +212,12 @@ case $WW_MODE in
   enterprise)
     echo "Copying WGE templates..."
     WGE_RELEASE_FILE="${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml"
-    DEFAULT_CHART_REPO="https://charts.dev.wkp.weave.works/releases/charts-v3"
+    CHART_REPO="https://charts.dev.wkp.weave.works/releases/charts-v3"
     if [ "${WEAVE_BRANCH}" ]
     then
       CHART_REPO="https://charts.dev.wkp.weave.works/dev/branches/${WEAVE_BRANCH}"
     elif [ "${WEAVE_VERSION}" ]
     then
-      CHART_REPO=${DEFAULT_CHART_REPO}
       ${SED_} 's/version: .*/version: "'"${WEAVE_VERSION}"'"/g' ${WGE_RELEASE_FILE}
     fi
     cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
