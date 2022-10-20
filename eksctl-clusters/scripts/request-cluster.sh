@@ -10,6 +10,8 @@ usage() {
   echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"
   echo "       $blnk [--cluster-version <CLUSTER_VERSION>] \\"
   echo "       $blnk [--weave-mode <enterprise|core|none> {default core}]"
+  echo "       $blnk [--weave-version <CHART_VERSION> ]"
+  echo "       $blnk [--weave-branch <BRANCH_NAME> ]"
   echo "       $blnk [--enable-flagger]"
   echo "       $blnk [--delete-after {default 15}]"
   echo "       $blnk [-h|--help]"
@@ -18,6 +20,8 @@ usage() {
   echo "  --cluster-name CLUSTER_NAME           -- Set cluster name"
   echo "  --cluster-version CLUSTER_VERSION     -- Set cluster version (default: 1.23)"
   echo "  --weave-mode <enterprise|core|none>   -- Select between installing WGE, WG-Core, or not install any (enterprise|core|none)"
+  echo "  --weave-version CHART_VERSION         -- Select a specific helm chart version (currently supports enterprise charts only)"
+  echo "  --weave-branch BRANCH_NAME            -- Select a specific git branch for installation (currently supports enterprise branches only)"
   echo "  --enable-flagger                      -- Flagger will be installed on the cluster (only available when --weave-mode=enterprise)"
   echo "  --delete-after                        -- Cluster will be auto deleted after this number of days (default: 15)"
   echo "  -h|--help                             -- Print this help message and exit"
@@ -30,6 +34,40 @@ defaults(){
   export WW_MODE="core"
   export ENABLE_FLAGGER="false"
   export DELETE_AFTER="15"
+}
+
+validateFlags(){
+  if [ $WEAVE_VERSION ] && [ $WEAVE_BRANCH ]
+  then
+    echo -e "${ERROR} --weave-version cannot be used with --weave-branch. You should only use one!"
+    exit 1
+  fi
+
+  if [ $WEAVE_VERSION ]
+  then
+    if [ "${WW_MODE}" == "core" ]
+    then
+      echo -e "${ERROR} --weave-version is currently supported for enterprise only"
+      exit 1
+    elif [ "${WW_MODE}" == "none" ]
+    then
+      echo -e "${ERROR} --weave-version cannot be used with --weave-mode none!"
+      exit 1
+    fi
+  fi
+
+  if [ $WEAVE_BRANCH ]
+  then
+    if [ "${WW_MODE}" == "core" ]
+    then
+      echo "-e ${ERROR} --weave-branch is currently supported for enterprise only"
+      exit 1
+    elif [ "${WW_MODE}" == "none" ]
+    then
+      echo "-e ${ERROR} --weave-branch cannot be used with --weave-mode none!"
+      exit 1
+    fi
+  fi
 }
 
 flags(){
@@ -52,6 +90,14 @@ flags(){
           echo -e "${ERROR} Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
           exit 1
         fi
+        ;;
+    --weave-version)
+        shift
+        export WEAVE_VERSION="$1"
+        ;;
+    --weave-branch)
+        shift
+        export WEAVE_BRANCH="$1"
         ;;
     --enable-flagger)
         export ENABLE_FLAGGER="true"
@@ -79,6 +125,8 @@ source ${BASH_SOURCE%/*}/colors.sh
 
 defaults
 flags "$@"
+validateFlags
+
 export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 
@@ -163,9 +211,19 @@ case $WW_MODE in
     ;;
   enterprise)
     echo "Copying WGE templates..."
+    WGE_RELEASE_FILE="${PARENT_DIR}/apps/enterprise/enterprise-app/release.yaml"
+    CHART_REPO="https://charts.dev.wkp.weave.works/releases/charts-v3"
+    if [ "${WEAVE_BRANCH}" ]
+    then
+      CHART_REPO="https://charts.dev.wkp.weave.works/dev/branches/${WEAVE_BRANCH}"
+    elif [ "${WEAVE_VERSION}" ]
+    then
+      ${SED_} 's/version: .*/version: "'"${WEAVE_VERSION}"'"/g' ${WGE_RELEASE_FILE}
+    fi
     cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
+    ${SED_} 's#${CHART_REPO}#'"${CHART_REPO}"'#g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
 
     # cp -r ${PARENT_DIR}/templates/* ${CLUSTER_DIR}/
     # ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/templates-kustomization.yaml
