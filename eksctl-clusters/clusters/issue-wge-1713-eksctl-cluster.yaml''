@@ -1,0 +1,54 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: issue-wge-1713
+  region: eu-north-1
+  version: "1.23"
+  tags:
+    environment: "issue-wge-1713"
+    delete-after: "${DELETE_AFTER}"
+
+iam:
+  withOIDC: true
+  serviceRoleARN: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
+  serviceAccounts:
+  - metadata:
+      name: kustomize-controller
+      namespace: flux-system
+    attachPolicyARNs:
+    - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
+    roleName: eksctl-issue-wge-1713-sops-decrypt-role
+    roleOnly: true
+
+# Enable private access to the API server.
+vpc:
+  clusterEndpoints:
+    privateAccess: true
+    publicAccess: true
+
+nodeGroups:
+  - name: issue-wge-1713-ng-1
+    instanceType: t3.large
+    minSize: 2
+    maxSize: 2
+    desiredCapacity: 2
+    volumeSize: 10
+    privateNetworking: true
+    tags:
+      environment: "issue-wge-1713"
+      delete-after: "${DELETE_AFTER}"
+    propagateASGTags: true
+    iam:
+      instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
+
+gitops:
+  flux:
+    gitProvider: github
+    flags:
+      owner: "weaveworks"
+      repository: "clusters-config"
+      private: "true"
+      branch: "cluster-issue-wge-1713"
+      namespace: "flux-system"
+      path: "eksctl-clusters/clusters/issue-wge-1713"
