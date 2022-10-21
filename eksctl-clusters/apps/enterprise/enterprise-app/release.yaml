@@ -37,6 +37,10 @@ spec:
     ingress:
       enabled: false
     config:
+      capi:
+        repositoryURL: "https://github.com/weaveworks/clusters-config"
+        baseBranch: "cluster-pentest-enterprise"
+        repositoryPath: "./eksctl-clusters/clusters/pentest-enterprise/clusters"
       git:
         type: github
         hostname: "github.com"
