@@ -33,7 +33,7 @@ defaults(){
   export CLUSTER_VERSION="1.23"
   export WW_MODE="core"
   export ENABLE_FLAGGER="false"
-  export DELETE_AFTER="15"
+  export DELETE_AFTER="7"
 }
 
 validateFlags(){
