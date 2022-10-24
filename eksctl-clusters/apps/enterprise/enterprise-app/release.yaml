@@ -42,7 +42,7 @@ spec:
           namespace: ""
         repositoryURL: "https://github.com/weaveworks/clusters-config"
         repositoryPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}/clusters"
-        repositoryClustersPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}"
+        # repositoryClustersPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}"
         baseBranch: "${BRANCH_NAME}"
       oidc:
         enabled: true
@@ -51,5 +51,5 @@ spec:
         clientCredentialsSecret: oidc-auth
     tls:
       enabled: false
-    # enablePipelines: true
+    enablePipelines: true
     # enableTerraformUI: true
