@@ -1,0 +1,111 @@
+apiVersion: capi.weave.works/v1alpha1
+kind: CAPITemplate
+metadata:
+  name: aws-eks-dev
+  namespace: default
+  annotations:
+    capi.weave.works/profile-0: '{"name": "cert-manager"}'
+    capi.weave.works/profile-1: '{"name": "weave-policy-agent", "editable": true, "version": "0.5.0", "namespace": "policy-system", "values": "policy-agent:\n  config:\n    AGENT_ENABLE_ADMISSION: \"0\"\n  accountId: sademo\n  clusterId: ${CLUSTER_NAME}" }'
+spec:
+  description: AWS EKS Development Cluster 
+  params:
+    - name: CLUSTER_NAME
+      description: The name for this cluster.
+    - name: AWS_REGION
+      description: AWS Region to create cluster
+      options: ['us-east-1','eu-central-1','eu-west-2','us-west-2']
+    - name: KUBERNETES_VERSION
+      description: EKS Kubernetes version to use
+      options: ['v1.19.16','v1.20.15','v1.21.13','v1.22.10','v1.23.7']
+    - name: WORKER_MACHINE_COUNT
+      description: Number of worker nodes to create.
+    - name: OWNER_EMAIL 
+      description: E-Mail of Cluster Owner
+  resourcetemplates:
+
+  - apiVersion: gitops.weave.works/v1alpha1
+    kind: GitopsCluster
+    metadata:
+      name: "${CLUSTER_NAME}"
+      namespace: default
+      labels:
+        weave.works/capi: bootstrap
+    spec:
+      capiClusterRef:
+        name: "${CLUSTER_NAME}"
+
+
+  - apiVersion: cluster.x-k8s.io/v1beta1
+    kind: Cluster
+    metadata:
+      name: ${CLUSTER_NAME}
+      namespace: default
+    spec:
+      clusterNetwork:
+        pods:
+          cidrBlocks:
+          - 10.120.0.0/20 
+      controlPlaneRef:
+        apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+        kind: AWSManagedControlPlane
+        name: ${CLUSTER_NAME}-control-plane
+      infrastructureRef:
+        apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+        kind: AWSManagedControlPlane
+        name: ${CLUSTER_NAME}-control-plane
+    
+  - apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    metadata:
+      name: ${CLUSTER_NAME}-control-plane
+      namespace: default
+    spec:
+      bastion:
+        enabled: true
+      addons:
+      - conflictResolution: overwrite
+        name: vpc-cni
+        version: v1.11.3-eksbuild.1
+      additionalTags: 
+        creator: ${OWNER_EMAIL}
+        environment: demo2
+        customer: weaveworks-cx
+        deployed: capa
+        projectGid: "99999"
+      region: ${AWS_REGION}
+      sshKeyName: sademo
+      version: ${KUBERNETES_VERSION}
+      eksClusterName: ${CLUSTER_NAME}
+    
+  - apiVersion: cluster.x-k8s.io/v1beta1
+    kind: MachinePool
+    metadata:
+      name: ${CLUSTER_NAME}-pool-0
+      namespace: default
+    spec:
+      clusterName: ${CLUSTER_NAME}
+      replicas: ${WORKER_MACHINE_COUNT}
+      template:
+        spec:
+          bootstrap:
+            dataSecretName: ""
+          clusterName: ${CLUSTER_NAME}
+          infrastructureRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+            kind: AWSManagedMachinePool
+            name: ${CLUSTER_NAME}-pool-0
+    
+  - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedMachinePool
+    metadata:
+      name: ${CLUSTER_NAME}-pool-0
+      namespace: default
+    spec: 
+      scaling:
+        minSize: 1
+        maxSize: 8
+      updateConfig:
+        maxUnavailable: 1
+      remoteAccess: 
+        public: true 
+
