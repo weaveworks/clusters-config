@@ -79,7 +79,7 @@ kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
     | ro-apps@test.invalid    | password | read-only access to **apps** namespace | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) "apps namespace only" | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) "apps namespace only" |
 
 ## Cluster TTL (time to live):
-Every cluster created by the `request-cluster` script runs for 15 days by default, then it will be auto deleted. To define the TTL in days, use `--delete-after` option while requesting the cluster. If you already provisioned your cluster, you can [extend TTL](#extending-your-cluster-ttl).
+Every cluster created by the `request-cluster` script runs for 7 days by default, then it will be auto deleted. To define the TTL in days, use `--delete-after` option while requesting the cluster. If you already provisioned your cluster, you can [extend TTL](#extending-your-cluster-ttl).
 
 ### Extending your cluster TTL:
 
