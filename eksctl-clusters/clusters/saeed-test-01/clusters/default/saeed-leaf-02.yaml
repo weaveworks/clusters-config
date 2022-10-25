@@ -1,0 +1,119 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"head_branch":"create-clusters-branch-fn8kg5","title":"Creates
+      cluster saeed-leaf-02","description":"This PR creates a new cluster","template_name":"aws-eks-modified","parameter_values":{"AWS_REGION":"eu-north-1","CLUSTER_NAME":"saeed-leaf-02","INSTANCE_TYPE":"t3.large","KUBERNETES_VERSION":"v1.23.7","OWNER_EMAIL":"hamada","WORKER_MACHINE_COUNT":"2"},"commit_message":"Creates
+      capi cluster","credentials":{},"values":[{"name":"cert-manager","version":"0.0.8","layer":"layer-0"},{"name":"weave-policy-agent","version":"0.5.0","values":"cG9saWN5LWFnZW50OgogIGNvbmZpZzoKICAgIEFHRU5UX0VOQUJMRV9BRE1JU1NJT046ICIwIgogIGFjY291bnRJZDogc2FkZW1vCiAgY2x1c3RlcklkOiAke0NMVVNURVJfTkFNRX0=","layer":"layer-1","namespace":"policy-system"}]}'
+  labels:
+    templates.weave.works/template-name: aws-eks-modified
+    templates.weave.works/template-namespace: default
+    weave.works/capi: bootstrap
+  name: saeed-leaf-02
+  namespace: default
+spec:
+  capiClusterRef:
+    name: saeed-leaf-02
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: aws-eks-modified
+    templates.weave.works/template-namespace: default
+  name: saeed-leaf-02
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 10.120.0.0/20
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: saeed-leaf-02-control-plane
+  infrastructureRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: saeed-leaf-02-control-plane
+
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: AWSManagedControlPlane
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks-modified
+    templates.weave.works/template-namespace: default
+  name: saeed-leaf-02-control-plane
+  namespace: default
+spec:
+  additionalTags:
+    creator: hamada
+    deployed: capa
+  eksClusterName: saeed-leaf-02
+  iamAuthenticatorConfig:
+    mapRoles:
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/AdministratorAccess
+      username: admin
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/WeaveEksEditor
+      username: admin
+  network:
+    vpc:
+      AvailabilityZoneUsageLimit: 1
+  region: eu-north-1
+  sshKeyName: sademo
+  version: v1.23.7
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks-modified
+    templates.weave.works/template-namespace: default
+  name: saeed-leaf-02-pool-0
+  namespace: default
+spec:
+  clusterName: saeed-leaf-02
+  replicas: 2
+  template:
+    spec:
+      bootstrap:
+        dataSecretName: ""
+      clusterName: saeed-leaf-02
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AWSManagedMachinePool
+        name: saeed-leaf-02-pool-0
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AWSManagedMachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks-modified
+    templates.weave.works/template-namespace: default
+  name: saeed-leaf-02-pool-0
+  namespace: default
+spec:
+  additionalTags:
+    creator: hamada
+  instanceType: t3.large
+  remoteAccess:
+    public: true
+  scaling:
+    maxSize: 8
+    minSize: 1
+  updateConfig:
+    maxUnavailable: 1
