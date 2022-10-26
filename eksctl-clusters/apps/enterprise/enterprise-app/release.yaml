@@ -42,7 +42,7 @@ spec:
           namespace: ""
         repositoryURL: "https://github.com/weaveworks/clusters-config"
         repositoryPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}/clusters"
-        repositoryClustersPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}"
+        repositoryClustersPath: "./eksctl-clusters/clusters"
         baseBranch: "${BRANCH_NAME}"
       oidc:
         enabled: true
