@@ -19,9 +19,6 @@ usage() {
 
 defaults(){
   export AWS_REGION="eu-north-1"
-  export WW_ADMIN_ARN="arn:aws:iam::894516026745:role/AdministratorAccess"
-  export WW_EDITOR_ARN="arn:aws:iam::894516026745:role/WeaveEksEditor"
-  export WW_GITHUB_ACTIONS_ARN="arn:aws:iam::894516026745:role/WeaveEksGithubActions"
 }
 
 flags(){
@@ -71,9 +68,4 @@ else
   exit 1
 fi
 
-# Add WW roles to aws-auth
-echo "Add weaveworks roles to aws-auth"
-eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_ADMIN_ARN} --group system:masters --username admin
-eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_EDITOR_ARN} --group system:masters --username admin
-eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_GITHUB_ACTIONS_ARN} --group system:masters --username admin
 echo -e "${SUCCESS} The cluster is ready."

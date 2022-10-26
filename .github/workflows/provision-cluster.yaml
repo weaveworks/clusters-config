@@ -84,19 +84,31 @@ jobs:
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
           export BRANCH_NAME=${{ github.event.ref }}
           export CLUSTER_NAME=${BRANCH_NAME#*cluster-}
+          echo "cluster_name=${CLUSTER_NAME}" >> $GITHUB_ENV
           echo "Provisioning $CLUSTER_NAME cluster ..."
           $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
 
-      - name: Check running clusters
+      - name: Add WW roles to aws-auth config-map
+        if: always()
         run: |
-          eksctl get clusters --region ${{ env.AWS_REGION }}
+          # Check if the cluster was successfully installed in AWS
+          export CLUSTER_EXISTS=$(eksctl get clusters --region ${{ env.AWS_REGION }} -n ${{ env.cluster_name }} 2> /dev/null)
+          if [ -n $CLUSTER_EXISTS ]; then
+            # Add Admin role
+            eksctl create iamidentitymapping --cluster ${{ env.cluster_name }} --region ${{ env.AWS_REGION }} \
+              --arn "arn:aws:iam::894516026745:role/AdministratorAccess" --group system:masters --username admin
+            # Add Editor role
+            eksctl create iamidentitymapping --cluster ${{ env.cluster_name }} --region ${{ env.AWS_REGION }} \
+              --arn "arn:aws:iam::894516026745:role/WeaveEksEditor" --group system:masters --username admin
+            # Add GithubActions role
+            eksctl create iamidentitymapping --cluster ${{ env.cluster_name }} --region ${{ env.AWS_REGION }} \
+              --arn "arn:aws:iam::894516026745:role/WeaveEksGithubActions" --group system:masters --username admin
+          fi
 
       - name: kubeconfig
         run: |
-          export BRANCH_NAME=${{ github.event.ref }}
-          export CLUSTER_NAME=${BRANCH_NAME#*cluster-}
-          echo $CLUSTER_NAME
-          eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${CLUSTER_NAME} --kubeconfig=$HOME/.kube/config
+          echo ${{ env.cluster_name }}
+          eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${{ env.cluster_name }} --kubeconfig=$HOME/.kube/config
           kubectl get nodes
 
       - name: clusterctl init --infrastructure aws
