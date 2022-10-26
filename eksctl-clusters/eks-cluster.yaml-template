@@ -8,6 +8,7 @@ metadata:
   tags:
     environment: "${CLUSTER_NAME}"
     delete-after: "${DELETE_AFTER}"
+    team: "${TEAM}"
 
 iam:
   withOIDC: true
