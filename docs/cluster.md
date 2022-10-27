@@ -52,6 +52,8 @@ kubectl port-forward -n flux-system svc/clusters-service 9001:8000
 # Weave Gitops Core
 kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
 ```
+You can then access the UI on `localhost:9001`
+
 **WARNING: Please don't change port 9001 because this is the port used by dex for authentication.**
 
 ### Authenticate using dex:
