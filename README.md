@@ -18,6 +18,7 @@ Configuration for engineering's ephemeral clusters
 
 - Authenticate in your CLI with `WeaveEksEditor` role:
     ```bash
+    export AWS_PROFILE=sts
     export AWS_ROLE_EKS="arn:aws:iam::894516026745:role/WeaveEksEditor"
     export GOOGLE_IDP_ID=C0203uytv
     export GOOGLE_SP_ID=656726301855

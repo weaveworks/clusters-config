@@ -20,7 +20,11 @@
 
 1. Add and commit your cluster directory then push the new branch
 
+1. Wait until the cluster is provisioned. It might take around 20 minutes. You can check your provisioning job in the [actions](https://github.com/weaveworks/clusters-config/actions) tab.
+
 1. Get kubeconfig file:
+
+    **Note:** You have to wait until the cluster is provisioned before you get the kubeconfig file, otherwise you may get an error like: `Error: cannot perform Kubernetes API operations on cluster "sarah-main" in "eu-north-1" region due to status "CREATING"`
     ```bash
     eksctl utils write-kubeconfig --region eu-north-1 --cluster $CLUSTER_NAME --kubeconfig=$HOME/.kube/config
     ```
