@@ -14,6 +14,7 @@ usage() {
   echo "       $blnk [--weave-branch <BRANCH_NAME> ]"
   echo "       $blnk [--enable-flagger]"
   echo "       $blnk [--delete-after {default 15}]"
+  echo "       $blnk [--team <TEAM_NAME>]"
   echo "       $blnk [-h|--help]"
 
   echo
@@ -24,6 +25,7 @@ usage() {
   echo "  --weave-branch BRANCH_NAME            -- Select a specific git branch for installation (currently supports enterprise branches only)"
   echo "  --enable-flagger                      -- Flagger will be installed on the cluster (only available when --weave-mode=enterprise)"
   echo "  --delete-after                        -- Cluster will be auto deleted after this number of days (default: 15)"
+  echo "  --team                                -- Engineering team name"
   echo "  -h|--help                             -- Print this help message and exit"
 
   exit 0
@@ -112,6 +114,10 @@ flags(){
             exit 1
         fi
         ;;
+    --team)
+      shift
+      export TEAM_NAME="$1"
+      ;;
     -h|--help)
         usage;;
     *) usage;;
@@ -139,6 +145,12 @@ export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/secrets-kustomization.yaml-t
 if [ -z $CLUSTER_NAME ]
 then
   echo -e "${ERROR} No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
+  exit 1
+fi
+
+if [ -z $TEAM_NAME ]
+then
+  echo -e "${ERROR} --team argument is not provided. Use '--team YOUR-TEAM'."
   exit 1
 fi
 
@@ -190,6 +202,7 @@ ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 ${SED_} 's/${DELETE_AFTER}/'"${DELETE_AFTER}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+${SED_} 's/${TEAM}/'"${TEAM_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 
 # Copy common apps to cluster dir
