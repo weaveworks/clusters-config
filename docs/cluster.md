@@ -15,7 +15,7 @@
       1. Check if the cluster is created before.
       1. Create a branch for the cluster, the branch is prefixed with "cluster-".
       1. Create the cluster directory `eksctl-clusters/clusters/<CLUSTER_NAME>`.
-      1. Copy eksctl cluster-config-file with default values to `eksctl-clusters/cluaters/<CLUSTER_NAME>/eksctl-cluster.yaml`.
+      1. Copy eksctl cluster-config-file with default values to `eksctl-clusters/clusters/<CLUSTER_NAME>/eksctl-cluster.yaml`.
       1. Copy cluster kustomization files **core** or **enterprise** to `eksctl-clusters/clusters/<CLUSTER_NAME>`.
 
 1. Add and commit your cluster directory then push the new branch
