@@ -88,6 +88,10 @@ jobs:
           echo "Provisioning $CLUSTER_NAME cluster ..."
           $GITHUB_WORKSPACE/eksctl-clusters/scripts/provision-cluster.sh --cluster-name $CLUSTER_NAME
 
+      - name: Check running clusters
+        run: |
+          eksctl get clusters --region ${{ env.AWS_REGION }}
+
       - name: Add WW roles to aws-auth config-map
         if: always()
         run: |
