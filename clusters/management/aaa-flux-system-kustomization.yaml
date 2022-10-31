@@ -6,9 +6,11 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
+  path: eksctl-clusters/clusters/pentest-enterprise
   prune: true
   sourceRef:
     kind: GitRepository
     name: podinfo
     namespace: apps
+  targetNamespace: apps
 status: {}
