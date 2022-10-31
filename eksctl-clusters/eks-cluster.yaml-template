@@ -31,9 +31,9 @@ vpc:
 nodeGroups:
   - name: ${CLUSTER_NAME}-ng-1
     instanceType: t4g.medium
-    minSize: 2
-    maxSize: 2
-    desiredCapacity: 2
+    minSize: 3
+    maxSize: 3
+    desiredCapacity: 3
     volumeSize: 10
     privateNetworking: true
     tags:
