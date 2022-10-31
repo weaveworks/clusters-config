@@ -7,7 +7,7 @@
     ```bash
       ./eksctl-clusters/scripts/request-cluster.sh --team blazing-bonfire --cluster-name <CLUSTER_NAME> --weave-mode core|enterprise|none --delete-after 10
     ```
-    For more options, run
+    For more options see this [section](#request-cluster-options), or run
       ```bash
         ./eksctl-clusters/scripts/request-cluster.sh --help
       ```
@@ -93,3 +93,16 @@ You can extend your cluster TTL by running:
 ```bash
   ./eksctl-clusters/scripts/extend-cluster-ttl.sh --cluster-name <CLUSTER_NAME> --extend <NUMBER_OF_DAYS_TO_EXTEND>
 ```
+
+## Request cluster options:
+
+| Option              | Default | Required | Description | 
+|---------------------|---------|----------|-------------|
+| `--cluster-name`    |         | Yes      | Cluster's Name. It should be unique |
+| `--cluster-version` | 1.23    | No       | Kubernetes cluster version |
+| `--weave-mode`      | core    | No       | Select between installing WGE, WG-Core, leaf-cluster or not install any (enterprise|core|leaf|none)". Leaf option is to create a cluster that will be used as leaf cluster. You still need to join that cluster to yor management cluster. |
+| `--weave-version`   |         | No       | Select a specific released version (works only with --weave-mode=enterprise) |
+| `--weave-branch`    |         | No       | Select a specific git branch for installation (works only with --weave-mode=enterprise). Note: You can't use both `--weave-branch` and `--weave-version`|
+| `--enable-flagger`  | false   | No       | Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
+| `--delete-after`    | 15      | No       | Cluster will be auto deleted after this number of days |
+| `--team`            |         | Yes      | Engineering team name |
