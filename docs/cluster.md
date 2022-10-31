@@ -104,5 +104,5 @@ You can extend your cluster TTL by running:
 | `--weave-version`   |         | No       | Select a specific released version (works only with --weave-mode=enterprise) |
 | `--weave-branch`    |         | No       | Select a specific git branch for installation (works only with --weave-mode=enterprise). Note: You can't use both `--weave-branch` and `--weave-version`|
 | `--enable-flagger`  | false   | No       | Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
-| `--delete-after`    | 15      | No       | Cluster will be auto deleted after this number of days |
+| `--delete-after`    | 7       | No       | Cluster will be auto deleted after this number of days |
 | `--team`            |         | Yes      | Engineering team name |
