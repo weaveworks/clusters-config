@@ -9,7 +9,7 @@ blnk=$(echo "$0" | sed 's/./ /g')
 usage() {
   echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"
   echo "       $blnk [--cluster-version <CLUSTER_VERSION>] \\"
-  echo "       $blnk [--weave-mode <enterprise|core|none> {default core}]"
+  echo "       $blnk [--weave-mode <enterprise|core|leaf|none> {default core}]"
   echo "       $blnk [--weave-version <CHART_VERSION> ]"
   echo "       $blnk [--weave-branch <BRANCH_NAME> ]"
   echo "       $blnk [--enable-flagger]"
@@ -18,15 +18,15 @@ usage() {
   echo "       $blnk [-h|--help]"
 
   echo
-  echo "  --cluster-name CLUSTER_NAME           -- Set cluster name"
-  echo "  --cluster-version CLUSTER_VERSION     -- Set cluster version (default: 1.23)"
-  echo "  --weave-mode <enterprise|core|none>   -- Select between installing WGE, WG-Core, or not install any (enterprise|core|none)"
-  echo "  --weave-version CHART_VERSION         -- Select a specific helm chart version (currently supports enterprise charts only)"
-  echo "  --weave-branch BRANCH_NAME            -- Select a specific git branch for installation (currently supports enterprise branches only)"
-  echo "  --enable-flagger                      -- Flagger will be installed on the cluster (only available when --weave-mode=enterprise)"
-  echo "  --delete-after                        -- Cluster will be auto deleted after this number of days (default: 15)"
-  echo "  --team                                -- Engineering team name"
-  echo "  -h|--help                             -- Print this help message and exit"
+  echo "  --cluster-name CLUSTER_NAME                -- Set cluster name"
+  echo "  --cluster-version CLUSTER_VERSION          -- Set cluster version (default: 1.23)"
+  echo "  --weave-mode <enterprise|core|leaf|none>   -- Select between installing WGE, WG-Core, leaf-cluster or not install any (enterprise|core|leaf|none)"
+  echo "  --weave-version CHART_VERSION              -- Select a specific helm chart version (currently supports enterprise charts only)"
+  echo "  --weave-branch BRANCH_NAME                 -- Select a specific git branch for installation (currently supports enterprise branches only)"
+  echo "  --enable-flagger                           -- Flagger will be installed on the cluster (only available when --weave-mode=enterprise)"
+  echo "  --delete-after                             -- Cluster will be auto deleted after this number of days (default: 15)"
+  echo "  --team                                     -- Engineering team name"
+  echo "  -h|--help                                  -- Print this help message and exit"
 
   exit 0
 }
@@ -87,9 +87,9 @@ flags(){
     --weave-mode)
         shift
         export WW_MODE="$1"
-        if [ "${WW_MODE}" != "core" ] && [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "none" ]
+        if [ "${WW_MODE}" != "core" ] && [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "leaf" ] && [ "${WW_MODE}" != "none" ]
         then
-          echo -e "${ERROR} Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core or none)!"
+          echo -e "${ERROR} Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core, leaf or none)!"
           exit 1
         fi
         ;;
@@ -154,7 +154,7 @@ then
   exit 1
 fi
 
-if [ $ENABLE_FLAGGER == "true" ] && [ "${WW_MODE}" != "enterprise" ]
+if [ $ENABLE_FLAGGER == "true" ] && ( [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "leaf" ] )
 then
   echo -e "${ERROR} --enable-flagger can only be used with --weave-mode=enterprise."
   exit 1
@@ -209,7 +209,7 @@ echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 echo "Copying apps-common templates..."
 cp -r ${PARENT_DIR}/apps/common/common-kustomization.yaml-template ${CLUSTER_DIR}/common-kustomization.yaml
 
-# Copy WGE/WG-Core files
+# Copy apps to cluster dir
 case $WW_MODE in
   core)
     USERNAME="wego-admin"
@@ -237,20 +237,23 @@ case $WW_MODE in
     ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
     ${SED_} 's#${CHART_REPO}#'"${CHART_REPO}"'#g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
-
-    # cp -r ${PARENT_DIR}/templates/* ${CLUSTER_DIR}/
-    # ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/templates-kustomization.yaml
-    if [ $ENABLE_FLAGGER == "true" ]
-    then
-      cp -r ${PARENT_DIR}/apps/flagger/flagger-kustomization.yaml-template ${CLUSTER_DIR}/flagger-kustomization.yaml
-    fi
+    ;;
+  leaf)
+    echo "Copying leaf cluster templates..."
+    cp -r ${PARENT_DIR}/apps/enterprise-leaf/enterprise-leaf-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-leaf-kustomization.yaml
     ;;
   none)
     echo -e "${WARNING} Neither WG-Core nor WGE will be installed. Cluster will be provisioned with Flux only!"
     ;;
 esac
 
-# Copy secrets
+# Copy flagger to cluster dir
+if [ $ENABLE_FLAGGER == "true" ]
+then
+  cp -r ${PARENT_DIR}/apps/flagger/flagger-kustomization.yaml-template ${CLUSTER_DIR}/flagger-kustomization.yaml
+fi
+
+# Copy secrets to cluster dir
 cp ${SECRETS_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/secrets-kustomization.yaml
 
 # Setup SOPS decryption for flux kustomize-controller
