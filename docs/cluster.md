@@ -96,7 +96,7 @@ You can extend your cluster TTL by running:
 
 ## Request cluster options:
 
-| Option              | Default | Required | Description | 
+| Option              | Default | Required | Description |
 |---------------------|---------|----------|-------------|
 | `--cluster-name`    |         | Yes      | Cluster's Name. It should be unique |
 | `--cluster-version` | 1.23    | No       | Kubernetes cluster version |
