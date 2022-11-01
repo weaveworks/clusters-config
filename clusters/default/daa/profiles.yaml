@@ -1,0 +1,75 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  creationTimestamp: null
+  name: weaveworks-charts
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  provider: generic
+  timeout: 1m0s
+  url: https://weaveworks.github.io/weave-gitops-profile-examples/
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-0
+  name: cert-manager
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: cert-manager
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.8
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    cert-manager:
+      installCRDs: true
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-1
+  name: weave-policy-agent
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: weave-policy-agent
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.5.0
+  dependsOn:
+  - name: cert-manager
+  install:
+    crds: CreateReplace
+    createNamespace: true
+  interval: 1m0s
+  targetNamespace: policy-system
+  upgrade:
+    crds: CreateReplace
+  values:
+    policy-agent:
+      accountId: sademo
+      clusterId: daa
+      config:
+        AGENT_ENABLE_ADMISSION: "0"
+status: {}
