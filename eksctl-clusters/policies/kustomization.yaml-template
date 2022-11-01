@@ -11,3 +11,5 @@ spec:
   path: ./eksctl-clusters/policies/
   prune: true
   validation: client
+  dependsOn:
+    - name: ${APPS_KUSTOMIZATION}
