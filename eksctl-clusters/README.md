@@ -1,20 +1,20 @@
 # eksctl-clusters
 This directory contians scripts, templates, flux configuration, and clusters created by eksctl.
 
+## Requesting a new cluster
+To request a new cluster, follow [this doc](./docs/cluster.md#requesting-a-cluster).
+
 ## Structure:
-- [apps](./apps/) where we keep apps config files.
-    - `core`
-        - Where we save several apps to be installed by default on all clusters, like, dex and podinfo.
-    - `enterprise`
-        - Containes WGE template yaml files to be reconsiled by fluxcd if you used `--weave-mode enterprise` option.
-    - `gitops`
-        - Containes gitops app yaml files. They will be installed if you used `--weave-mode core` option.
-- [Clusters](./clusters/) where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir.
-- [eks-cluster.yaml-template](./eks-cluster.yaml-template) is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.
-- [scripts](./scripts/) where all of our scripts will live.
-- [shared-secrets](./shared-secrets/) Where we save secrets that are shared for all clusters. like, entitlement-secret.yaml
-- [flux-kustomization.yaml-template](./flux-kustomization.yaml-template) is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir.
-- [secrets-kustomization.yaml-template](./secrets-kustomization.yaml-template) is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
+| Directory       | Description |
+|--               |--           |
+| [apps](./apps/) | where we keep apps config files. |
+| [Clusters](./clusters/)| where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir. |
+| [scripts](./scripts/) | where all of our scripts will live. |
+| [shared-secrets](./shared-secrets/) | Where we save secrets that are shared for all clusters. like, entitlement-secret.yaml |
+| [templates](./templates/) | Where we keep all templates that we use |
+| [eks-cluster.yaml-template](./eks-cluster.yaml-template) | is the eks cluster template that will be use in creating the eks cluster. It will be copied under each cluster dir.|
+| [flux-kustomization.yaml-template](./flux-kustomization.yaml-template) | is the flux kustomization template that is used to patch flux controllers on bootstrapping. It will be copied under each cluster dir. |
+| [secrets-kustomization.yaml-template](./secrets-kustomization.yaml-template) | is the shared-secrets kustomization template that references the encrypted shared-secrets dir. It will be copied under each cluster dir.
 
 ## Using SOPS to encrypt secrets
 We use [SOPS](https://github.com/mozilla/sops) to encrypt our secrets. Shared secrets in the `shared-secrets` dir are encrypted using AWS KMS key that's configured in `.sops.yaml` config (in the root of the repo). They are then decrypted into the cluster directly using flux kustomize-controller.
