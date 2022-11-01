@@ -19,7 +19,7 @@
 
     **Note:** You have to wait until the cluster is provisioned before you get the kubeconfig file, otherwise you may get an error like: `Error: cannot perform Kubernetes API operations on cluster <CLUSTER_NAME> in "eu-north-1" region due to status "CREATING"`
     ```bash
-    eksctl utils write-kubeconfig --region eu-north-1 --cluster $CLUSTER_NAME --kubeconfig=$HOME/.kube/config
+    eksctl utils write-kubeconfig --region eu-north-1 --cluster <CLUSTER_NAME> --kubeconfig=$HOME/.kube/config
     ```
 
 ## Deploy Specific Version of WGE:
@@ -97,6 +97,7 @@ You can extend your cluster TTL by running:
 | <nobr>`--weave-version`</nobr>   |         | No       | Select a specific released version (works only with --weave-mode=enterprise) |
 | <nobr>`--weave-branch`</nobr>    |         | No       | Select a specific git branch for installation (works only with --weave-mode=enterprise). Note: You can't use both `--weave-branch` and `--weave-version`|
 | <nobr>`--enable-flagger`</nobr>  | false   | No       | Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
+| <nobr>`--enable-policies`</nobr> | false   | No       | Default policies will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
 | <nobr>`--delete-after`</nobr>    | 7       | No       | Cluster will be auto deleted after this number of days |
 | <nobr>`--team`</nobr>            |         | Yes      | Engineering team name |
 
