@@ -2,7 +2,7 @@
 This directory contians scripts, templates, flux configuration, and clusters created by eksctl.
 
 ## Requesting a new cluster
-To request a new cluster, follow [this doc](./docs/cluster.md#requesting-a-cluster).
+To request a new cluster, follow [this doc](../docs/cluster.md#requesting-a-cluster).
 
 ## Structure:
 | Directory       | Description |
