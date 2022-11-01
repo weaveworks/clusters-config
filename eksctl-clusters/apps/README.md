@@ -1,8 +1,6 @@
 # Apps
 Where we keep apps config files to be reconsiled by flux.
 
-There are 3 catagories for apps:
-
 1. [**common**](./common/):
     Applications that will be installed by default. Like, [**dex**](./common/dex/) and [**podinfo**](./common/podinfo/) apps.
 

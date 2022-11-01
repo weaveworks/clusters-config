@@ -25,7 +25,7 @@ usage() {
   echo "  --weave-version CHART_VERSION              -- Select a specific helm chart version (currently supports enterprise charts only)"
   echo "  --weave-branch BRANCH_NAME                 -- Select a specific git branch for installation (currently supports enterprise branches only)"
   echo "  --enable-flagger                           -- Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf)"
-  echo "  --enable-policies                          -- Default policies will be installed on the cluster (only available when --weave-mode=enterprise)"
+  echo "  --enable-policies                          -- Default policies will be installed on the cluster (only available when --weave-mode=enterprise|leaf)"
   echo "  --delete-after                             -- Cluster will be auto deleted after this number of days (default: 15)"
   echo "  --team                                     -- Engineering team name"
   echo "  -h|--help                                  -- Print this help message and exit"

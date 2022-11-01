@@ -5,19 +5,12 @@
     ```
 1. Run the `request-cluster` script
     ```bash
-      ./eksctl-clusters/scripts/request-cluster.sh --team blazing-bonfire --cluster-name <CLUSTER_NAME> --weave-mode core|enterprise|none --delete-after 10
+      ./eksctl-clusters/scripts/request-cluster.sh --team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <enterprise|core|leaf|none> --delete-after 10
     ```
     For more options see this [section](#request-cluster-options), or run
       ```bash
         ./eksctl-clusters/scripts/request-cluster.sh --help
       ```
-      #### What does the script do?
-      1. Check if the cluster is created before.
-      1. Create a branch for the cluster, the branch is prefixed with "cluster-".
-      1. Create the cluster directory `eksctl-clusters/clusters/<CLUSTER_NAME>`.
-      1. Copy eksctl cluster-config-file with default values to `eksctl-clusters/clusters/<CLUSTER_NAME>/eksctl-cluster.yaml`.
-      1. Copy cluster kustomization files **core** or **enterprise** to `eksctl-clusters/clusters/<CLUSTER_NAME>`.
-
 1. Add and commit your cluster directory then push the new branch
 
 1. Wait until the cluster is provisioned. It might take around 20 minutes. You can check your provisioning job in the [actions](https://github.com/weaveworks/clusters-config/actions) tab.
@@ -26,7 +19,7 @@
 
     **Note:** You have to wait until the cluster is provisioned before you get the kubeconfig file, otherwise you may get an error like: `Error: cannot perform Kubernetes API operations on cluster <CLUSTER_NAME> in "eu-north-1" region due to status "CREATING"`
     ```bash
-    eksctl utils write-kubeconfig --region eu-north-1 --cluster $CLUSTER_NAME --kubeconfig=$HOME/.kube/config
+    eksctl utils write-kubeconfig --region eu-north-1 --cluster <CLUSTER_NAME> --kubeconfig=$HOME/.kube/config
     ```
 
 ## Deploy Specific Version of WGE:
@@ -96,13 +89,22 @@ You can extend your cluster TTL by running:
 
 ## Request cluster options:
 
-| Option              | Default | Required | Description |
-|---------------------|---------|----------|-------------|
-| `--cluster-name`    |         | Yes      | Cluster's Name. It should be unique |
-| `--cluster-version` | 1.23    | No       | Kubernetes cluster version |
-| `--weave-mode`      | core    | No       | Select between installing WGE, WG-Core, leaf-cluster or not install any (enterprise|core|leaf|none)". Leaf option is to create a cluster that will be used as leaf cluster. You still need to join that cluster to yor management cluster. |
-| `--weave-version`   |         | No       | Select a specific released version (works only with --weave-mode=enterprise) |
-| `--weave-branch`    |         | No       | Select a specific git branch for installation (works only with --weave-mode=enterprise). Note: You can't use both `--weave-branch` and `--weave-version`|
-| `--enable-flagger`  | false   | No       | Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
-| `--delete-after`    | 7       | No       | Cluster will be auto deleted after this number of days |
-| `--team`            |         | Yes      | Engineering team name |
+| <nobr>Option</nobr>              | Default | Required | Description |
+|----------------------------------|---------|----------|-------------|
+| <nobr>`--cluster-name`</nobr>    |         | Yes      | Cluster's Name. It should be unique |
+| <nobr>`--cluster-version`</nobr> | 1.23    | No       | Kubernetes cluster version |
+| <nobr>`--weave-mode`</nobr>      | core    | No       | Select between installing WGE, WG-Core, leaf-cluster or not install any (enterprise|core|leaf|none)". Leaf option is to create a cluster that will be used as leaf cluster. You still need to join that cluster to yor management cluster. |
+| <nobr>`--weave-version`</nobr>   |         | No       | Select a specific released version (works only with --weave-mode=enterprise) |
+| <nobr>`--weave-branch`</nobr>    |         | No       | Select a specific git branch for installation (works only with --weave-mode=enterprise). Note: You can't use both `--weave-branch` and `--weave-version`|
+| <nobr>`--enable-flagger`</nobr>  | false   | No       | Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
+| <nobr>`--enable-policies`</nobr> | false   | No       | Default policies will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
+| <nobr>`--delete-after`</nobr>    | 7       | No       | Cluster will be auto deleted after this number of days |
+| <nobr>`--team`</nobr>            |         | Yes      | Engineering team name |
+
+## What does request-cluster script do?
+
+1. Check if the cluster is created before.
+1. Create a branch for the cluster, the branch is prefixed with "cluster-". If the branch was created before, it will fail.
+1. Create the cluster directory `eksctl-clusters/clusters/<CLUSTER_NAME>`.
+1. Copy eksctl cluster-config-file with default values to `eksctl-clusters/clusters/<CLUSTER_NAME>/eksctl-cluster.yaml`.
+1. Copy cluster kustomization files to `eksctl-clusters/clusters/<CLUSTER_NAME>`.
