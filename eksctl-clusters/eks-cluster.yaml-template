@@ -30,7 +30,7 @@ vpc:
 
 nodeGroups:
   - name: ${CLUSTER_NAME}-ng-1
-    instanceType: t4g.medium
+    instanceType: t3.medium
     minSize: 3
     maxSize: 3
     desiredCapacity: 3
