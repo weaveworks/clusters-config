@@ -15,5 +15,7 @@ spec:
         namespace: flux-system
       version: 0.0.8
   interval: 10m0s
-  values: null
+  values:
+    cert-manager:
+      installCRDs: true
 status: {}
