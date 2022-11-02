@@ -5,7 +5,7 @@
     ```
 1. Run the `request-cluster` script
     ```bash
-      ./eksctl-clusters/scripts/request-cluster.sh --team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <enterprise|core|leaf|none> --delete-after 10
+      ./eksctl-clusters/scripts/request-cluster.sh --team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <WEAVE_MODE> --delete-after 10
     ```
     For more options see this [section](#request-cluster-options), or run
       ```bash
