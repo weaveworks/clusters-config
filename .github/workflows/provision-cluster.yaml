@@ -8,7 +8,8 @@ env:
   AWS_REGION: "eu-north-1"
   CLUSTERCTL_VERSION: "v1.2.3"
   CLUSTER_AWS_ADM_VERSION: "v1.5.0"
-  EKSCTL_VERSION: "v0.109.0"
+  EKSCTL_VERSION: "v0.116.0"
+  FLUX_VERSION: "v0.36.0"
 
 jobs:
   provision-cluster:
@@ -52,7 +53,8 @@ jobs:
 
       - name: Install flux
         run: |
-          curl --silent --location https://github.com/fluxcd/flux2/releases/download/v0.33.0/flux_0.33.0_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
+          VER=$(echo ${{ env.FLUX_VERSION }} | sed 's/^[^0-9]*//')
+          curl --silent --location https://github.com/fluxcd/flux2/releases/download/${{ env.FLUX_VERSION }}/flux_$VER_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
           sudo mv /tmp/flux /usr/local/bin
           flux version --client
 
