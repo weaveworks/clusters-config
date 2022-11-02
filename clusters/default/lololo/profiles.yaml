@@ -1,0 +1,241 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  creationTimestamp: null
+  name: weaveworks-charts
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  provider: generic
+  timeout: 1m0s
+  url: https://weaveworks.github.io/weave-gitops-profile-examples/
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-0
+  name: cert-manager
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: cert-manager
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.8
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    cert-manager:
+      installCRDs: true
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  name: dex
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: dex
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.12
+  dependsOn:
+  - name: flagger
+  - name: prometheus
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    dex:
+      config:
+        enablePasswordDB: true
+        issuer: http://my-issuer-url.com
+        storage:
+          type: memory
+      enabled: true
+      ingress:
+        enabled: true
+        hosts:
+        - host: my-issuer-url.com
+          paths:
+          - path: /
+            pathType: ImplementationSpecific
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-2
+  name: flagger
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: flagger
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.4
+  dependsOn:
+  - name: ingress-nginx
+  - name: weave-policy-agent
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    flagger:
+      meshProvider: nginx
+      prometheus:
+        install: true
+    loadtester:
+      logLevel: debug
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-1
+  name: ingress-nginx
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: ingress-nginx
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.11
+  dependsOn:
+  - name: cert-manager
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    ingress-nginx:
+      controller:
+        service:
+          annotations:
+            networking.gke.io/load-balancer-type: Internal
+            service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+            service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+            service.beta.kubernetes.io/oci-load-balancer-internal: "true"
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-2
+  name: prometheus
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: prometheus
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.11
+  dependsOn:
+  - name: ingress-nginx
+  - name: weave-policy-agent
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    kube-prometheus-stack:
+      alertmanager:
+        ingress:
+          annotations:
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/rewrite-target: /$1
+            nginx.ingress.kubernetes.io/use-regex: "true"
+          enabled: true
+          paths:
+          - /alertmanager/?(.*)
+      enabled: true
+      grafana:
+        grafana.ini:
+          server:
+            root_url: https://localhost:3000/grafana/
+            serve_from_sub_path: true
+        ingress:
+          annotations:
+            kubernetes.io/ingress.class: nginx
+          enabled: true
+          path: /grafana/?(.*)
+      prometheus:
+        prometheusSpec:
+          podMonitorSelector: {}
+          podMonitorSelectorNilUsesHelmValues: false
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-1
+  name: weave-policy-agent
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: weave-policy-agent
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.5.0
+  dependsOn:
+  - name: cert-manager
+  install:
+    crds: CreateReplace
+    createNamespace: true
+  interval: 1m0s
+  targetNamespace: policy-system
+  upgrade:
+    crds: CreateReplace
+  values:
+    policy-agent:
+      accountId: sademo
+      clusterId: lololo
+      config:
+        AGENT_ENABLE_ADMISSION: "0"
+status: {}
