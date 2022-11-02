@@ -54,7 +54,7 @@ jobs:
       - name: Install flux
         run: |
           VER=$(echo ${{ env.FLUX_VERSION }} | sed 's/^[^0-9]*//')
-          curl --silent --location https://github.com/fluxcd/flux2/releases/download/${{ env.FLUX_VERSION }}/flux_$VER_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
+          curl --silent --location https://github.com/fluxcd/flux2/releases/download/${{ env.FLUX_VERSION }}/flux_${VER}_$(uname -s)_amd64.tar.gz | tar xz -C /tmp
           sudo mv /tmp/flux /usr/local/bin
           flux version --client
 
