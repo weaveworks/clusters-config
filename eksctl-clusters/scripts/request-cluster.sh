@@ -290,4 +290,4 @@ cp ${FLUX_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/flux-system/kustomization.yaml
 ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/flux-system/kustomization.yaml
 
 echo -e "${SUCCESS} Cluster directory \"${CLUSTER_DIR}\" has been created"
-echo -e "          Please, commit the files and create a PR to provision the cluster"
+echo -e "          Please, commit the files and push the branch to provision the cluster"
