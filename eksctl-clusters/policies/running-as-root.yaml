@@ -35,7 +35,7 @@ spec:
     - name: exclude_namespaces
       type: array
       required: false
-      value: [kube-system]
+      value: ["kube-system", "capi-system", "capa-system", "capi-kubeadm-bootstrap-system", "capi-kubeadm-control-plane-system"]
     - name: exclude_label_key
       type: string
       required: false
