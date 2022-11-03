@@ -4,6 +4,9 @@ on:
   delete:
     branches: '**'
 
+env:
+  AWS_REGION: "eu-north-1"
+
 jobs:
   delete-cluster:
     if: startsWith(github.event.ref, 'cluster-')
@@ -47,16 +50,27 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
-          aws-region: eu-north-1
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Export Cluster Name
+        run: |
+          export BRANCH_NAME=${{ github.event.ref }}
+          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
+
+          echo "CLUSTER_NAME=${CLUSTER_NAME}" >> $GITHUB_ENV
+
+      - name: kubeconfig
+        run: |
+          echo "Cluster: ${{ env.CLUSTER_NAME }}"
+          eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${{ env.CLUSTER_NAME }} --kubeconfig=$HOME/.kube/config
+          kubectl get nodes
 
       - name: Delete Cluster
         run: |
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
-          export BRANCH_NAME=${{ github.event.ref }}
-          export CLUSTER_NAME=${BRANCH_NAME#cluster-}
-          echo "Deleting $CLUSTER_NAME cluster ..."
-          $GITHUB_WORKSPACE/eksctl-clusters/scripts/destroy-cluster.sh --cluster-name $CLUSTER_NAME
+          echo "Deleting ${{ env.CLUSTER_NAME }} cluster ..."
+          $GITHUB_WORKSPACE/eksctl-clusters/scripts/destroy-cluster.sh --cluster-name ${{ env.CLUSTER_NAME }}
 
       - name: Check running clusters
         run: |
-          eksctl get clusters --region eu-north-1
+          eksctl get clusters --region ${{ env.AWS_REGION }}
