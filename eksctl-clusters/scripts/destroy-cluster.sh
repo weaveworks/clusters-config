@@ -69,7 +69,7 @@ else
   do
   kubectl delete svc $name -n $ns
   done
-  
+
   # Delete EKS cluster
   echo "Deleting ${CLUSTER_NAME} cluster"
   eksctl delete cluster --region ${AWS_REGION} --name ${CLUSTER_NAME}
