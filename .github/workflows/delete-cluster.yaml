@@ -65,25 +65,22 @@ jobs:
           eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${{ env.CLUSTER_NAME }} --kubeconfig=$HOME/.kube/config
           kubectl get nodes
 
-      - name: Cleaning up Cluster
+      - name: Cleaning up resources 
         run: |
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
           echo "Cleaning up ${{ env.CLUSTER_NAME }}" cluster ..."
           
-          # Delete flux system from the management cluster
+          echo "Deleting flux system"
           flux uninstall --silent
-          # Delete capi clusters
+          
+          echo "Deleting capi clusters"
           kubectl delete cluster -A --all
-          kubectl delete cluster -A --all
-          kubectl delete cluster -A --all
-          kubectl delete cluster -A --all
-          # Delete any orphan resources
-          kubectl delete CAPITemplate --all
-          kubectl delete ClusterBootstrapConfig --all
-          kubectl delete ClusterResourceSet --all
-          # Delete policy agent
-          kubectl delete ValidatingWebhookConfiguration policy-agent
-          kubectl delete namespaces policy-system
+
+          echo "Deleting loadbalancers"
+          for name ns in `kubectl get svc -A -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace,TYPE:.spec.type | tr -s " " | grep -i loadbalancer | cut -d " " -f 1,2`
+          do
+          kubectl delete svc $name -n $ns
+          done
 
       - name: Delete Cluster
         run: |
