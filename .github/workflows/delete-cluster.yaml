@@ -65,14 +65,14 @@ jobs:
           eksctl utils write-kubeconfig --region ${{ env.AWS_REGION }} --cluster ${{ env.CLUSTER_NAME }} --kubeconfig=$HOME/.kube/config
           kubectl get nodes
 
-      - name: Cleaning up resources 
+      - name: Cleaning up resources
         run: |
           export GITHUB_TOKEN=${{ secrets.WEAVE_GITOPS_BOT_TOKEN_CLUSTERS_CONFIG }}
           echo "Cleaning up ${{ env.CLUSTER_NAME }}" cluster ..."
-          
+
           echo "Deleting flux system"
           flux uninstall --silent
-          
+
           echo "Deleting capi clusters"
           kubectl delete cluster -A --all
 
