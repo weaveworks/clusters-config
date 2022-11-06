@@ -64,11 +64,12 @@ else
   echo "Deleting capi clusters"
   kubectl delete cluster -A --all
 
-  echo "Deleting loadbalancers"
-  for name ns in `kubectl get svc -A -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace,TYPE:.spec.type | tr -s " " | grep -i loadbalancer | cut -d " " -f 1,2`
-  do
-  kubectl delete svc $name -n $ns
-  done
+  # Delete loadbalancers
+  kubectl get svc -A -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace,TYPE:.spec.type | \
+   tr -s " " | \
+   grep -i loadbalancer | \
+   cut -d " " -f 1,2 | \
+   awk -F ' ' '{print "Deleting " $1 " loadbalancer"};{system("kubectl delete service -n " $2 " " $1 )}'
 
   # Delete EKS cluster
   echo "Deleting ${CLUSTER_NAME} cluster"
