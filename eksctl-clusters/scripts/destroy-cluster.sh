@@ -58,6 +58,19 @@ if [ -z $CLUSTER_EXISTS ]; then
   echo -e "${ERROR} Could not find cluster '${CLUSTER_NAME}' to delete."
   exit 1
 else
+  echo "Deleting flux system"
+  flux uninstall --silent
+
+  echo "Deleting capi clusters"
+  kubectl delete cluster -A --all
+
+  # Delete loadbalancers
+  kubectl get svc -A -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace,TYPE:.spec.type | \
+   tr -s " " | \
+   grep -i loadbalancer | \
+   cut -d " " -f 1,2 | \
+   awk -F ' ' '{print "Deleting " $1 " loadbalancer"};{system("kubectl delete service -n " $2 " " $1 )}'
+
   # Delete EKS cluster
   echo "Deleting ${CLUSTER_NAME} cluster"
   eksctl delete cluster --region ${AWS_REGION} --name ${CLUSTER_NAME}
