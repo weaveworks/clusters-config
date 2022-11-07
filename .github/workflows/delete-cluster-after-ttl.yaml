@@ -3,6 +3,8 @@ name: Delete EKS Cluster After TTL
 on:
   schedule:
     - cron:  '0 0 * * *'
+  workflow_dispatch: {}
+
 env:
   AWS_REGION: "eu-north-1"
 
@@ -95,9 +97,16 @@ jobs:
             echo -e
           done
 
+          echo "noTTL Clusters: ${noTTL[@]}"
           echo "noTTL=${noTTL}" >> $GITHUB_OUTPUT
+
+          echo "deleteClusters: ${deleteClusters[@]}"
           echo "deleteClusters=${deleteClusters}" >> $GITHUB_OUTPUT
+
+          echo "zeroDaysClusters: ${zeroDaysClusters[@]}"
           echo "zeroDaysClusters=${zeroDaysClusters}" >> $GITHUB_OUTPUT
+
+          echo "threeDaysClusters: ${threeDaysClusters[@]}"
           echo "threeDaysClusters=${threeDaysClusters}" >> $GITHUB_OUTPUT
 
   delete-clusters:
