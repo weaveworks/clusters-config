@@ -3,13 +3,19 @@ name: Delete EKS Cluster
 on:
   delete:
     branches: '**'
+  workflow_dispatch:
+    inputs:
+      cluster-name:
+        description: "Cluster Name"
+        required: true
+        type: string
 
 env:
   AWS_REGION: "eu-north-1"
 
 jobs:
   delete-cluster:
-    if: startsWith(github.event.ref, 'cluster-')
+    if: ${{ startsWith(github.event.ref, 'cluster-') || (github.event_name == 'workflow_dispatch')}}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -52,11 +58,17 @@ jobs:
           role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Export Cluster Name
+      - name: Export Cluster Name if Branch Deleted
+        if: ${{ startsWith(github.event.ref, 'cluster-') }}
         run: |
           export BRANCH_NAME=${{ github.event.ref }}
           export CLUSTER_NAME=${BRANCH_NAME#cluster-}
           echo "CLUSTER_NAME=${CLUSTER_NAME}" >> $GITHUB_ENV
+
+      - name: Export Cluster Name if Triggered Manually
+        if: ${{ (github.event_name == 'workflow_dispatch') }}
+        run: |
+          echo "CLUSTER_NAME=${{ inputs.cluster-name }}" >> $GITHUB_ENV
 
       - name: kubeconfig
         run: |
