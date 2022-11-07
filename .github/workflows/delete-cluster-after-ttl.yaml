@@ -127,7 +127,7 @@ jobs:
           git config --global user.email "weave-gitops-bot@weave.works"
           git config --global user.name "weave-gitops-bot"
 
-          deleteClusters=${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters[@]}}
+          deleteClusters=${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}
           echo "The following clusters are being deleted:"
           echo ${deleteClusters[@]}
 
