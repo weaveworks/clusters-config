@@ -156,7 +156,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters[@]}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
                   }
                 }
               ]
@@ -189,7 +189,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL[@]}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
                   }
                 }
               ]
@@ -217,7 +217,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters[@]}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
                   }
                 }
               ]
@@ -245,7 +245,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters[@]}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters}}"
                   }
                 }
               ]
