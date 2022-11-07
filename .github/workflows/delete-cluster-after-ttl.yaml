@@ -98,16 +98,16 @@ jobs:
           done
 
           echo "noTTL Clusters: ${noTTL[@]}"
-          echo "noTTL=${noTTL}" >> $GITHUB_OUTPUT
+          echo "noTTL=${noTTL[@]}" >> $GITHUB_OUTPUT
 
           echo "deleteClusters: ${deleteClusters[@]}"
-          echo "deleteClusters=${deleteClusters}" >> $GITHUB_OUTPUT
+          echo "deleteClusters=${deleteClusters[@]}" >> $GITHUB_OUTPUT
 
           echo "zeroDaysClusters: ${zeroDaysClusters[@]}"
-          echo "zeroDaysClusters=${zeroDaysClusters}" >> $GITHUB_OUTPUT
+          echo "zeroDaysClusters=${zeroDaysClusters[@]}" >> $GITHUB_OUTPUT
 
           echo "threeDaysClusters: ${threeDaysClusters[@]}"
-          echo "threeDaysClusters=${threeDaysClusters}" >> $GITHUB_OUTPUT
+          echo "threeDaysClusters=${threeDaysClusters[@]}" >> $GITHUB_OUTPUT
 
   delete-clusters:
     if: needs.Check-delete-after-for-running-clusters.outputs.deleteClusters != ''
@@ -127,7 +127,7 @@ jobs:
           git config --global user.email "weave-gitops-bot@weave.works"
           git config --global user.name "weave-gitops-bot"
 
-          deleteClusters=${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}
+          deleteClusters=${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters[@]}}
           echo "The following clusters are being deleted:"
           echo ${deleteClusters[@]}
 
@@ -156,7 +156,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters[@]}}"
                   }
                 }
               ]
@@ -189,7 +189,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL[@]}}"
                   }
                 }
               ]
@@ -217,7 +217,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters[@]}}"
                   }
                 }
               ]
@@ -245,7 +245,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters}}"
+                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters[@]}}"
                   }
                 }
               ]
