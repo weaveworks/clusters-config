@@ -92,5 +92,5 @@ jobs:
     if: always()
     uses: ./.github/workflows/slack-notification.yaml
     with:
-      header-text: "Status of deleting ${{ env.CLUSTER_NAME }} cluster:"
-      message: "${{ jobs.delete-cluster.result }}"
+      header-text: Status of deleting ${{ env.CLUSTER_NAME }} cluster
+      message: ${{ jobs.delete-cluster.result }}
