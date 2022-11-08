@@ -134,5 +134,5 @@ jobs:
     if: always()
     uses: ./.github/workflows/slack-notification.yaml
     with:
-      header-text: "Status of provisioning ${{ env.cluster_name }} cluster:"
-      message: "${{ jobs.provision-cluster.result }}"
+      header-text: Status of provisioning ${{ env.cluster_name }} cluster
+      message: ${{ jobs.provision-cluster.result }}
