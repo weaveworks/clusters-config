@@ -85,3 +85,12 @@ jobs:
       - name: Check running clusters
         run: |
           eksctl get clusters --region ${{ env.AWS_REGION }}
+
+  slack-notifications:
+    needs:
+      - delete-cluster
+    if: always()
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "Status of deleting ${{ env.CLUSTER_NAME }} cluster:"
+      message: "${{ jobs.delete-cluster.result }}"
