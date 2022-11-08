@@ -15,6 +15,9 @@ jobs:
   provision-cluster:
     if: startsWith(github.event.ref, 'cluster-')
     runs-on: ubuntu-latest
+    outputs:
+      CLUSTER_NAME: ${{ steps.outputs.outputs.CLUSTER_NAME }}
+      PROVISION_STATUS: ${{ job.status }}
     permissions:
       id-token: write
       contents: read
@@ -128,11 +131,17 @@ jobs:
           clusterctl init --infrastructure aws
           kubectl get deploy -A
 
+      - name: outputs
+        if: always()
+        id: outputs
+        run: |
+          echo "CLUSTER_NAME=${{ env.cluster_name }}" >> $GITHUB_OUTPUT
+
   slack-notifications:
     needs:
       - delete-cluster
     if: always()
     uses: ./.github/workflows/slack-notification.yaml
     with:
-      header-text: "Status of provisioning ${{ env.cluster_name }} cluster:"
-      message: "${{ jobs.provision-cluster.result }}"
+      header-text: Status of provisioning ${{ needs.provision-cluster.outputs.CLUSTER_NAME }} cluster
+      message: ${{ needs.provision-cluster.outputs.PROVISION_STATUS }}
