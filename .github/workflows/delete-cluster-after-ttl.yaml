@@ -137,118 +137,38 @@ jobs:
             git push origin --delete ${BRANCH_NAME}
           done
 
-      - name: deleteClusters-slack-notification
-        uses: slackapi/slack-github-action@v1.22.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "The following clusters are being deleted:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-
-  slack-notifications:
-    runs-on: ubuntu-latest
+  deleteClusters-slack-notification:
+    if: needs.Check-delete-after-for-running-clusters.outputs.deleteClusters != ''
     needs:
       - Check-delete-after-for-running-clusters
-    steps:
-      - name: noTTL-slack-notification
-        if: needs.Check-delete-after-for-running-clusters.outputs.noTTL != ''
-        uses: slackapi/slack-github-action@v1.22.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "The following clusters don't have delete-after tag:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "The following clusters are being deleted:"
+      message: "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
 
-      - name: zeroDaysClusters-slack-notification
-        if: needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters != ''
-        uses: slackapi/slack-github-action@v1.22.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "The following clusters will be deleted tomorrow:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  noTTL-slack-notifications:
+    if: needs.Check-delete-after-for-running-clusters.outputs.noTTL != ''
+    needs:
+      - Check-delete-after-for-running-clusters
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "The following clusters don't have delete-after tag:"
+      message: "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
 
-      - name: threeDaysClusters-slack-notification
-        if: needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters != ''
-        uses: slackapi/slack-github-action@v1.22.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "The following clusters will be deleted in 3 days:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters}}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  zeroDaysClusters-slack-notifications:
+    if: needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters != ''
+    needs:
+      - Check-delete-after-for-running-clusters
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "The following clusters will be deleted tomorrow:"
+      message: "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
+
+  threeDaysClusters-slack-notifications:
+    if: needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters != ''
+    needs:
+      - Check-delete-after-for-running-clusters
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "The following clusters will be deleted in 3 days:"
+      message: "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters}}"

@@ -127,3 +127,12 @@ jobs:
 
           clusterctl init --infrastructure aws
           kubectl get deploy -A
+
+  slack-notifications:
+    needs:
+      - delete-cluster
+    if: always()
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "Status of provisioning ${{ env.cluster_name }} cluster:"
+      message: "${{ jobs.provision-cluster.result }}"
