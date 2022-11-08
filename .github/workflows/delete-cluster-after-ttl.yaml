@@ -252,3 +252,21 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  noTTL-slack-notifications:
+    if: needs.Check-delete-after-for-running-clusters.outputs.noTTL != ''
+    needs:
+      - Check-delete-after-for-running-clusters
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "The following clusters don't have delete-after tag:"
+      message: "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
+
+  zeroDaysClusters-slack-notifications:
+    if: needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters != ''
+    needs:
+      - Check-delete-after-for-running-clusters
+    uses: ./.github/workflows/slack-notification.yaml
+    with:
+      header-text: "The following clusters will be deleted tomorrow:"
+      message: "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
