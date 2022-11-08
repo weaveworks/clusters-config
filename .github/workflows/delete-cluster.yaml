@@ -90,6 +90,7 @@ jobs:
           eksctl get clusters --region ${{ env.AWS_REGION }}
       
       - name: outputs
+        if: always()
         id: outputs
         run: |
           echo "CLUSTER_NAME=${{ env.CLUSTER_NAME }}" >> $GITHUB_OUTPUT
