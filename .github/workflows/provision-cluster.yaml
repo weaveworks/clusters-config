@@ -130,7 +130,7 @@ jobs:
 
           clusterctl init --infrastructure aws
           kubectl get deploy -A
-      
+
       - name: outputs
         if: always()
         id: outputs

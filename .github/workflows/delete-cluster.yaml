@@ -88,7 +88,7 @@ jobs:
       - name: Check running clusters
         run: |
           eksctl get clusters --region ${{ env.AWS_REGION }}
-      
+
       - name: outputs
         if: always()
         id: outputs
