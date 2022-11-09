@@ -145,6 +145,8 @@ jobs:
     with:
       header-text: "The following clusters are being deleted:"
       message: "${{needs.Check-delete-after-for-running-clusters.outputs.deleteClusters}}"
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   noTTL-slack-notifications:
     if: needs.Check-delete-after-for-running-clusters.outputs.noTTL != ''
@@ -154,6 +156,8 @@ jobs:
     with:
       header-text: "The following clusters don't have delete-after tag:"
       message: "${{needs.Check-delete-after-for-running-clusters.outputs.noTTL}}"
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   zeroDaysClusters-slack-notifications:
     if: needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters != ''
@@ -163,6 +167,8 @@ jobs:
     with:
       header-text: "The following clusters will be deleted tomorrow:"
       message: "${{needs.Check-delete-after-for-running-clusters.outputs.zeroDaysClusters}}"
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   threeDaysClusters-slack-notifications:
     if: needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters != ''
@@ -172,3 +178,5 @@ jobs:
     with:
       header-text: "The following clusters will be deleted in 3 days:"
       message: "${{needs.Check-delete-after-for-running-clusters.outputs.threeDaysClusters}}"
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
