@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       CLUSTER_NAME: ${{ steps.outputs.outputs.CLUSTER_NAME }}
-      PROVISION_STATUS: ${{ job.status }}
+      STATUS: ${{ job.status }}
     permissions:
       id-token: write
       contents: read
@@ -138,10 +138,12 @@ jobs:
           echo "CLUSTER_NAME=${{ env.cluster_name }}" >> $GITHUB_OUTPUT
 
   slack-notifications:
+    if: always() && startsWith(github.event.ref, 'cluster-')
     needs:
       - provision-cluster
-    if: always()
     uses: ./.github/workflows/slack-notification.yaml
     with:
       header-text: Status of provisioning ${{ needs.provision-cluster.outputs.CLUSTER_NAME }} cluster
-      message: ${{ needs.provision-cluster.outputs.PROVISION_STATUS }}
+      message: ${{ needs.provision-cluster.outputs.STATUS }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

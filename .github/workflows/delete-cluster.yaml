@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       CLUSTER_NAME: ${{ steps.outputs.outputs.CLUSTER_NAME }}
-      DELETE_STATUS: ${{ job.status }}
+      STATUS: ${{ job.status }}
     permissions:
       id-token: write
       contents: read
@@ -96,10 +96,12 @@ jobs:
           echo "CLUSTER_NAME=${{ env.CLUSTER_NAME }}" >> $GITHUB_OUTPUT
 
   slack-notifications:
+    if: ${{ always() && ( startsWith(github.event.ref, 'cluster-') || (github.event_name == 'workflow_dispatch') ) }}
     needs:
       - delete-cluster
-    if: always()
     uses: ./.github/workflows/slack-notification.yaml
     with:
       header-text: Status of deleting ${{ needs.delete-cluster.outputs.CLUSTER_NAME }} cluster
-      message: ${{ needs.delete-cluster.outputs.DELETE_STATUS }}
+      message: ${{ needs.delete-cluster.outputs.STATUS }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
