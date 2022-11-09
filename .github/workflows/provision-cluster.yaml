@@ -139,7 +139,7 @@ jobs:
 
   slack-notifications:
     needs:
-      - delete-cluster
+      - provision-cluster
     if: always()
     uses: ./.github/workflows/slack-notification.yaml
     with:
