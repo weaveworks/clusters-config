@@ -59,7 +59,7 @@ if [ -z $CLUSTER_EXISTS ]; then
   exit 1
 else
   echo "Deleting flux system"
-  flux uninstall --silent
+  flux uninstall --silent --keep-namespace=true
 
   echo "Deleting capi clusters"
   kubectl delete cluster -A --all
