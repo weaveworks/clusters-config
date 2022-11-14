@@ -20,6 +20,8 @@ jobs:
     outputs:
       CLUSTER_NAME: ${{ steps.outputs.outputs.CLUSTER_NAME }}
       STATUS: ${{ job.status }}
+      STATUS_EMOJI: ${{ steps.outputs.outputs.STATUS_EMOJI }}
+      SLACK_MESSAGE: ${{ steps.outputs.outputs.SLACK_MESSAGE }}
     permissions:
       id-token: write
       contents: read
@@ -94,6 +96,13 @@ jobs:
         id: outputs
         run: |
           echo "CLUSTER_NAME=${{ env.CLUSTER_NAME }}" >> $GITHUB_OUTPUT
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "STATUS_EMOJI=greentick" >> $GITHUB_OUTPUT
+            echo "SLACK_MESSAGE=Cluster has been deleted successfully!" >> $GITHUB_OUTPUT
+          elif [ "${{ job.status }}" == "failure" ]; then
+            echo "STATUS_EMOJI=failed" >> $GITHUB_OUTPUT
+            echo "SLACK_MESSAGE=Cluster failed to be deleted!!" >> $GITHUB_OUTPUT
+          fi
 
   slack-notifications:
     if: ${{ always() && ( startsWith(github.event.ref, 'cluster-') || (github.event_name == 'workflow_dispatch') ) }}
@@ -101,7 +110,7 @@ jobs:
       - delete-cluster
     uses: ./.github/workflows/slack-notification.yaml
     with:
-      header-text: Status of deleting ${{ needs.delete-cluster.outputs.CLUSTER_NAME }} cluster
-      message: ${{ needs.delete-cluster.outputs.STATUS }}
+      header-text: "DELETE CLUSTER: ${{ needs.delete-cluster.outputs.CLUSTER_NAME }}"
+      message: " :${{ needs.delete-cluster.outputs.STATUS_EMOJI }}: ${{ needs.delete-cluster.outputs.SLACK_MESSAGE }}"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
