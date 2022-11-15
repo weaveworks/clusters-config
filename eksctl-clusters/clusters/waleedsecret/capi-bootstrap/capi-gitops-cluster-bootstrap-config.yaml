@@ -29,6 +29,8 @@ spec:
         envFrom:
         - secretRef:
           name: ssh-credentials
+        - secretRef:
+          name: awssm-secret
       restartPolicy: Never
       volumes:
       - name: kubeconfig
