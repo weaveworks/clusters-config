@@ -18,8 +18,7 @@ spec:
             - name: kubeconfig
               mountPath: "/etc/gitops"
               readOnly: true
-          args:
-            [
+          args: [
               "bootstrap",
               "github",
               "--kubeconfig=/etc/gitops/value",
@@ -30,7 +29,7 @@ spec:
             ]
           envFrom:
             - secretRef:
-                name: ssh-credentials
+              name: ssh-credentials
       restartPolicy: Never
       volumes:
         - name: kubeconfig
