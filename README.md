@@ -33,6 +33,12 @@ Configuration for engineering's ephemeral clusters
     - Eksctl cluster configurations.
     - flux, gitops, other apps files.
 
+### Slack notifications:
+We send slack notifications to #clusters-config channel. We notify for:
+1. Create a cluster
+1. Delete a cluster
+1. TTL is about to end.
+
 ### Requesting a new cluster
 To request a new cluster, follow the [requesting a new cluster](./docs/cluster.md#requesting-a-cluster) doc
 
