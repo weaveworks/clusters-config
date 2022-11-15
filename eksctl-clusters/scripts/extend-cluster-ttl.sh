@@ -4,7 +4,6 @@
 #      run ./extend-cluster-ttl.sh --cluster-name CLUSTER_NAME --extend <NUMBER_OF_DAYS_TO_BE_EXTENDED>
 
 set -e
-set -x
 
 blnk=$(echo "$0" | sed 's/./ /g')
 usage() {
