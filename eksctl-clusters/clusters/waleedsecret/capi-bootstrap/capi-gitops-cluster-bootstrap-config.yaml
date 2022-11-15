@@ -1,0 +1,39 @@
+apiVersion: capi.weave.works/v1alpha1
+kind: ClusterBootstrapConfig
+metadata:
+  name: capi-gitops
+  namespace: default
+spec:
+  clusterSelector:
+    matchLabels:
+      weave.works/capi: bootstrap
+  jobTemplate:
+    generateName: "run-gitops-{{ .ObjectMeta.Name }}"
+    spec:
+      containers:
+        - image: ghcr.io/fluxcd/flux-cli:v0.35.0
+          name: flux-bootstrap
+          resources: {}
+          volumeMounts:
+            - name: kubeconfig
+              mountPath: "/etc/gitops"
+              readOnly: true
+          args:
+            [
+              "bootstrap",
+              "github",
+              "--kubeconfig=/etc/gitops/value",
+              "--owner=weaveworks",
+              "--repository="clusters-config",
+              "--branch="cluster-waleedsecret",
+              "--path=./eksctl-clusters/clusters/waleedsecret/clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
+            ]
+          envFrom:
+            - secretRef:
+                name: ssh-credentials
+                name: aws-sm-crs-secret
+      restartPolicy: Never
+      volumes:
+        - name: kubeconfig
+          secret:
+            secretName: "{{ .ObjectMeta.Name }}-kubeconfig"
