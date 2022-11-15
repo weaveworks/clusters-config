@@ -2,9 +2,9 @@ apiVersion: gitops.weave.works/v1alpha1
 kind: GitopsCluster
 metadata:
   annotations:
-    templates.weave.works/create-request: '{"head_branch":"create-clusters-branch-b2apwn","title":"Creates
-      cluster leaf","description":"This PR creates a new cluster","template_name":"aws-eks","parameter_values":{"AWS_REGION":"eu-north-1","CLUSTER_NAME":"leaf","INSTANCE_TYPE":"t3.medium","KUBERNETES_VERSION":"v1.23.7","OWNER_EMAIL":"waleed.hamam@weave.works","SSH_KEY_NAME":"testwaleed","WORKER_MACHINE_COUNT":"0"},"commit_message":"Creates
-      capi cluster","credentials":{}}'
+    templates.weave.works/create-request: '{"head_branch":"edit-cluster-leaf-branch-6tc7y","title":"Edits
+      cluster leaf","description":"This PR edits the cluster","template_name":"aws-eks","parameter_values":{"AWS_REGION":"eu-north-1","CLUSTER_NAME":"leaf","INSTANCE_TYPE":"t3.medium","KUBERNETES_VERSION":"v1.23.7","OWNER_EMAIL":"waleed.hamam@weave.works","SSH_KEY_NAME":"testwaleed","WORKER_MACHINE_COUNT":"0"},"commit_message":"Edits
+      capi cluster leaf","credentials":{}}'
   labels:
     templates.weave.works/template-name: aws-eks
     templates.weave.works/template-namespace: default
