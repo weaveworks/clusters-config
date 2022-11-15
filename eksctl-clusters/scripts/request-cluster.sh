@@ -200,20 +200,21 @@ fi
 mkdir -p ${CLUSTER_DIR}
 echo -e "${SUCCESS} '${CLUSTER_DIR}' created successfully."
 
-if [ "$(uname -s)" == "Linux" ]; then
-  SED_="sed -i"
-elif [ "$(uname -s)" == "Darwin" ]; then
-  SED_="sed -i ''"
-fi
+sedi () {
+    case $(uname -s) in
+        *[Dd]arwin* | *BSD* ) sed -i '' "$@";;
+        *) sed -i "$@";;
+    esac
+}
 
 # Copy eksctl config to cluster dir
 echo "Copying eksctl config file..."
 cp ${EKS_CLUSTER_TEMPLATE} ${EKS_CLUSTER_CONFIG_FILE}
-${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
-${SED_} 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
-${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
-${SED_} 's/${DELETE_AFTER}/'"${DELETE_AFTER}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
-${SED_} 's/${TEAM}/'"${TEAM_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+sedi 's/${CLUSTER_VERSION}/'"${CLUSTER_VERSION}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+sedi 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+sedi 's/${DELETE_AFTER}/'"${DELETE_AFTER}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
+sedi 's/${TEAM}/'"${TEAM_NAME}"'/g' ${EKS_CLUSTER_CONFIG_FILE}
 echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 
 # Copy common apps to cluster dir
@@ -239,10 +240,10 @@ case $WW_MODE in
 
     echo "Copying WeaveGitops templates..."
     cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/gitops-kustomization.yaml
-    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+    sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
 
-    ${SED_} 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
-    ${SED_} 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+    sedi 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+    sedi 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
     ;;
   enterprise)
     echo "Copying WGE templates..."
@@ -253,16 +254,16 @@ case $WW_MODE in
       CHART_REPO="https://charts.dev.wkp.weave.works/dev/branches/${WEAVE_BRANCH}"
     elif [ "${WEAVE_VERSION}" ]
     then
-      ${SED_} 's/version: .*/version: "'"${WEAVE_VERSION}"'"/g' ${WGE_RELEASE_FILE}
+      sedi 's/version: .*/version: "'"${WEAVE_VERSION}"'"/g' ${WGE_RELEASE_FILE}
     fi
     cp -r ${PARENT_DIR}/apps/enterprise/enterprise-kustomization.yaml-template ${CLUSTER_DIR}/enterprise-kustomization.yaml
-    ${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
-    ${SED_} 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
-    ${SED_} 's#${CHART_REPO}#'"${CHART_REPO}"'#g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
+    sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
+    sedi 's/${BRANCH_NAME}/'"${BRANCH_NAME}"'/g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
+    sedi 's#${CHART_REPO}#'"${CHART_REPO}"'#g' ${CLUSTER_DIR}/enterprise-kustomization.yaml
 
     if [ $ENABLE_POLICIES == "true" ]
     then
-      ${SED_} 's/${APPS_KUSTOMIZATION}/'"enterprise"'/g' ${CLUSTER_DIR}/policies-kustomization.yaml
+      sedi 's/${APPS_KUSTOMIZATION}/'"enterprise"'/g' ${CLUSTER_DIR}/policies-kustomization.yaml
     fi
     ;;
   leaf)
@@ -271,7 +272,7 @@ case $WW_MODE in
 
     if [ $ENABLE_POLICIES == "true" ]
     then
-      ${SED_} 's/${APPS_KUSTOMIZATION}/'"enterprise-leaf"'/g' ${CLUSTER_DIR}/policies-kustomization.yaml
+      sedi 's/${APPS_KUSTOMIZATION}/'"enterprise-leaf"'/g' ${CLUSTER_DIR}/policies-kustomization.yaml
     fi
     ;;
   none)
@@ -287,7 +288,7 @@ mkdir -p ${CLUSTER_DIR}/flux-system
 touch ${CLUSTER_DIR}/flux-system/gotk-components.yaml \
     ${CLUSTER_DIR}/flux-system/gotk-sync.yaml
 cp ${FLUX_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/flux-system/kustomization.yaml
-${SED_} 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/flux-system/kustomization.yaml
+sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/flux-system/kustomization.yaml
 
 echo -e "${SUCCESS} Cluster directory \"${CLUSTER_DIR}\" has been created"
 echo -e "          Please, commit the files and push the branch to provision the cluster"

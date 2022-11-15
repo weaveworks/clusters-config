@@ -48,11 +48,12 @@ source ${BASH_SOURCE%/*}/colors.sh
 defaults
 flags "$@"
 
-if [ "$(uname -s)" == "Linux" ]; then
-  SED_="sed -i"
-elif [ "$(uname -s)" == "Darwin" ]; then
-  SED_="sed -i ''"
-fi
+sedi () {
+    case $(uname -s) in
+        *[Dd]arwin* | *BSD* ) sed -i '' "$@";;
+        *) sed -i "$@";;
+    esac
+}
 
 export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-cluster.yaml
@@ -74,7 +75,7 @@ DELETE_AFTER=$(aws eks list-tags-for-resource --resource-arn $CLUSTER_ARN --quer
 EXTENDED_DELETE_AFTER=$(($DELETE_AFTER + $DAYS))
 
 if grep -q "delete-after: $DELETE_AFTER" $EKS_CLUSTER_CONFIG_FILE; then # delete-after tag exists?
-    ${SED_} 's/delete-after: '${DELETE_AFTER}'/delete-after: '${EXTENDED_DELETE_AFTER}'/g' ${EKS_CLUSTER_CONFIG_FILE} # modify delete-after tag
+    sedi 's/delete-after: '${DELETE_AFTER}'/delete-after: '${EXTENDED_DELETE_AFTER}'/g' ${EKS_CLUSTER_CONFIG_FILE} # modify delete-after tag
 else
     echo -e "${WARNING} delete-after tag does not exist in cluster config: ${EKS_CLUSTER_CONFIG_FILE}"
     echo -e "          Please, add it to your eksctl cluster config file and push to your cluster branch. You can get it's value from the AWS Console."
