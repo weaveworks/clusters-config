@@ -1,26 +1,29 @@
 ## Requesting a cluster:
 1. Clone the repo
     ```bash
-      git clone git@github.com:weaveworks/clusters-config.git
+    git clone git@github.com:weaveworks/clusters-config.git
     ```
 1. Run the `request-cluster` script
     ```bash
-      ./eksctl-clusters/scripts/request-cluster.sh --team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <WEAVE_MODE> --delete-after 10
+    ./eksctl-clusters/scripts/request-cluster.sh --team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <WEAVE_MODE> --delete-after 10
     ```
     For more options see this [section](#request-cluster-options), or run
       ```bash
-        ./eksctl-clusters/scripts/request-cluster.sh --help
+      ./eksctl-clusters/scripts/request-cluster.sh --help
       ```
 1. Add and commit your cluster directory then push the new branch
 
 1. Wait until the cluster is provisioned. It might take around 20 minutes. You can check your provisioning job in the [actions](https://github.com/weaveworks/clusters-config/actions) tab.
 
-1. Get kubeconfig file:
+1. Join #clusters-config slack channel to get notified once the cluster is provisioned!
 
-    **Note:** You have to wait until the cluster is provisioned before you get the kubeconfig file, otherwise you may get an error like: `Error: cannot perform Kubernetes API operations on cluster <CLUSTER_NAME> in "eu-north-1" region due to status "CREATING"`
-    ```bash
-    eksctl utils write-kubeconfig --region eu-north-1 --cluster <CLUSTER_NAME> --kubeconfig=$HOME/.kube/config
-    ```
+## Get kubeconfig file:
+
+  > **_NOTE:_** You have to wait until the cluster is provisioned before you get the kubeconfig file, otherwise you may get an error like this: `Error: cannot perform Kubernetes API operations on cluster <CLUSTER_NAME> in "eu-north-1" region due to status "CREATING"`
+
+  ```bash
+  eksctl utils write-kubeconfig --region eu-north-1 --cluster <CLUSTER_NAME> --kubeconfig=$HOME/.kube/config
+  ```
 
 ## Deploy Specific Version of WGE:
 By default, flux will deploy the latest version of WGE and will reconcile new versions once released. To deploy specific release, use the `--weave-version` option.
@@ -29,8 +32,8 @@ By default, flux will deploy the latest version of WGE and will reconcile new ve
 ./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION>
 ```
 
-## Develop and test your code!
-You can deploy WGE from a feature branch and renconcile changes automatically. Use `--weave-branch` option while you are requesting the cluster.
+## Develop and test your feature branch!
+You can deploy **WGE** from a feature branch and renconcile changes automatically. Use `--weave-branch` option while you are requesting the cluster.
 
 ```bash
 ./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME>
@@ -79,6 +82,8 @@ You can then access the UI on `localhost:9001`
 
 ## Cluster TTL (time to live):
 Every cluster created by the `request-cluster` script runs for 7 days by default, then it will be auto deleted. To define the TTL in days, use `--delete-after` option while requesting the cluster. If you already provisioned your cluster, you can [extend TTL](#extending-your-cluster-ttl).
+
+Join #clusters-config slack channel to get notifications before ttl ends!
 
 ### Extending your cluster TTL:
 
