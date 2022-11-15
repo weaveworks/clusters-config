@@ -24,7 +24,7 @@ spec:
           "--owner=weaveworks",
           "--repository=clusters-config",
           "--branch=cluster-waleedsecret",
-          "--path=./eksctl-clusters/clusters/waleedsecret/clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}"
+          "--path=./eksctl-clusters/clusters/waleedsecret/clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
         ]
         envFrom:
         - secretRef:
