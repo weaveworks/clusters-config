@@ -22,10 +22,10 @@ spec:
           "github",
           "--kubeconfig=/etc/gitops/value",
           "--owner=weaveworks",
-          "--repository="clusters-config",
-          "--branch="cluster-waleedsecret",
-          "--path=./eksctl-clusters/clusters/waleedsecret/clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
-          ]
+          "--repository=clusters-config",
+          "--branch=cluster-waleedsecret",
+          "--path=./eksctl-clusters/clusters/waleedsecret/clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}"
+        ]
         envFrom:
         - secretRef:
           name: ssh-credentials
