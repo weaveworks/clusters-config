@@ -37,7 +37,7 @@ Configuration for engineering's ephemeral clusters
 We send slack notifications to #clusters-config channel. We notify for:
 1. Create a cluster
 1. Delete a cluster
-1. TTl is about to end.
+1. TTL is about to end.
 
 ### Requesting a new cluster
 To request a new cluster, follow the [requesting a new cluster](./docs/cluster.md#requesting-a-cluster) doc
