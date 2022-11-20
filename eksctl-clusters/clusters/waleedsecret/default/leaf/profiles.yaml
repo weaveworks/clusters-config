@@ -1,0 +1,198 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  creationTimestamp: null
+  name: weaveworks-charts
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  provider: generic
+  timeout: 1m0s
+  url: https://weaveworks.github.io/weave-gitops-profile-examples/
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-0
+  name: cert-manager
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: cert-manager
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.8
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    cert-manager:
+      installCRDs: true
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  name: dex
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: dex
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.12
+  dependsOn:
+  - name: weave-policy-agent
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    dex:
+      config:
+        enablePasswordDB: true
+        issuer: http://my-issuer-url.com
+        storage:
+          type: memory
+      enabled: true
+      ingress:
+        enabled: true
+        hosts:
+        - host: my-issuer-url.com
+          paths:
+          - path: /
+            pathType: ImplementationSpecific
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-0
+  name: local-path-provisioner
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: local-path-provisioner
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.3
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    local-path-provisioner:
+      storageClass:
+        defaultClass: true
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-0
+  name: metallb
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: metallb
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.0.3
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    metallb:
+      configInline:
+        address-pools:
+        - addresses:
+          - 172.16.20.251/32
+          name: default
+          protocol: layer2
+      prometheus:
+        namespace: ""
+        podMonitor:
+          enabled: false
+        prometheusRule:
+          enabled: false
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-1
+  name: weave-policy-agent
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: weave-policy-agent
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.5.3
+  dependsOn:
+  - name: cert-manager
+  - name: local-path-provisioner
+  - name: metallb
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    policy-agent:
+      caCertificate: ""
+      certificate: ""
+      config:
+        accountId: ""
+        admission:
+          enabled: true
+          sinks:
+            k8sEventsSink:
+              enabled: true
+        audit:
+          enabled: false
+        clusterId: ""
+      failurePolicy: Ignore
+      key: ""
+      persistence:
+        enabled: false
+      useCertManager: true
+    policySource:
+      enabled: false
+status: {}
