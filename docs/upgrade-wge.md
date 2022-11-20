@@ -1,6 +1,6 @@
 # Upgrade WGE
 
-- This document explaines how to switch between WGE released versions. Or switching between WGE released versions and WGE from a feature-branch. 
+- This document explaines how to switch between WGE released versions. Or switching between WGE released versions and WGE from a feature-branch.
 
 - This will give engineers the power to upgrade WGE and test the upgrade before releasing a new version.
 
