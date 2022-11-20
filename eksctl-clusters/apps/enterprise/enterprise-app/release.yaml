@@ -24,6 +24,8 @@ spec:
         kind: HelmRepository
         name: weave-gitops-enterprise-charts
         namespace: flux-system
+  dependsOn:
+  - name: cert-manager
   interval: 10m0s
   install:
     crds: CreateReplace
@@ -53,3 +55,8 @@ spec:
       enabled: false
     enablePipelines: true
     enableTerraformUI: true
+    policy-agent:
+      enabled: true
+      config:
+        accountId: "${CLUSTER_NAME}-user"
+        clusterId: "${CLUSTER_NAME}"
