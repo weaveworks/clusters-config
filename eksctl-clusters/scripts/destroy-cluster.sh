@@ -59,10 +59,10 @@ if [ -z $CLUSTER_EXISTS ]; then
   exit 1
 else
   echo "Deleting flux system"
-  flux uninstall --silent --keep-namespace=true
+  flux uninstall --silent --keep-namespace=true || true
 
   echo "Deleting capi clusters"
-  kubectl delete cluster -A --all
+  kubectl delete cluster -A --all || true
 
   # Delete loadbalancers
   kubectl get svc -A -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace,TYPE:.spec.type | \
