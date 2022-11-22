@@ -7,12 +7,13 @@ set -e
 
 blnk=$(echo "$0" | sed 's/./ /g')
 usage() {
-  echo "Usage: $0 --cluster-name <CLUSTER_NAME> --extend <NUMBER_OF_DAYS_TO_BE_EXTENDED>\\"
+  echo "Usage: $0 --cluster-name <CLUSTER_NAME>\\"
+  echo "       $blnk --extend <NUMBER_OF_DAYS_TO_BE_EXTENDED>"
   echo "       $blnk [-h|--help]"
 
   echo
   echo "  --cluster-name CLUSTER_NAME              -- Set cluster name"
-  echo "  --extend NUMBER_OF_DAYS_TO_BE_EXTENDED   -- Set cluster name"
+  echo "  --extend NUMBER_OF_DAYS_TO_BE_EXTENDED   -- Set number of days to extend ttl"
   echo "  -h|--help                                -- Print this help message and exit"
 
   exit 0
@@ -33,6 +34,12 @@ flags(){
     --extend)
         shift
         export DAYS="$1"
+
+        re='^[0-9]+$'
+        if ! [[ $DAYS =~ $re ]] ; then
+            echo -e "${ERROR} Not a number. Please enter the number of days to be extended"
+            exit 1
+        fi
         ;;
     -h|--help)
         usage;;
@@ -44,16 +51,10 @@ flags(){
 }
 
 source ${BASH_SOURCE%/*}/colors.sh
+source ${BASH_SOURCE%/*}/common-functions.sh
 # -------------------------------------------------------------------
 defaults
 flags "$@"
-
-sedi () {
-    case $(uname -s) in
-        *[Dd]arwin* | *BSD* ) sed -i '' "$@";;
-        *) sed -i "$@";;
-    esac
-}
 
 export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-cluster.yaml
@@ -64,10 +65,10 @@ then
   exit 1
 fi
 
-re='^[0-9]+$'
-if ! [[ $DAYS =~ $re ]] ; then
-    echo -e "${ERROR} Not a number. Please enter the number of days to be extended"
-    exit 1
+if [ -z $DAYS ]
+then
+  echo -e "${ERROR} You have to enter number of days to be extended!  Use '--extend NUMBER_OF_DAYS_TO_BE_EXTENDED'"
+  exit 1
 fi
 
 CLUSTER_ARN=$(aws eks describe-cluster --name $CLUSTER_NAME --query "cluster.arn" --output text)
