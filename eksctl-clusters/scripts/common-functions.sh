@@ -26,4 +26,18 @@ validateFlags(){
       exit 1
     fi
   fi
+
+  # Using --enable-flager with --weave-mode enterprise or leaf only!
+  if [ $ENABLE_FLAGGER == "true" ] && ( [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "leaf" ] )
+  then
+    echo -e "${ERROR} --enable-flagger can only be used with --weave-mode=enterprise|leaf."
+    exit 1
+  fi
+
+  # Using --enable-policies with --weave-mode enterprise or leaf only!
+  if [ $ENABLE_POLICIES == "true" ] && ( [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "leaf" ] )
+  then
+    echo -e "${ERROR} --enable-policies can only be used with --weave-mode=enterprise|leaf."
+    exit 1
+  fi
 }

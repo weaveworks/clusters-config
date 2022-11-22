@@ -40,40 +40,6 @@ defaults(){
   export DELETE_AFTER="7"
 }
 
-validateFlags(){
-  if [ $WEAVE_VERSION ] && [ $WEAVE_BRANCH ]
-  then
-    echo -e "${ERROR} --weave-version cannot be used with --weave-branch. You should only use one!"
-    exit 1
-  fi
-
-  if [ $WEAVE_VERSION ]
-  then
-    if [ "${WW_MODE}" == "core" ]
-    then
-      echo -e "${ERROR} --weave-version is currently supported for enterprise only"
-      exit 1
-    elif [ "${WW_MODE}" == "none" ]
-    then
-      echo -e "${ERROR} --weave-version cannot be used with --weave-mode none!"
-      exit 1
-    fi
-  fi
-
-  if [ $WEAVE_BRANCH ]
-  then
-    if [ "${WW_MODE}" == "core" ]
-    then
-      echo "-e ${ERROR} --weave-branch is currently supported for enterprise only"
-      exit 1
-    elif [ "${WW_MODE}" == "none" ]
-    then
-      echo "-e ${ERROR} --weave-branch cannot be used with --weave-mode none!"
-      exit 1
-    fi
-  fi
-}
-
 flags(){
   while test $# -gt 0
   do
@@ -132,6 +98,7 @@ flags(){
 }
 
 source ${BASH_SOURCE%/*}/colors.sh
+source ${BASH_SOURCE%/*}/common-functions.sh
 # -------------------------------------------------------------------
 
 defaults
@@ -156,18 +123,6 @@ fi
 if [ -z $TEAM_NAME ]
 then
   echo -e "${ERROR} --team argument is not provided. Use '--team YOUR-TEAM'."
-  exit 1
-fi
-
-if [ $ENABLE_FLAGGER == "true" ] && ( [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "leaf" ] )
-then
-  echo -e "${ERROR} --enable-flagger can only be used with --weave-mode=enterprise|leaf."
-  exit 1
-fi
-
-if [ $ENABLE_POLICIES == "true" ] && ( [ "${WW_MODE}" != "enterprise" ] && [ "${WW_MODE}" != "leaf" ] )
-then
-  echo -e "${ERROR} --enable-policies can only be used with --weave-mode=enterprise|leaf."
   exit 1
 fi
 
@@ -199,13 +154,6 @@ fi
 # Creating cluster directory
 mkdir -p ${CLUSTER_DIR}
 echo -e "${SUCCESS} '${CLUSTER_DIR}' created successfully."
-
-sedi () {
-    case $(uname -s) in
-        *[Dd]arwin* | *BSD* ) sed -i '' "$@";;
-        *) sed -i "$@";;
-    esac
-}
 
 # Copy eksctl config to cluster dir
 echo "Copying eksctl config file..."
