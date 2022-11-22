@@ -13,3 +13,4 @@
     ```
 
     > **_NOTE:_** You cann't use both "--weave-branch" and "--weave-version". Select only one.
+1. Commit and push changes to your branch, flux will reconcile.
