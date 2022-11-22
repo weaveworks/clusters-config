@@ -7,10 +7,6 @@
     ```bash
     make request-cluster ARGS="--team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <WEAVE_MODE> --delete-after 10"
     ```
-    OR
-    ```bash
-    ./eksctl-clusters/scripts/request-cluster.sh --team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <WEAVE_MODE> --delete-after 10
-    ```
     > **_Note:_** We recommend using `make` instead of using the script path.
 
     For more options see this [section](#request-cluster-options), or run
@@ -37,20 +33,12 @@ By default, flux will deploy the latest version of WGE and will reconcile new ve
 ```bash
 make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION> --team <TEAM_NAME>"
 ```
-OR
-```bash
-./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION> --team <TEAM_NAME>
-```
 
 ## Develop and test your feature branch!
 You can deploy **WGE** from a feature branch and renconcile changes automatically. Use `--weave-branch` option while you are requesting the cluster.
 
 ```bash
 make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME> --team <TEAM_NAME>"
-```
-OR
-```bash
-./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME> --team <TEAM_NAME>
 ```
 
 ## Accessing UI:
@@ -104,10 +92,6 @@ Join #clusters-config slack channel to get notifications before ttl ends!
 You can extend your cluster TTL by running:
 ```bash
   make extend-ttl ARGS="--cluster-name <CLUSTER_NAME> --extend <NUMBER_OF_DAYS_TO_EXTEND>"
-```
-OR
-```bash
-  ./eksctl-clusters/scripts/extend-cluster-ttl.sh --cluster-name <CLUSTER_NAME> --extend <NUMBER_OF_DAYS_TO_EXTEND>
 ```
 
 ## Request cluster options:
