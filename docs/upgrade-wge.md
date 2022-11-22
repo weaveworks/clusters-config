@@ -9,7 +9,7 @@
 1. Checkout to the cluster branch. The script will fail if you didn't!
 1. Run the following command:
     ```bash
-    ./eksctl-clusters/scripts/update-cluster.sh [--weave-branch WEAVE_BRANCH | --weave-version WEAVE_VERSION]
+    make update-cluster ARGS="[--weave-branch WEAVE_BRANCH || --weave-version WEAVE_VERSION]"
     ```
 
     > **_NOTE:_** You cann't use both "--weave-branch" and "--weave-version". Select only one.

@@ -5,17 +5,23 @@
     ```
 1. Run the `request-cluster` script
     ```bash
+    make request-cluster ARGS="--team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <WEAVE_MODE> --delete-after 10"
+    ```
+    OR
+    ```bash
     ./eksctl-clusters/scripts/request-cluster.sh --team <TEAM_NAME> --cluster-name <CLUSTER_NAME> --weave-mode <WEAVE_MODE> --delete-after 10
     ```
+    > **_Note:_** We recommend using `make` instead of using the script path.
+
     For more options see this [section](#request-cluster-options), or run
       ```bash
-      ./eksctl-clusters/scripts/request-cluster.sh --help
+      make request-cluster ARGS="--help"
       ```
 1. Add and commit your cluster directory then push the new branch
 
 1. Wait until the cluster is provisioned. It might take around 20 minutes. You can check your provisioning job in the [actions](https://github.com/weaveworks/clusters-config/actions) tab.
 
-1. Join #clusters-config slack channel to get notified once the cluster is provisioned!
+1. Join **#clusters-config** slack channel to get notified once the cluster is provisioned!
 
 ## Get kubeconfig file:
 
@@ -29,14 +35,22 @@
 By default, flux will deploy the latest version of WGE and will reconcile new versions once released. To deploy specific release, use the `--weave-version` option.
 
 ```bash
-./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION>
+make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION> --team <TEAM_NAME>"
+```
+OR
+```bash
+./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION> --team <TEAM_NAME>
 ```
 
 ## Develop and test your feature branch!
 You can deploy **WGE** from a feature branch and renconcile changes automatically. Use `--weave-branch` option while you are requesting the cluster.
 
 ```bash
-./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME>
+make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME> --team <TEAM_NAME>"
+```
+OR
+```bash
+./eksctl-clusters/scripts/request-cluster.sh --cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME> --team <TEAM_NAME>
 ```
 
 ## Accessing UI:
@@ -88,6 +102,10 @@ Join #clusters-config slack channel to get notifications before ttl ends!
 ### Extending your cluster TTL:
 
 You can extend your cluster TTL by running:
+```bash
+  make extend-ttl ARGS="--cluster-name <CLUSTER_NAME> --extend <NUMBER_OF_DAYS_TO_EXTEND>"
+```
+OR
 ```bash
   ./eksctl-clusters/scripts/extend-cluster-ttl.sh --cluster-name <CLUSTER_NAME> --extend <NUMBER_OF_DAYS_TO_EXTEND>
 ```
