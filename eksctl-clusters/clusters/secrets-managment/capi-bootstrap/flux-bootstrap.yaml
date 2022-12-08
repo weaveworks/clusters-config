@@ -30,7 +30,7 @@ spec:
             ]
           envFrom:
             - secretRef:
-                name: flux-system
+                name: my-pat
           env:
             - name: EXP_CLUSTER_RESOURCE_SET
               value: "true"
