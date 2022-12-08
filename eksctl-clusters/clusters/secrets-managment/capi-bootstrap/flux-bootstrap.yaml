@@ -26,7 +26,7 @@ spec:
               "--kubeconfig=/etc/gitops/value",
               "--owner=weaveworks",
               "--repository=clusters-config",
-              "--branch="cluster-secrets-managment",
+              "--branch=cluster-secrets-managment",
               "--path=./eksctl-clusters/clusters/secrets-managment/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
             ]
           envFrom:
