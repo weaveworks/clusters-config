@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - gotk-components.yaml
+  - gotk-sync.yaml
+patches:
+  - patch: |
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: kustomize-controller
+        annotations:
+          eks.amazonaws.com/role-arn: arn:aws:iam::894516026745:role/eksctl-test-eso-apis-sops-decrypt-role
+    target:
+      kind: ServiceAccount
+      name: kustomize-controller

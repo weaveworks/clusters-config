@@ -1,0 +1,56 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: test-eso-apis
+  region: eu-north-1
+  version: "1.23"
+  tags:
+    environment: "test-eso-apis"
+    delete-after: "1"
+    team: "timberwolf"
+
+iam:
+  withOIDC: true
+  serviceRoleARN: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
+  serviceAccounts:
+  - metadata:
+      name: kustomize-controller
+      namespace: flux-system
+    attachPolicyARNs:
+    - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
+    roleName: eksctl-test-eso-apis-sops-decrypt-role
+    roleOnly: true
+
+# Enable private access to the API server.
+vpc:
+  clusterEndpoints:
+    privateAccess: true
+    publicAccess: true
+
+nodeGroups:
+  - name: test-eso-apis-ng-1
+    instanceType: t3.medium
+    minSize: 3
+    maxSize: 3
+    desiredCapacity: 3
+    volumeSize: 10
+    privateNetworking: true
+    tags:
+      environment: "test-eso-apis"
+      delete-after: "1"
+      team: "timberwolf"
+    propagateASGTags: true
+    iam:
+      instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
+
+gitops:
+  flux:
+    gitProvider: github
+    flags:
+      owner: "weaveworks"
+      repository: "clusters-config"
+      private: "true"
+      branch: "cluster-test-eso-apis"
+      namespace: "flux-system"
+      path: "eksctl-clusters/clusters/test-eso-apis"
