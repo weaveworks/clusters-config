@@ -1,0 +1,107 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"head_branch":"wge-create-branch-m9pb5h","title":"Creates
+      resource tegreed-leaf-test","description":"This PR creates a aws-eks instance","template_name":"aws-eks","parameter_values":{"AWS_REGION":"eu-north-1","CLUSTER_NAME":"tegreed-leaf-test","INSTANCE_TYPE":"t3.medium","KUBERNETES_VERSION":"v1.23.7","OWNER_EMAIL":"tagreed.anany@weave.works","SSH_KEY_NAME":"weave-gitops-pesto","WORKER_MACHINE_COUNT":"1"},"commit_message":"Creates
+      aws-eks instance","credentials":{},"template_namespace":"default","template_kind":"CAPITemplate"}'
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+    weave.works/capi: bootstrap
+  name: tegreed-leaf-test
+  namespace: default
+spec:
+  capiClusterRef:
+    name: tegreed-leaf-test
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: tegreed-leaf-test
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 10.120.0.0/20
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: tegreed-leaf-test-control-plane
+  infrastructureRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: tegreed-leaf-test-control-plane
+
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: AWSManagedControlPlane
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: tegreed-leaf-test-control-plane
+  namespace: default
+spec:
+  additionalTags:
+    creator: tagreed.anany@weave.works
+  iamAuthenticatorConfig:
+    mapRoles:
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/AdministratorAccess
+      username: admin
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/WeaveEksEditor
+      username: admin
+  region: eu-north-1
+  sshKeyName: weave-gitops-pesto
+  version: v1.23.7
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: tegreed-leaf-test-pool-0
+  namespace: default
+spec:
+  clusterName: tegreed-leaf-test
+  replicas: 1
+  template:
+    spec:
+      bootstrap:
+        dataSecretName: ""
+      clusterName: tegreed-leaf-test
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AWSManagedMachinePool
+        name: tegreed-leaf-test-pool-0
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AWSManagedMachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: tegreed-leaf-test-pool-0
+  namespace: default
+spec:
+  additionalTags:
+    creator: tagreed.anany@weave.works
+  instanceType: t3.medium
