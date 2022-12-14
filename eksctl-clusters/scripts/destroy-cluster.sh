@@ -54,7 +54,7 @@ CONFIG_FILE=${CLUSTER_DIR}/eksctl-cluster.yaml
 
 
 export CLUSTER_EXISTS=$(eksctl get clusters --region ${AWS_REGION} -n ${CLUSTER_NAME} 2> /dev/null)
-if [ -z $CLUSTER_EXISTS ]; then
+if [ -z "$CLUSTER_EXISTS" ]; then
   echo -e "${ERROR} Could not find cluster '${CLUSTER_NAME}' to delete."
   exit 1
 else
