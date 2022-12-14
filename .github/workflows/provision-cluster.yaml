@@ -104,7 +104,7 @@ jobs:
         run: |
           # Check if the cluster was successfully installed in AWS
           export CLUSTER_EXISTS=$(eksctl get clusters --region ${{ env.AWS_REGION }} -n ${{ env.cluster_name }} 2> /dev/null)
-          if [ -n $CLUSTER_EXISTS ]; then
+          if [ -n "$CLUSTER_EXISTS" ]; then
             # Add Admin role
             eksctl create iamidentitymapping --cluster ${{ env.cluster_name }} --region ${{ env.AWS_REGION }} \
               --arn "arn:aws:iam::894516026745:role/AdministratorAccess" --group system:masters --username admin
