@@ -1,0 +1,188 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    metadata.weave.works/dashboard.prometheus: https://prometheus.io/
+    templates.weave.works/create-request: '{"head_branch":"create-clusters-branch-p41ly","title":"Creates
+      cluster test2","description":"This PR creates a new cluster","template_name":"cluster-template-development-2","parameter_values":{"CLUSTER_NAME":"test2","CONTROL_PLANE_MACHINE_COUNT":"1","KUBERNETES_VERSION":"1.23.3","NAMESPACE":"default","WORKER_MACHINE_COUNT":"1"},"commit_message":"Creates
+      capi cluster","credentials":{},"values":[{"name":"weave-policy-agent","version":"0.5.3","layer":"layer-1"}]}'
+  labels:
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+    weave.works/apps: capd
+    weave.works/flux: bootstrap
+  name: test2
+  namespace: default
+spec:
+  capiClusterRef:
+    name: test2
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    cni: calico
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+  name: test2
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+    serviceDomain: cluster.local
+    services:
+      cidrBlocks:
+      - 10.128.0.0/12
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: test2-control-plane
+    namespace: default
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: DockerCluster
+    name: test2
+    namespace: default
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: DockerCluster
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+  name: test2
+  namespace: default
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: DockerMachineTemplate
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+  name: test2-control-plane
+  namespace: default
+spec:
+  template:
+    spec:
+      extraMounts:
+      - containerPath: /var/run/docker.sock
+        hostPath: /var/run/docker.sock
+
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+  name: test2-control-plane
+  namespace: default
+spec:
+  kubeadmConfigSpec:
+    clusterConfiguration:
+      apiServer:
+        certSANs:
+        - localhost
+        - 127.0.0.1
+        - 0.0.0.0
+      controllerManager:
+        extraArgs:
+          enable-hostpath-provisioner: "true"
+    initConfiguration:
+      nodeRegistration:
+        criSocket: /var/run/containerd/containerd.sock
+        kubeletExtraArgs:
+          cgroup-driver: cgroupfs
+          eviction-hard: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
+    joinConfiguration:
+      nodeRegistration:
+        criSocket: /var/run/containerd/containerd.sock
+        kubeletExtraArgs:
+          cgroup-driver: cgroupfs
+          eviction-hard: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: DockerMachineTemplate
+      name: test2-control-plane
+      namespace: default
+  replicas: 1
+  version: 1.23.3
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: DockerMachineTemplate
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+  name: test2-md-0
+  namespace: default
+spec:
+  template:
+    spec: {}
+
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+  name: test2-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            cgroup-driver: cgroupfs
+            eviction-hard: nodefs.available<0%,nodefs.inodesFree<0%,imagefs.available<0%
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: cluster-template-development-2
+    templates.weave.works/template-namespace: default
+  name: test2-md-0
+  namespace: default
+spec:
+  clusterName: test2
+  replicas: 1
+  selector:
+    matchLabels: null
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: test2-md-0
+          namespace: default
+      clusterName: test2
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: DockerMachineTemplate
+        name: test2-md-0
+        namespace: default
+      version: 1.23.3
