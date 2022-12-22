@@ -40,6 +40,15 @@ flags(){
   done
 }
 
+waitDNSRecord(){
+  until [ "$(dig +short $1)" != "" ];
+  do
+    echo "Waiting for domain to be available: $1"
+    sleep 20
+  done
+  echo -e "${SUCCESS} Domain is ready: $1"
+}
+
 source ${BASH_SOURCE%/*}/colors.sh
 # -------------------------------------------------------------------
 defaults
@@ -76,4 +85,11 @@ echo "Add weaveworks roles to aws-auth"
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_ADMIN_ARN} --group system:masters --username admin
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_EDITOR_ARN} --group system:masters --username admin
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_GITHUB_ACTIONS_ARN} --group system:masters --username admin
-echo -e "${SUCCESS} The cluster is ready."
+
+waitDNSRecord $CLUSTER_NAME.eng-sandbox.weave.works.
+waitDNSRecord $CLUSTER_NAME-dex.eng-sandbox.weave.works.
+
+# Rollout WGE to make sure it captures the dex domain on start up
+kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service
+
+echo -e "${SUCCESS} Cluster is ready!"

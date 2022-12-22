@@ -21,6 +21,13 @@ iam:
     - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
     roleName: eksctl-${CLUSTER_NAME}-sops-decrypt-role
     roleOnly: true
+  - metadata:
+      name: external-dns
+      namespace: external-dns
+    attachPolicyARNs:
+    - "arn:aws:iam::894516026745:policy/AllowExternalDNSUpdates"
+    roleName: eksctl-${CLUSTER_NAME}-route53-external-dns-role
+    roleOnly: false # create role and annotated service account
 
 # Enable private access to the API server.
 vpc:

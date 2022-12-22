@@ -38,6 +38,7 @@ defaults(){
   export ENABLE_FLAGGER="false"
   export ENABLE_POLICIES="false"
   export DELETE_AFTER="7"
+  export SSL_CERTIFICATE_ARN="arn:aws:acm:eu-north-1:894516026745:certificate/5f8813f2-b630-4d0d-8c34-8fb68ec166ac"
 }
 
 flags(){
@@ -168,6 +169,8 @@ echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 # Copy common apps to cluster dir
 echo "Copying apps-common templates..."
 cp -r ${PARENT_DIR}/apps/common/common-kustomization.yaml-template ${CLUSTER_DIR}/common-kustomization.yaml
+sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/common-kustomization.yaml
+sedi 's+${SSL_CERTIFICATE_ARN}+'"${SSL_CERTIFICATE_ARN}"'+g' ${CLUSTER_DIR}/common-kustomization.yaml
 
 # Copy flagger to cluster dir
 if [ $ENABLE_FLAGGER == "true" ]

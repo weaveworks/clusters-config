@@ -61,6 +61,9 @@ else
   echo "Deleting flux system"
   flux uninstall --silent --keep-namespace=true
 
+  # Delete ingress resources to trigger external dns to delete Route53 records
+  kubectl delete ingress -A --all
+
   echo "Deleting capi clusters"
   kubectl delete cluster -A --all
 

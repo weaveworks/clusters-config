@@ -8,7 +8,7 @@ To request a new cluster, follow [this doc](../docs/cluster.md#requesting-a-clus
 | Directory       | Description |
 |--               |--           |
 | [apps](./apps/) | where we keep apps config files. |
-| [Clusters](./clusters/)| where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir. |
+| [clusters](./clusters/)| where we save all data related to a created cluster. **Flux** will be connected to this repo and add its files to the **eksctl-clusters/clusters/CLUSTER_NAME** dir. |
 | [policies](./policies/) | where the default policies live. Any new policies can be added here and reconciled by Flux |
 | [scripts](./scripts/) | where all of our scripts will live. |
 | [shared-secrets](./shared-secrets/) | where we save secrets that are shared for all clusters. like, entitlement-secret.yaml |

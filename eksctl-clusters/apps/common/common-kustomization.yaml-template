@@ -12,3 +12,7 @@ spec:
   path: ./eksctl-clusters/apps/common
   prune: true
   validation: client
+  postBuild:
+    substitute:
+      CLUSTER_NAME: ${CLUSTER_NAME}
+      SSL_CERTIFICATE_ARN: ${SSL_CERTIFICATE_ARN}
