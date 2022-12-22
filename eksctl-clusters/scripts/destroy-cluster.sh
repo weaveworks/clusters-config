@@ -77,7 +77,6 @@ else
 
   # Delete ingress resources to trigger external dns to delete Route53 records
   kubectl delete ingress -A --all
-  waitDNSRecordDeleted $CLUSTER_NAME.eng-sandbox.weave.works.
   waitDNSRecordDeleted $CLUSTER_NAME-dex.eng-sandbox.weave.works.
 
   echo "Deleting capi clusters"

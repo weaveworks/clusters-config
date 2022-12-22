@@ -63,6 +63,7 @@ fi
 export PARENT_DIR=${BASH_SOURCE%/scripts*}
 export CLUSTER_DIR=${PARENT_DIR}/clusters/${CLUSTER_NAME}
 export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-cluster.yaml
+export WGE_KUSTOMIZATION="${CLUSTER_DIR}/enterprise-kustomization.yaml"
 
 # Check if GITHUB_TOKEN is set
 if [ -z ${GITHUB_TOKEN} ]; then
@@ -86,10 +87,14 @@ eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_EDITOR_ARN} --group system:masters --username admin
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_GITHUB_ACTIONS_ARN} --group system:masters --username admin
 
-waitDNSRecordCreated $CLUSTER_NAME.eng-sandbox.weave.works.
-waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works.
+CHECK_ENTERPRISE_MODE=$(ls -d ${WGE_KUSTOMIZATION} 2> /dev/null || true )
+if [ ${CHECK_ENTERPRISE_MODE} ]
+then
+  waitDNSRecordCreated $CLUSTER_NAME.eng-sandbox.weave.works.
+  waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works.
 
-# Rollout WGE to make sure it captures the dex domain on start up
-kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service
+  # Rollout WGE to make sure it captures the dex domain on start up
+  kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service
+fi
 
 echo -e "${SUCCESS} Cluster is ready!"
