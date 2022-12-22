@@ -37,6 +37,20 @@ flags(){
   done
 }
 
+waitDNSRecordDeleted(){
+  while :
+  do
+    records=$(aws route53 list-resource-record-sets --hosted-zone-id Z077228227PQNG000XADR --query "ResourceRecordSets[?Name == '$CLUSTER_NAME.eng-sandbox.weave.works.']")
+    str=$(echo $records | sed -e 's/\[//g' -e 's/\]//g') # remove [] so that it turns into empty string ""
+    if [[ "$str" != "" ]]; then
+        echo "Waiting for domain to be deleted: $1"
+        sleep 30
+    else
+        break
+    fi
+  done
+}
+
 source ${BASH_SOURCE%/*}/colors.sh
 # -------------------------------------------------------------------
 defaults
@@ -63,6 +77,8 @@ else
 
   # Delete ingress resources to trigger external dns to delete Route53 records
   kubectl delete ingress -A --all
+  waitDNSRecordDeleted $CLUSTER_NAME.eng-sandbox.weave.works.
+  waitDNSRecordDeleted $CLUSTER_NAME-dex.eng-sandbox.weave.works.
 
   echo "Deleting capi clusters"
   kubectl delete cluster -A --all

@@ -40,11 +40,11 @@ flags(){
   done
 }
 
-waitDNSRecord(){
+waitDNSRecordCreated(){
   until [ "$(dig +short $1)" != "" ];
   do
     echo "Waiting for domain to be available: $1"
-    sleep 20
+    sleep 30
   done
   echo -e "${SUCCESS} Domain is ready: $1"
 }
@@ -86,8 +86,8 @@ eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_EDITOR_ARN} --group system:masters --username admin
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_GITHUB_ACTIONS_ARN} --group system:masters --username admin
 
-waitDNSRecord $CLUSTER_NAME.eng-sandbox.weave.works.
-waitDNSRecord $CLUSTER_NAME-dex.eng-sandbox.weave.works.
+waitDNSRecordCreated $CLUSTER_NAME.eng-sandbox.weave.works.
+waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works.
 
 # Rollout WGE to make sure it captures the dex domain on start up
 kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service

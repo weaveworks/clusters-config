@@ -42,9 +42,32 @@ make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise
 ```
 
 ## Accessing UI:
-Every provisioned cluster has a domain registered along with it which points to the WGE UI service. You can access it by accessing the domain: <cluster_name>.eng-sandbox.weave.works
+### WGE
+Every WGE provisioned cluster has a domain registered along with it which points to the WGE UI service. You can access the UI by accessing the domain: <cluster_name>.eng-sandbox.weave.works
 
-### WGE Users:
+### WG Core
+Currently domains feature is not implemented for WG Core. You will need port-forwarding:
+```bash
+kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
+```
+
+You can then access the UI on localhost:9001
+
+**WARNING: Please don't change port 9001 because this is the port used by dex for authentication.**
+
+## Dex Authentication:
+### WG Core
+For WG Core you need to port-forward dex service so that you can auth using dex users
+
+  1. Add dex to your `/etc/hosts`.
+      ```bash
+      127.0.0.1 dex-dex.dex.svc.cluster.local
+      ```
+  1. Port-farword dex service:
+      ```bash
+      kubectl port-forward -n dex svc/dex-dex 5556:5556
+
+### Dex OIDC Users:
 1. Basic auth:
     ```bash
     username = wego-admin
