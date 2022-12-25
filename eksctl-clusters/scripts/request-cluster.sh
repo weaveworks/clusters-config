@@ -113,7 +113,8 @@ export EKS_CLUSTER_TEMPLATE=${PARENT_DIR}/eks-cluster.yaml-template
 export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-cluster.yaml
 
 export FLUX_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/flux-kustomization.yaml-template
-export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/secrets-kustomization.yaml-template
+export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/
+-kustomization.yaml-template
 
 if [ -z $CLUSTER_NAME ]
 then
@@ -233,6 +234,7 @@ esac
 
 # Copy secrets to cluster dir
 cp ${SECRETS_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/secrets-kustomization.yaml
+sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/secrets-kustomization.yaml
 
 # Setup SOPS decryption for flux kustomize-controller
 mkdir -p ${CLUSTER_DIR}/flux-system
