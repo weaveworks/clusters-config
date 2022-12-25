@@ -17,12 +17,6 @@ spec:
       username: ${USERNAME}
       passwordHash: ${PASSWORDHASH}
     listOCIRepositories: true # Display OCI Repositories, requires flux 0.32
-    oidcSecret:
-      create: true
-      clientID: weave-gitops-app
-      clientSecret: B7Skl2cfSoOQgOhIkeqxx1uJjWxjCFoEEymk
-      issuerURL: https://${CLUSTER_NAME}-dex.eng-sandbox.weave.works
-      redirectURL: https://${CLUSTER_NAME}.eng-sandbox.weave.works/oauth2/callback
     ingress:
       enabled: true
       annotations:

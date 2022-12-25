@@ -10,7 +10,7 @@ patches:
       metadata:
         name: kustomize-controller
         annotations:
-          eks.amazonaws.com/role-arn: arn:aws:iam::894516026745:role/eksctl-core1-sops-decrypt-role
+          eks.amazonaws.com/role-arn: arn:aws:iam::894516026745:role/eksctl-core2-sops-decrypt-role
     target:
       kind: ServiceAccount
       name: kustomize-controller

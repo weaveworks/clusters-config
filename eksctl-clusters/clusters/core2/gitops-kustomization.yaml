@@ -16,4 +16,4 @@ spec:
     substitute:
       USERNAME: wego-admin
       PASSWORDHASH: $2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a
-      CLUSTER_NAME: core1
+      CLUSTER_NAME: core2

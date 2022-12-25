@@ -2,11 +2,11 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: core1
+  name: core2
   region: eu-north-1
   version: "1.23"
   tags:
-    environment: "core1"
+    environment: "core2"
     delete-after: "7"
     team: "blaze"
 
@@ -19,14 +19,14 @@ iam:
       namespace: flux-system
     attachPolicyARNs:
     - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
-    roleName: eksctl-core1-sops-decrypt-role
+    roleName: eksctl-core2-sops-decrypt-role
     roleOnly: true
   - metadata:
       name: external-dns
       namespace: external-dns
     attachPolicyARNs:
     - "arn:aws:iam::894516026745:policy/AllowExternalDNSUpdates"
-    roleName: eksctl-core1-route53-external-dns-role
+    roleName: eksctl-core2-route53-external-dns-role
     roleOnly: false # create role and annotated service account
 
 # Enable private access to the API server.
@@ -36,7 +36,7 @@ vpc:
     publicAccess: true
 
 nodeGroups:
-  - name: core1-ng-1
+  - name: core2-ng-1
     instanceType: t3.medium
     minSize: 3
     maxSize: 3
@@ -44,7 +44,7 @@ nodeGroups:
     volumeSize: 10
     privateNetworking: true
     tags:
-      environment: "core1"
+      environment: "core2"
       delete-after: "7"
       team: "blaze"
     propagateASGTags: true
@@ -58,6 +58,6 @@ gitops:
       owner: "weaveworks"
       repository: "clusters-config"
       private: "true"
-      branch: "cluster-core1"
+      branch: "cluster-core2"
       namespace: "flux-system"
-      path: "eksctl-clusters/clusters/core1"
+      path: "eksctl-clusters/clusters/core2"
