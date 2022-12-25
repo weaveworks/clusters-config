@@ -90,12 +90,6 @@ eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION
 waitDNSRecordCreated $CLUSTER_NAME.eng-sandbox.weave.works.
 waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works.
 
-kubectl get secrets -n flux-system oidc-auth -oyaml
-# Patch oidc-auth secret with domain values
-kubectl patch secret oidc-auth -n flux-system -p="{\"data\":{\"issuerURL\": \"`echo -n 'https://'$CLUSTER_NAME'-dex.eng-sandbox.weave.works' | base64`\"}}"
-kubectl patch secret oidc-auth -n flux-system -p="{\"data\":{\"redirectURL\": \"`echo -n 'https://'$CLUSTER_NAME'.eng-sandbox.weave.works/oauth2/callback' | base64`\"}}"
-kubectl get secrets -n flux-system oidc-auth -oyaml
-
 # Rollout WGE/Core to make sure it captures the dex domain on start up
 CHECK_ENTERPRISE_MODE=$(ls -d ${WGE_KUSTOMIZATION} 2> /dev/null || true )
 if [ ${CHECK_ENTERPRISE_MODE} ]

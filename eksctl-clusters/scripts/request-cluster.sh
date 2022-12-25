@@ -233,6 +233,7 @@ esac
 
 # Copy secrets to cluster dir
 cp ${SECRETS_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/secrets-kustomization.yaml
+sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/secrets-kustomization.yaml
 
 # Setup SOPS decryption for flux kustomize-controller
 mkdir -p ${CLUSTER_DIR}/flux-system
