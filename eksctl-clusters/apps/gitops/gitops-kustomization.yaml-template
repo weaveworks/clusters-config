@@ -16,3 +16,4 @@ spec:
     substitute:
       USERNAME: ${USERNAME}
       PASSWORDHASH: ${PASSWORDHASH}
+      CLUSTER_NAME: ${CLUSTER_NAME}
