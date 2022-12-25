@@ -17,6 +17,9 @@ spec:
       username: ${USERNAME}
       passwordHash: ${PASSWORDHASH}
     listOCIRepositories: true # Display OCI Repositories, requires flux 0.32
+    oidcSecret:
+      issuerURL: https://${CLUSTER_NAME}-dex.eng-sandbox.weave.works
+      redirectURL: https://${CLUSTER_NAME}.eng-sandbox.weave.works/oauth2/callback
     ingress:
       enabled: true
       annotations:
