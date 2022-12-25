@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: gitops
+  namespace: flux-system
+spec:
+  interval: 30s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./eksctl-clusters/apps/gitops
+  prune: true
+  validation: client
+  postBuild:
+    substitute:
+      USERNAME: wego-admin
+      PASSWORDHASH: $2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a
+      CLUSTER_NAME: core1
