@@ -46,8 +46,6 @@ spec:
         baseBranch: "${BRANCH_NAME}"
       oidc:
         enabled: true
-        issuerURL: https://${CLUSTER_NAME}-dex.eng-sandbox.weave.works
-        redirectURL: https://${CLUSTER_NAME}.eng-sandbox.weave.works/oauth2/callback
         clientCredentialsSecret: oidc-auth
     tls:
       enabled: false
