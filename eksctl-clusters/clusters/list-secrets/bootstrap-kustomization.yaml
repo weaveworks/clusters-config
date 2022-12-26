@@ -8,6 +8,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./eksctl-clusters/clusters/${CLUSTER_NAME}/capi-bootstrap
+  path: ./eksctl-clusters/clusters/list-secrets/capi-bootstrap
   prune: true
   validation: client
