@@ -33,7 +33,7 @@ usage() {
 }
 
 defaults(){
-  export CLUSTER_VERSION="1.23"
+  export CLUSTER_VERSION="1.24"
   export WW_MODE="core"
   export ENABLE_FLAGGER="false"
   export ENABLE_POLICIES="false"
