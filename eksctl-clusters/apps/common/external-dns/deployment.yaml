@@ -28,7 +28,7 @@ spec:
             - --policy=sync # would allow ExternalDNS from deleting any records, upsert-only to prevent deleting any records
             - --aws-zone-type=public # only look at public hosted zones (valid values are public, private or no value for both)
             - --registry=txt
-            - --txt-owner-id=Z077228227PQNG000XADR
+            - --txt-owner-id=cluster-${CLUSTER_NAME}
           env:
             - name: AWS_DEFAULT_REGION
               value: eu-north-1

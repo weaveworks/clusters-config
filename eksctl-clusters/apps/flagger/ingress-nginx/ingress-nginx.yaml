@@ -4,7 +4,7 @@ metadata:
   labels:
     weave.works/applied-layer: layer-1
   name: flagger-nginx
-  namespace: flux-system
+  namespace: flagger
 spec:
   chart:
     spec:

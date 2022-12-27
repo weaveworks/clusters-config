@@ -1,3 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: ingress-nginx
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  timeout: 1m0s
+  url: "https://kubernetes.github.io/ingress-nginx"
+---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -12,9 +22,9 @@ spec:
       sourceRef:
         apiVersion: source.toolkit.fluxcd.io/v1beta2
         kind: HelmRepository
-        name: weaveworks-charts
+        name: ingress-nginx
         namespace: flux-system
-      version: 0.0.11
+      version: 4.2.5
   install:
     crds: CreateReplace
     createNamespace: true
@@ -23,13 +33,18 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
-    ingress-nginx:
-      controller:
-        service:
-          annotations:
-            service.beta.kubernetes.io/aws-load-balancer-ssl-cert: ${SSL_CERTIFICATE_ARN}
-            service.beta.kubernetes.io/aws-load-balancer-type: nlb
-            service.beta.kubernetes.io/aws-load-balancer-internal: "false"
-          targetPorts:
-            http: http
-            https: http
+    controller:
+      ingressClassResource:
+        enabled: true
+        name: public-nginx
+        default: false
+        controllerValue: "k8s.io/public-ingress-nginx"
+      ingressClass: public-nginx
+      service:
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-ssl-cert: ${SSL_CERTIFICATE_ARN}
+          service.beta.kubernetes.io/aws-load-balancer-type: nlb
+          service.beta.kubernetes.io/aws-load-balancer-internal: "false"
+        targetPorts:
+          http: http
+          https: http
