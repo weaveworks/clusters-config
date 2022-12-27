@@ -140,7 +140,7 @@ jobs:
           echo "CLUSTER_NAME=${{ env.cluster_name }}" >> $GITHUB_OUTPUT
           if [ "${{ job.status }}" == "success" ]; then
             echo "STATUS_EMOJI=greentick" >> $GITHUB_OUTPUT
-            echo "SLACK_MESSAGE=Cluster has been provisioned successfully: https://${{ env.cluster_name }}.eng-sandbox.weave.works" >> $GITHUB_OUTPUT
+            echo "SLACK_MESSAGE=Cluster has been provisioned successfully! You can access the UI through https://${{ env.cluster_name }}.eng-sandbox.weave.works" >> $GITHUB_OUTPUT
           elif [ "${{ job.status }}" == "failure" ]; then
             echo "STATUS_EMOJI=failed" >> $GITHUB_OUTPUT
             echo "SLACK_MESSAGE=Cluster failed to be provisioned!!" >> $GITHUB_OUTPUT
