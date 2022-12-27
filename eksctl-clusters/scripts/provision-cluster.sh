@@ -94,11 +94,9 @@ waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works.
 CHECK_ENTERPRISE_MODE=$(ls -d ${WGE_KUSTOMIZATION} 2> /dev/null || true )
 if [ ${CHECK_ENTERPRISE_MODE} ]
 then
-  waitDNSRecordCreated $CLUSTER_NAME.eng-sandbox.weave.works.
-  waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works.
-
-  # Rollout WGE to make sure it captures the dex domain on start up
   kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service
+else
+  kubectl rollout restart -n flux-system deployment ww-gitops-weave-gitops
 fi
 
 echo -e "${SUCCESS} Cluster is ready!"

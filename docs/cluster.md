@@ -45,7 +45,7 @@ make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise
 
 Every provisioned cluster has a domain registered along with it and this domain points to the UI service. You can access the UI by accessing the domain: <cluster_name>.eng-sandbox.weave.works
 
-### Users:
+### Access the UI using one of the following users::
 1. Basic auth:
     ```bash
     username = wego-admin

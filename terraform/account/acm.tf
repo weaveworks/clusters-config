@@ -1,5 +1,5 @@
-# SSL Certificate for the eng-sandbox domain used to register
-# created clusters domains
+# SSL Certificate for the eng-sandbox domain used with the domains
+# registered with the provisioned clusters
 
 resource "aws_acm_certificate" "eng_sandbox" {
   domain_name       = "*.eng-sandbox.weave.works"
