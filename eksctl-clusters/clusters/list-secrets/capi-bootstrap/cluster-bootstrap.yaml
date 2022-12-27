@@ -25,12 +25,12 @@ spec:
               "github",
               "--kubeconfig=/etc/gitops/value",
               "--owner=waleedhammam",
-              "--repository=new-repo",
+              "--repository=leaf-cluster",
               "--path=./clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
             ]
           envFrom:
             - secretRef:
-                name: my-pat
+                name: ssh-creds
           env:
             - name: EXP_CLUSTER_RESOURCE_SET
               value: "true"
