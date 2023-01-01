@@ -13,7 +13,7 @@ spec:
       options: ['eu-north-1']
     - name: KUBERNETES_VERSION
       description: EKS Kubernetes version to use
-      options: ['v1.22.10','v1.23.7']
+      options: ['v1.22.10','v1.24.1']
     - name: WORKER_MACHINE_COUNT
       description: Number of worker nodes to create.
     - name: INSTANCE_TYPE
