@@ -38,6 +38,7 @@ defaults(){
   export ENABLE_FLAGGER="false"
   export ENABLE_POLICIES="false"
   export DELETE_AFTER="7"
+  export SSL_CERTIFICATE_ARN="arn:aws:acm:eu-north-1:894516026745:certificate/5f8813f2-b630-4d0d-8c34-8fb68ec166ac"
 }
 
 flags(){
@@ -114,6 +115,9 @@ export EKS_CLUSTER_CONFIG_FILE=${PARENT_DIR}/clusters/${CLUSTER_NAME}-eksctl-clu
 export FLUX_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/flux-kustomization.yaml-template
 export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/secrets-kustomization.yaml-template
 
+export OIDC_ISSUER_URL=https://${CLUSTER_NAME}-dex.eng-sandbox.weave.works
+export OIDC_REDIRECT_URL=https://${CLUSTER_NAME}.eng-sandbox.weave.works/oauth2/callback
+
 if [ -z $CLUSTER_NAME ]
 then
   echo -e "${ERROR} No cluster name provided. Use '--cluster-name YOUR-CLUSTER' to set your cluster name."
@@ -168,6 +172,8 @@ echo -e "${SUCCESS} '${EKS_CLUSTER_CONFIG_FILE}' is created successfully."
 # Copy common apps to cluster dir
 echo "Copying apps-common templates..."
 cp -r ${PARENT_DIR}/apps/common/common-kustomization.yaml-template ${CLUSTER_DIR}/common-kustomization.yaml
+sedi 's/${CLUSTER_NAME}/'"${CLUSTER_NAME}"'/g' ${CLUSTER_DIR}/common-kustomization.yaml
+sedi 's+${SSL_CERTIFICATE_ARN}+'"${SSL_CERTIFICATE_ARN}"'+g' ${CLUSTER_DIR}/common-kustomization.yaml
 
 # Copy flagger to cluster dir
 if [ $ENABLE_FLAGGER == "true" ]
@@ -230,6 +236,10 @@ esac
 
 # Copy secrets to cluster dir
 cp ${SECRETS_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/secrets-kustomization.yaml
+BASE64_OIDC_ISSUER_URL=$(echo -n "${OIDC_ISSUER_URL}" | base64)
+BASE64_OIDC_REDIRECT_URL=$(echo -n "${OIDC_REDIRECT_URL}" | base64)
+sedi 's/${ISSUER_URL}/'"${BASE64_OIDC_ISSUER_URL}"'/g' ${CLUSTER_DIR}/secrets-kustomization.yaml
+sedi 's/${REDIRECT_URL}/'"${BASE64_OIDC_REDIRECT_URL}"'/g' ${CLUSTER_DIR}/secrets-kustomization.yaml
 
 # Setup SOPS decryption for flux kustomize-controller
 mkdir -p ${CLUSTER_DIR}/flux-system

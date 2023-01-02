@@ -17,6 +17,20 @@ spec:
       username: ${USERNAME}
       passwordHash: ${PASSWORDHASH}
     listOCIRepositories: true # Display OCI Repositories, requires flux 0.32
+    ingress:
+      enabled: true
+      className: "public-nginx"
+      annotations:
+        # kubernetes.io/tls-acme: "true"
+        external-dns.alpha.kubernetes.io/hostname: ${CLUSTER_NAME}.eng-sandbox.weave.works
+        # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+      hosts:
+        - host: ${CLUSTER_NAME}.eng-sandbox.weave.works
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository

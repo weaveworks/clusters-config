@@ -1,4 +1,7 @@
 creation_rules:
-  - path_regex: eksctl-clusters\/shared-secrets\/.+\.yaml
-    encrypted_regex: ^(data|stringData)$
+  - path_regex: eksctl-clusters\/shared-secrets\/oidc-secret\.yaml
+    encrypted_regex: ^(clientID|clientSecret)$
+    kms: arn:aws:kms:eu-north-1:894516026745:alias/sops-key
+  # default rule
+  - encrypted_regex: ^(data|stringData)$
     kms: arn:aws:kms:eu-north-1:894516026745:alias/sops-key

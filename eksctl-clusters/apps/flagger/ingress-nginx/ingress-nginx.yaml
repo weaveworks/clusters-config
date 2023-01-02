@@ -3,8 +3,8 @@ kind: HelmRelease
 metadata:
   labels:
     weave.works/applied-layer: layer-1
-  name: ingress-nginx
-  namespace: flux-system
+  name: flagger-nginx
+  namespace: flagger
 spec:
   chart:
     spec:
@@ -21,7 +21,7 @@ spec:
     crds: CreateReplace
     createNamespace: true
   interval: 1m0s
-  targetNamespace: ingress-nginx
+  targetNamespace: flagger
   upgrade:
     crds: CreateReplace
   values:

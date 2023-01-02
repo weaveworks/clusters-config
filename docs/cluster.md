@@ -15,7 +15,7 @@
       ```
 1. Add and commit your cluster directory then push the new branch
 
-1. Wait until the cluster is provisioned. It might take around 20 minutes. You can check your provisioning job in the [actions](https://github.com/weaveworks/clusters-config/actions) tab.
+1. Wait until the cluster is provisioned. It might take around 20~30 minutes. You can check your provisioning job in the [actions](https://github.com/weaveworks/clusters-config/actions) tab.
 
 1. Join **#clusters-config** slack channel to get notified once the cluster is provisioned!
 
@@ -42,29 +42,10 @@ make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise
 ```
 
 ## Accessing UI:
-In order to access the UI, you need to port-farword `clusters-service` in case you deployed WGE app, or `weave-gitops` service for gitops app:
-```bash
-# WGE
-kubectl port-forward -n flux-system svc/clusters-service 9001:8000
 
-# Weave Gitops Core
-kubectl port-forward -n flux-system svc/ww-gitops-weave-gitops 9001:9001
-```
-You can then access the UI on `localhost:9001`
+Every provisioned cluster has a domain registered along with it and this domain points to the UI service. You can access the UI by accessing the domain: <cluster_name>.eng-sandbox.weave.works
 
-**WARNING: Please don't change port 9001 because this is the port used by dex for authentication.**
-
-### Authenticate using dex:
-  1. Add dex to your `/etc/hosts`.
-      ```bash
-      127.0.0.1 dex-dex.dex.svc.cluster.local
-      ```
-  1. Port-farword dex service:
-      ```bash
-      kubectl port-forward -n dex svc/dex-dex 5556:5556
-      ```
-
-### Access the UI using one of the following users:
+### Access the UI using one of the following users::
 1. Basic auth:
     ```bash
     username = wego-admin
@@ -72,7 +53,7 @@ You can then access the UI on `localhost:9001`
     ```
     User have admin permission to all namespaces.
 
-1. Dex users:
+1. Dex OIDC users:
   The following static users are created by default:
 
     | User                    | password | Permission                             | gitops Rpac | enterprise Rbac |
