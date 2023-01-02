@@ -68,6 +68,7 @@ else
     kubectl delete cluster -A --all
   else
     echo -e "${WARNING} clusters api is not installed"
+  fi
 
   # Delete loadbalancers
   kubectl get svc -A -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace,TYPE:.spec.type | \
