@@ -62,7 +62,12 @@ else
   flux uninstall --silent --keep-namespace=true
 
   echo "Deleting capi clusters"
-  kubectl delete cluster -A --all
+  clusters=$(kubectl get cluster -A)
+  if [ -n "$clusters" ]
+  then
+    kubectl delete cluster -A --all
+  else
+    echo -e "${WARNING} clusters api is not installed"
 
   # Delete loadbalancers
   kubectl get svc -A -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace,TYPE:.spec.type | \
