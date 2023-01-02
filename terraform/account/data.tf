@@ -170,4 +170,14 @@ data "aws_iam_policy_document" "eks_editor" {
     ]
     actions = ["iam:PassRole"]
   }
+
+  statement {
+    sid    = "AllowListRecordSets"
+    effect = "Allow"
+    actions = [
+      "route53:ListHostedZones",
+      "route53:ListResourceRecordSets"
+    ]
+    resources = ["*"]
+  }
 }
