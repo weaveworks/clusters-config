@@ -62,7 +62,7 @@ else
   flux uninstall --silent --keep-namespace=true
 
   echo "Deleting capi clusters"
-  clusters=$(kubectl get cluster -A 2> /dev/null)
+  clusters=$(kubectl get cluster -A 2> /dev/null || true)
   if [ -n "$clusters" ]
   then
     kubectl delete cluster -A --all
