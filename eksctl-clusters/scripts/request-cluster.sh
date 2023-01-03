@@ -33,6 +33,7 @@ usage() {
 }
 
 defaults(){
+  export MAIN_BRANCH="main"
   export CLUSTER_VERSION="1.24"
   export WW_MODE="core"
   export ENABLE_FLAGGER="false"
@@ -117,6 +118,13 @@ export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/secrets-kustomization.yaml-t
 
 export OIDC_ISSUER_URL=https://${CLUSTER_NAME}-dex.eng-sandbox.weave.works
 export OIDC_REDIRECT_URL=https://${CLUSTER_NAME}.eng-sandbox.weave.works/oauth2/callback
+
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+if [ $CURRENT_BRANCH != $MAIN_BRANCH ]
+then
+  echo -e "${ERROR} You're currently on ($CURRENT_BRANCH) branch. Please checkout to (main) branch and pull the latest."
+  exit 1
+fi
 
 if [ -z $CLUSTER_NAME ]
 then
