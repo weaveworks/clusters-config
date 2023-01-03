@@ -1,0 +1,107 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"head_branch":"create-clusters-branch-3azctc","title":"Creates
+      cluster temp1","description":"This PR creates a new cluster","template_name":"aws-eks","parameter_values":{"AWS_REGION":"eu-north-1","CLUSTER_NAME":"temp1","INSTANCE_TYPE":"t3.medium","KUBERNETES_VERSION":"v1.23.7","OWNER_EMAIL":"rana.hassan@weave.works","SSH_KEY_NAME":"temp1","WORKER_MACHINE_COUNT":"1"},"commit_message":"Creates
+      capi cluster","credentials":{}}'
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+    weave.works/capi: bootstrap
+  name: temp1
+  namespace: default
+spec:
+  capiClusterRef:
+    name: temp1
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: temp1
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 10.120.0.0/20
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: temp1-control-plane
+  infrastructureRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: temp1-control-plane
+
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: AWSManagedControlPlane
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: temp1-control-plane
+  namespace: default
+spec:
+  additionalTags:
+    creator: rana.hassan@weave.works
+  iamAuthenticatorConfig:
+    mapRoles:
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/AdministratorAccess
+      username: admin
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/WeaveEksEditor
+      username: admin
+  region: eu-north-1
+  sshKeyName: temp1
+  version: v1.23.7
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: temp1-pool-0
+  namespace: default
+spec:
+  clusterName: temp1
+  replicas: 1
+  template:
+    spec:
+      bootstrap:
+        dataSecretName: ""
+      clusterName: temp1
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AWSManagedMachinePool
+        name: temp1-pool-0
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AWSManagedMachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: temp1-pool-0
+  namespace: default
+spec:
+  additionalTags:
+    creator: rana.hassan@weave.works
+  instanceType: t3.medium
