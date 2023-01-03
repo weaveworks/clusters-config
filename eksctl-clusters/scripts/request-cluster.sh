@@ -119,7 +119,7 @@ export SECRETS_KUSTOMIZATION_TEMPLATE=${PARENT_DIR}/secrets-kustomization.yaml-t
 export OIDC_ISSUER_URL=https://${CLUSTER_NAME}-dex.eng-sandbox.weave.works
 export OIDC_REDIRECT_URL=https://${CLUSTER_NAME}.eng-sandbox.weave.works/oauth2/callback
 
-CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+CURRENT_BRANCH=$(git branch --show)
 if [ $CURRENT_BRANCH != $MAIN_BRANCH ]
 then
   echo -e "${ERROR} You're currently on ($CURRENT_BRANCH) branch. Please checkout to ($MAIN_BRANCH) branch and pull the latest."
