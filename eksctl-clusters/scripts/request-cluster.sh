@@ -246,8 +246,8 @@ esac
 
 # Copy secrets to cluster dir
 cp ${SECRETS_KUSTOMIZATION_TEMPLATE} ${CLUSTER_DIR}/secrets-kustomization.yaml
-BASE64_OIDC_ISSUER_URL=$(echo -n "${OIDC_ISSUER_URL}" | base64 -w0)
-BASE64_OIDC_REDIRECT_URL=$(echo -n "${OIDC_REDIRECT_URL}" | base64 -w0)
+BASE64_OIDC_ISSUER_URL=$(echo -n "${OIDC_ISSUER_URL}" | base64 | tr -d \\n)
+BASE64_OIDC_REDIRECT_URL=$(echo -n "${OIDC_REDIRECT_URL}" | base64 | tr -d \\n)
 sedi 's/${ISSUER_URL}/'"${BASE64_OIDC_ISSUER_URL}"'/g' ${CLUSTER_DIR}/secrets-kustomization.yaml
 sedi 's/${REDIRECT_URL}/'"${BASE64_OIDC_REDIRECT_URL}"'/g' ${CLUSTER_DIR}/secrets-kustomization.yaml
 
