@@ -1,0 +1,58 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  creationTimestamp: null
+  name: weaveworks-charts
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  provider: generic
+  timeout: 1m0s
+  url: https://weaveworks.github.io/weave-gitops-profile-examples/
+status: {}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  creationTimestamp: null
+  labels:
+    weave.works/applied-layer: layer-1
+  name: weave-policy-agent
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: weave-policy-agent
+      sourceRef:
+        apiVersion: source.toolkit.fluxcd.io/v1beta2
+        kind: HelmRepository
+        name: weaveworks-charts
+        namespace: flux-system
+      version: 0.5.4
+  install:
+    crds: CreateReplace
+  interval: 1m0s
+  upgrade:
+    crds: CreateReplace
+  values:
+    policy-agent:
+      caCertificate: ""
+      certificate: ""
+      config:
+        accountId: ""
+        admission:
+          enabled: true
+          sinks:
+            k8sEventsSink:
+              enabled: true
+        audit:
+          enabled: false
+        clusterId: ""
+      failurePolicy: Ignore
+      key: ""
+      persistence:
+        enabled: false
+      useCertManager: false
+    policySource:
+      enabled: false
+status: {}
