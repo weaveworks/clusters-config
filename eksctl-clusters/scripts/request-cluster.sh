@@ -124,6 +124,8 @@ if [ $CURRENT_BRANCH != $MAIN_BRANCH ]
 then
   echo -e "${ERROR} You're currently on ($CURRENT_BRANCH) branch. Please checkout to ($MAIN_BRANCH) branch and pull the latest."
   exit 1
+else
+  git pull origin $MAIN_BRANCH
 fi
 
 if [ -z $CLUSTER_NAME ]
