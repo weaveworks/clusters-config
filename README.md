@@ -6,12 +6,15 @@ Configuration for engineering's ephemeral clusters
 - [eksctl-clusters](./eksctl-clusters/) contians scripts, templates, flux configuration, and clusters created by eksctl.
 
 ## Getting Started
-### Tools you will need to install:
+### Required dependencies
 - [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 - [direnv](https://direnv.net/)
 - [eksctl](https://eksctl.io/introduction/#installation)
 - [gsts](https://github.com/ruimarinho/gsts)
-- [pre-commit](README.md#pre-commit-hooks)
+- [pre-commit](https://pre-commit.com/)
+
+### Recommended dependencies
+- An [EditorConfig](https://editorconfig.org/) compatible editor.
 
 ### Getting access to Engineering Sandbox AWS Account
 
@@ -45,17 +48,4 @@ To request a new cluster, follow the [requesting a new cluster](./docs/cluster.m
 ### Pre-Commit hooks
 
 This repository uses [pre-commit hooks](https://pre-commit.com/) to run quick
-checks against it. They can be installed and run using:
-
-```bash
-$ pip3 install pre-commit
-# or
-$ brew install pre-commit
-# Then
-$ pre-commit install
-# The hooks can be run with
-$ pre-commit run --all
-# Otherwise they'll run automatically on commit
-# they can be skipped with
-$ git commit -n
-```
+checks against it. Please install before use.

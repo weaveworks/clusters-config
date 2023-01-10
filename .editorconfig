@@ -1,0 +1,13 @@
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+indent_style = space
+max_line_length = 120
+
+[*.{tf,tfvars,yaml}]
+indent_size = 2
+indent_style = space
