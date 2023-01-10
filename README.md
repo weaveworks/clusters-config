@@ -8,6 +8,7 @@ Configuration for engineering's ephemeral clusters
 ## Getting Started
 ### Tools you will need to install:
 - [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- [direnv](https://direnv.net/)
 - [eksctl](https://eksctl.io/introduction/#installation)
 - [gsts](https://github.com/ruimarinho/gsts)
 - [pre-commit](README.md#pre-commit-hooks)
@@ -18,11 +19,10 @@ Configuration for engineering's ephemeral clusters
 
 - Authenticate in your CLI with `WeaveEksEditor` role:
     ```bash
-    export AWS_PROFILE=sts
-    export AWS_ROLE_EKS="arn:aws:iam::894516026745:role/WeaveEksEditor"
-    export GOOGLE_IDP_ID=C0203uytv
-    export GOOGLE_SP_ID=656726301855
-    gsts --aws-role-arn "$AWS_ROLE_EKS" --sp-id "$GOOGLE_SP_ID" --idp-id "$GOOGLE_IDP_ID" --username <YOUR_EMAIL>
+    $ export GOOGLE_USERNAME=<YOUR_EMAIL>
+    $ source env.sh
+    ✔ Login successful!
+    Environment configured, authenticated to AWS as arn:aws:iam::894516026745:role/WeaveEksEditor.
     ```
 
 ### How do we manage clusters?
