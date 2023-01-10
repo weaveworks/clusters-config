@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: enterprise
+  namespace: flux-system
+spec:
+  interval: 30s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./eksctl-clusters/apps/enterprise
+  prune: true
+  validation: client
+  postBuild:
+    substitute:
+      CLUSTER_NAME: ahsayde-sm
+      BRANCH_NAME: cluster-ahsayde-sm
+      CHART_REPO: https://charts.dev.wkp.weave.works/releases/charts-v3
