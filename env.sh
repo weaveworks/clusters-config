@@ -9,6 +9,9 @@ _awsCliV2_docs=(
   "https://aws.amazon.com/cli/"
   "https://www.notion.so/weaveworks/Accessing-AWS-Resources-600faa584fec4c6ba5b0f2ef27be309e"
 )
+_direnv_docs=(
+  "https://direnv.net/"
+)
 _eksctl_docs=(
   "https://eksctl.io/introduction/#installation"
 )
@@ -29,6 +32,13 @@ fi
 if ! command -v aws >/dev/null; then
   echo "If you intend to manage clusters, please install the AWS CLI v2:"
   printf "%s\n" "${_awsCliV2_docs[@]}"
+  return 64
+fi
+
+# Test for presence of direnv
+if ! command -v direnv >/dev/null; then
+  echo "If you intend to manage clusters, please install direnv:"
+  printf "%s\n" "${_direnv_docs[@]}"
   return 64
 fi
 
