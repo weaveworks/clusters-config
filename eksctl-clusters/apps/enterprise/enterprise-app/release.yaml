@@ -58,6 +58,20 @@ spec:
       config:
         accountId: "${CLUSTER_NAME}-user"
         clusterId: "${CLUSTER_NAME}"
+    pipeline-controller:
+      promotion:
+        service:
+          enabled: true
+        ingress:
+          enabled: true
+          className: "public-nginx"
+          annotations:
+            external-dns.alpha.kubernetes.io/hostname: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
+          hosts:
+          - host: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
+            paths:
+            - path: /
+              pathType: ImplementationSpecific
     ingress:
       enabled: true
       className: "public-nginx"
