@@ -45,6 +45,9 @@ spec:
     runner:
       image:
         tag: v0.13.1
+      serviceAccount:
+        annotations:
+          eks.amazonaws.com/role-arn: "arn:aws:iam::894516026745:role/wge2205-tf-controller"
     awsPackage:
       install: true
       tag: v4.38.0-v1alpha11
