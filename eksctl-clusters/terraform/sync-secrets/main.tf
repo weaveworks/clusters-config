@@ -34,11 +34,11 @@ resource "kubectl_manifest" "secrets" {
 }
 
 
-resource "null_resource" "sync_secret" {
-  depends_on = [kubectl_manifest.source_namespace, kubectl_manifest.target_namespace,kubectl_manifest.secrets]
-  provisioner "local-exec" {
-    command = <<-EOF
-      kubectl get secret -n source -l sync="enabled" -o yaml | sed 's/namespace: .*/namespace: target/' | kubectl apply -f -
-    EOF
-  }
-}
+#resource "null_resource" "sync_secret" {
+#  depends_on = [kubectl_manifest.source_namespace, kubectl_manifest.target_namespace,kubectl_manifest.secrets]
+#  provisioner "local-exec" {
+#    command = <<-EOF
+#      kubectl get secret -n source -l sync="enabled" -o yaml | sed 's/namespace: .*/namespace: target/' | kubectl apply -f -
+#    EOF
+#  }
+#}
