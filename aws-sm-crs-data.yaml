@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  access-key: QUtJQVdWQTNVM0JERjdaRlVHRlY=
+  secret-access-key: UjVuWWZ3T0ZFb2NMUTUxQVRNRjZNdHh0TytIMVpxeDFIdGd0RnkvMg==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: awssm-secret
+  namespace: flux-system
