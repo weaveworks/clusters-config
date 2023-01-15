@@ -46,6 +46,8 @@ spec:
       image:
         repository: ghcr.io/rparmer/tf-runner
         tag: ubuntu-1669733504
+        annotations:
+          eks.amazonaws.com/role-arn: "arn:aws:iam::894516026745:role/wge2205-tf-controller"
     awsPackage:
       install: true
       tag: v4.38.0-v1alpha11
