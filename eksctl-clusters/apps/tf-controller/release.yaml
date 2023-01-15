@@ -44,7 +44,8 @@ spec:
       tag: v0.13.1
     runner:
       image:
-        tag: v0.13.1
+        repository: ghcr.io/rparmer/tf-runner
+        tag: ubuntu-1669733504
     awsPackage:
       install: true
       tag: v4.38.0-v1alpha11
