@@ -3,11 +3,11 @@ provider "aws" {
 
 }
 data "aws_eks_cluster" "this" {
-  name = "wge2205"
+  name = "wge-2205"
 }
 
 data "aws_eks_cluster_auth" "this" {
-  name = "wge2205"
+  name = "wge-2205"
 }
 
 data "local_file" "token" {
