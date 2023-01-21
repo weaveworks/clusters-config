@@ -1,18 +1,13 @@
 provider "aws" {
   region = "eu-north-1"
-
 }
 
-data "aws_eks_cluster" "this" {
+data "aws_eks_cluster" "default_test-control-plane" {
   name = "default_test-control-plane"
 }
 
-data "aws_eks_cluster_auth" "this" {
+data "aws_eks_cluster_auth" "default_test-control-plane" {
   name = "default_test-control-plane"
-}
-
-data "local_file" "this_token" {
-  filename = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 }
 
 data "aws_iam_policy_document" "tf_controller_assume_role" {
