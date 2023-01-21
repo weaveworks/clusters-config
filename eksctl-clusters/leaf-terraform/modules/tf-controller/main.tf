@@ -5,12 +5,12 @@ data "aws_iam_policy_document" "tf_controller_assume_role" {
 
     condition {
       test     = "StringEquals"
-      variable = "oidc.eks.eu-north-1.amazonaws.com/id/66AEA5A038F7AFB34662B2C7CFF3010D:sub"
+      variable = "oidc.eks.eu-north-1.amazonaws.com/id/A98A063228ABBB91D48C62BFB3AE21F8:sub"
       values   = ["system:serviceaccount:flux-system:tf-runner"]
     }
 
     principals {
-      identifiers = ["arn:aws:iam::894516026745:oidc-provider/oidc.eks.eu-north-1.amazonaws.com/id/66AEA5A038F7AFB34662B2C7CFF3010D"]
+      identifiers = ["arn:aws:iam::457472006214:oidc-provider/oidc.eks.eu-north-1.amazonaws.com/id/A98A063228ABBB91D48C62BFB3AE21F8"]
       type        = "Federated"
     }
   }
