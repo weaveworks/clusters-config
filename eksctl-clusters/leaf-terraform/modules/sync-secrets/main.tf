@@ -16,11 +16,11 @@ data "local_file" "this_token" {
 }
 
 
-# data "aws_eks_cluster" "leaf" {
+# data "aws_eks_cluster" "default_test-control-plane" {
 #   name = "default_test-control-plane"
 # }
 
-# data "aws_eks_cluster_auth" "leaf" {
+# data "aws_eks_cluster_auth" "default_test-control-plane" {
 #   name = "default_test-control-plane"
 # }
 
@@ -33,11 +33,11 @@ data "local_file" "this_token" {
 #}
 #
 #provider "kubectl" {
-#  host                   = data.aws_eks_cluster.leaf.endpoint
-#  cluster_ca_certificate = base64decode(data.aws_eks_cluster.leaf.certificate_authority[0].data)
+#  host                   = data.aws_eks_cluster.default_test-control-plane.endpoint
+#  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default_test-control-plane.certificate_authority[0].data)
 #  token                  = var.token
 #  load_config_file       = false
-#  alias                  = "leaf"
+#  alias                  = "default_test-control-plane"
 #}
 
 provider "kubernetes" {
@@ -48,10 +48,10 @@ provider "kubernetes" {
 }
 
 # provider "kubernetes" {
-#   host                   = data.aws_eks_cluster.leaf.endpoint
-#   cluster_ca_certificate = base64decode(data.aws_eks_cluster.leaf.certificate_authority[0].data)
+#   host                   = data.aws_eks_cluster.default_test-control-plane.endpoint
+#   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default_test-control-plane.certificate_authority[0].data)
 #   token                  = var.token
-#   alias                  = "leaf"
+#   alias                  = "default_test-control-plane"
 # }
 
 data "kubernetes_secret_v1" "secret-to-sync-remote" {
@@ -69,11 +69,11 @@ data "kubernetes_secret_v1" "secret-to-sync-remote" {
 #   }
 
 #   data     = data.kubernetes_secret_v1.secret-to-sync-remote.data
-#   provider = kubernetes.leaf
+#   provider = kubernetes.default_test-control-plane
 # }
 
 #resource "kubectl_manifest" "source_namespace" {
-#  provider  = kubectl.leaf
+#  provider  = kubectl.default_test-control-plane
 #  yaml_body = <<-YAML
 #    apiVersion: v1
 #    kind: Namespace
