@@ -21,9 +21,9 @@ resource "aws_iam_role" "tf_controller" {
   name               = "default_test-control-plane-tf-controller"
 }
 
-resource "aws_iam_role_policy_attachment" "tf_controller" {
-  role       = aws_iam_role.tf_controller.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
+# resource "aws_iam_role_policy_attachment" "tf_controller" {
+#   role       = aws_iam_role.tf_controller.name
+#   policy_arn = "arn:aws:iam::aws:policy/waleed-tf-runner"
+# }
 
 # kubectl annotate -n flux-system serviceaccount tf-runner eks.amazonaws.com/role-arn="arn:aws:iam::894516026745:role/wge2205-tf-controller"
