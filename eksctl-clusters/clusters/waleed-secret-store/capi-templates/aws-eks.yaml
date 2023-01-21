@@ -65,8 +65,6 @@ spec:
         - name: INSTANCE_TYPE
           value: "${INSTANCE_TYPE}"
       varsFrom:
-        - kind: ConfigMap
-          name: leaf-cluster-config
         - kind: Secret
           name: ${CLUSTER_NAME}-kubeconfig
       sourceRef:
