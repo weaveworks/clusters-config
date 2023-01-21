@@ -32,10 +32,6 @@ spec:
   interval: 1h
   path: ./eksctl-clusters/leaf-terraform
   retryInterval: 20s
-  sourceRef:
-    kind: GitRepository
-    name: terraform
-    namespace: flux-system
   vars:
   - name: CLUSTER_NAME
     value: test
