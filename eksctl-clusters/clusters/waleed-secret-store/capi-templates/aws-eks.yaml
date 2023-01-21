@@ -68,7 +68,7 @@ spec:
         - kind: ConfigMap
           name: leaf-cluster-config
         - kind: Secret
-          name: leaf-cluster-auth
+          name: ${CLUSTER_NAME}-kubeconfig
       sourceRef:
         kind: GitRepository
         name: terraform
