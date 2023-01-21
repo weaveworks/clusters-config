@@ -30,7 +30,7 @@ spec:
   approvePlan: auto
   destroyResourcesOnDeletion: true
   interval: 1h
-  path: ./leaf-terraform/
+  path: ./eksctl-clusters/leaf-terraform
   retryInterval: 20s
   sourceRef:
     kind: GitRepository
