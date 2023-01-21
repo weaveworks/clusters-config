@@ -5,20 +5,17 @@ locals {
 }
 
 
-provider "flux" {}
-
-
 provider "aws" {
   region = "eu-north-1"
 
 }
 
 data "aws_eks_cluster" "leaf" {
-  name = "${CLUSTER_NAME}-leaf"
+  name = "${cluster_name}-leaf"
 }
 
 data "aws_eks_cluster_auth" "leaf" {
-  name = "${CLUSTER_NAME}-leaf"
+  name = "${cluster_name}-leaf"
 }
 
 provider "kubectl" {

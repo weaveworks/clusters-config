@@ -1,5 +1,5 @@
 
-variable "CLUSTER_NAME" {
+variable "cluster_name" {
   type        = string
   description = "cluster name"
   default = "test"
