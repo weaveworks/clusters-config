@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1h
   retryInterval: 20s
-  path: ./eksctl-clusters/terraform/flux
+  path: ./eksctl-clusters/leaf-terraform/flux
   approvePlan: auto
   destroyResourcesOnDeletion: true
   sourceRef:

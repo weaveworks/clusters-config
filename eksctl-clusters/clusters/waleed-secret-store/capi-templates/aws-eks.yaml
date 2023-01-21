@@ -50,7 +50,7 @@ spec:
     spec:
       interval: 1h
       retryInterval: 20s
-      path: ./leaf-terraform/
+      path: ./eksctl-clusters/leaf-terraform
       approvePlan: auto
       destroyResourcesOnDeletion: true
       writeOutputsToSecret:
