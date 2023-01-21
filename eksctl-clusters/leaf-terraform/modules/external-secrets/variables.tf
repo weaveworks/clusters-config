@@ -6,4 +6,5 @@ variable "token" {
 variable "CLUSTER_NAME" {
   type        = string
   description = "cluster name"
+  default = "test"
 }
