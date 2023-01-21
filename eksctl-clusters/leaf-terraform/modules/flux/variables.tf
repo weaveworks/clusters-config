@@ -2,7 +2,7 @@
 variable "cluster_name" {
   type        = string
   description = "cluster name"
-  default = "test"
+  default = "default_test-control-plane"
 }
 
 variable "github_owner" {

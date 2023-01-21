@@ -4,11 +4,11 @@ provider "aws" {
 }
 
 data "aws_eks_cluster" "leaf" {
-  name = "${CLUSTER_NAME}-leaf"
+  name = "default_test-control-plane"
 }
 
 data "aws_eks_cluster_auth" "leaf" {
-  name = "${CLUSTER_NAME}-leaf"
+  name = "default_test-control-plane"
 }
 
 provider "kubectl" {
