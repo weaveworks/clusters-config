@@ -3,22 +3,28 @@ kind: CAPITemplate
 metadata:
   name: aws-eks
   namespace: default
+  labels:
+    weave.works/template-type: terraform
+  annotations:
+    templates.weave.works/profiles-enabled: "true"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
 spec:
-  description: AWS EKS Cluster
+  description: Template for creating new AWS EKS Cluster leaf clusters
   params:
     - name: CLUSTER_NAME
       description: The name for this cluster.
     - name: AWS_REGION
       description: AWS Region to create cluster
-      options: ['eu-north-1']
+      options: ["eu-north-1"]
     - name: KUBERNETES_VERSION
       description: EKS Kubernetes version to use
-      options: ['v1.22.10','v1.24.1']
+      options: ["v1.22.10","v1.24.1"]
     - name: WORKER_MACHINE_COUNT
       description: Number of worker nodes to create.
     - name: INSTANCE_TYPE
-      description: Tpye of worker nodes
-      options: ['t3.medium','t3.large']
+      description: Type of worker nodes
+      options: ["t3.medium","t3.large"]
     - name: OWNER_EMAIL
       description: E-Mail of Cluster Owner
     - name: SSH_KEY_NAME
@@ -35,6 +41,39 @@ spec:
     spec:
       capiClusterRef:
         name: "${CLUSTER_NAME}"
+
+  - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+    kind: Terraform
+    metadata:
+      name: "${CLUSTER_NAME}-core"
+      namespace: flux-system
+    spec:
+      interval: 1h
+      retryInterval: 20s
+      path: ./leaf-terraform/
+      approvePlan: auto
+      destroyResourcesOnDeletion: true
+      writeOutputsToSecret:
+        name: "${CLUSTER_NAME}-core-outputs"
+      vars:
+        - name: CLUSTER_NAME
+          value: "${CLUSTER_NAME}"
+        - name: AWS_REGION
+          value: "${AWS_REGION}"
+        - name: target_path
+          value: "clusters/default/${CLUSTER_NAME}"
+        - name: INSTANCE_TYPE
+          value: "${INSTANCE_TYPE}"
+      varsFrom:
+        - kind: ConfigMap
+          name: leaf-cluster-config
+        - kind: Secret
+          name: leaf-cluster-auth
+      sourceRef:
+        kind: GitRepository
+        name: terraform
+        namespace: flux-system
+
   - apiVersion: cluster.x-k8s.io/v1beta1
     kind: Cluster
     metadata:

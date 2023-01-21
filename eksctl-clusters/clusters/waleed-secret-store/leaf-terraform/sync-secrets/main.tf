@@ -4,11 +4,11 @@ provider "aws" {
 }
 
 data "aws_eks_cluster" "this" {
-  name = "waleed-secret-store"
+  name = "${CLUSTER_NAME}-store"
 }
 
 data "aws_eks_cluster_auth" "this" {
-  name = "waleed-secret-store"
+  name = "${CLUSTER_NAME}-store"
 }
 
 data "local_file" "this_token" {
@@ -17,11 +17,11 @@ data "local_file" "this_token" {
 
 
 # data "aws_eks_cluster" "leaf" {
-#   name = "waleed-secret-store-leaf"
+#   name = "${CLUSTER_NAME}-store-leaf"
 # }
 
 # data "aws_eks_cluster_auth" "leaf" {
-#   name = "waleed-secret-store-leaf"
+#   name = "${CLUSTER_NAME}-store-leaf"
 # }
 
 #provider "kubectl" {

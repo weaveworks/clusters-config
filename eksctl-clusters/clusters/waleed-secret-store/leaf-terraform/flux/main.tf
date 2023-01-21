@@ -14,11 +14,11 @@ provider "aws" {
 }
 
 data "aws_eks_cluster" "leaf" {
-  name = "waleed-secret-store-leaf"
+  name = "${CLUSTER_NAME}-leaf"
 }
 
 data "aws_eks_cluster_auth" "leaf" {
-  name = "waleed-secret-store-leaf"
+  name = "${CLUSTER_NAME}-leaf"
 }
 
 provider "kubectl" {

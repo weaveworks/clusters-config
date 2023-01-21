@@ -3,3 +3,7 @@ variable "token" {
   description = "cluster token"
   default     = "123"
 }
+variable "CLUSTER_NAME" {
+  type        = string
+  description = "cluster name"
+}

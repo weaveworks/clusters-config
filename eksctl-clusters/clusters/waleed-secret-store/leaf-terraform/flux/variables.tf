@@ -1,3 +1,9 @@
+
+variable "CLUSTER_NAME" {
+  type        = string
+  description = "cluster name"
+}
+
 variable "github_owner" {
   type        = string
   description = "github owner"

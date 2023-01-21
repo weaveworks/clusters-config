@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "tf_controller_assume_role" {
 
 resource "aws_iam_role" "tf_controller" {
   assume_role_policy = data.aws_iam_policy_document.tf_controller_assume_role.json
-  name               = "waleed-secret-store-tf-controller"
+  name               = "${CLUSTER_NAME}-tf-controller"
 }
 
 resource "aws_iam_role_policy_attachment" "tf_controller" {
