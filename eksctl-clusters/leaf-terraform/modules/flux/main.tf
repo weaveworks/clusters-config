@@ -42,7 +42,7 @@ resource "tls_private_key" "main" {
 # Kubernetes
 resource "kubernetes_namespace" "flux_system" {
   metadata {
-    name = "flux-system-default_test-control-plane"
+    name = "flux-system-leaf"
   }
 
 
