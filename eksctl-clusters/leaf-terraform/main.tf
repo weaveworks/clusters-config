@@ -10,7 +10,7 @@ module "flux" {
   source = "./modules/flux"
 }
 
-module "external-secrets" {
-  source = "./modules/external-secrets"
-}
+# module "external-secrets" {
+#   source = "./modules/external-secrets"
+# }
 

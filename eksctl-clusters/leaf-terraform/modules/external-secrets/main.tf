@@ -1,6 +1,5 @@
 provider "aws" {
   region = "eu-north-1"
-
 }
 
 data "aws_eks_cluster" "default_test-control-plane" {
