@@ -14,6 +14,7 @@ variable "github_owner" {
 variable "github_token" {
   type        = string
   description = "github token"
+  default = "test-token"
 }
 
 variable "repository_name" {
