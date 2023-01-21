@@ -48,6 +48,7 @@ spec:
   varsFrom:
   - kind: Secret
     name: test-kubeconfig
+    namespace: flux-system
   writeOutputsToSecret:
     name: test-core-outputs
 
