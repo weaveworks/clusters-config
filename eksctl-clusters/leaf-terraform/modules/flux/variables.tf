@@ -31,7 +31,7 @@ variable "repository_visibility" {
 
 variable "branch" {
   type        = string
-  default     = "cluster-wge2205"
+  default     = "cluster-waleed-secret-store"
   description = "branch name"
 }
 
@@ -43,6 +43,6 @@ variable "token" {
 
 variable "target_path" {
   type        = string
-  default     = "./eksctl-clusters/clusters/wge2205-leaf"
+  default     = "./eksctl-clusters/clusters/waleed-secret-store-leaf"
   description = "flux sync target path"
 }
