@@ -4,11 +4,11 @@ provider "aws" {
 }
 
 data "aws_eks_cluster" "this" {
-  name = "default_test-control-plane"
+  name = "waleed-secret-store"
 }
 
 data "aws_eks_cluster_auth" "this" {
-  name = "default_test-control-plane"
+  name = "waleed-secret-store"
 }
 
 data "local_file" "this_token" {
@@ -16,13 +16,13 @@ data "local_file" "this_token" {
 }
 
 
-# data "aws_eks_cluster" "default_test-control-plane" {
-#   name = "default_test-control-plane"
-# }
+data "aws_eks_cluster" "leaf" {
+  name = "default_test-control-plane"
+}
 
-# data "aws_eks_cluster_auth" "default_test-control-plane" {
-#   name = "default_test-control-plane"
-# }
+data "aws_eks_cluster_auth" "leaf" {
+  name = "default_test-control-plane"
+}
 
 #provider "kubectl" {
 #  host                   = data.aws_eks_cluster.this.endpoint
@@ -47,12 +47,12 @@ provider "kubernetes" {
   alias                  = "this"
 }
 
-# provider "kubernetes" {
-#   host                   = data.aws_eks_cluster.default_test-control-plane.endpoint
-#   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default_test-control-plane.certificate_authority[0].data)
-#   token                  = var.token
-#   alias                  = "default_test-control-plane"
-# }
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.leaf.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.leaf.certificate_authority[0].data)
+  token                  = var.token
+  alias                  = "leaf"
+}
 
 data "kubernetes_secret_v1" "secret-to-sync-remote" {
   metadata {
@@ -62,18 +62,18 @@ data "kubernetes_secret_v1" "secret-to-sync-remote" {
   provider = kubernetes.this
 }
 
-# resource "kubernetes_secret_v1" "target-to-sync-remote" {
-#   metadata {
-#     name      = data.kubernetes_secret_v1.secret-to-sync-remote.metadata[0].name
-#     namespace = data.kubernetes_secret_v1.secret-to-sync-remote.metadata[0].namespace
-#   }
+resource "kubernetes_secret_v1" "target-to-sync-remote" {
+  metadata {
+    name      = data.kubernetes_secret_v1.secret-to-sync-remote.metadata[0].name
+    namespace = data.kubernetes_secret_v1.secret-to-sync-remote.metadata[0].namespace
+  }
 
-#   data     = data.kubernetes_secret_v1.secret-to-sync-remote.data
-#   provider = kubernetes.default_test-control-plane
-# }
+  data     = data.kubernetes_secret_v1.secret-to-sync-remote.data
+  provider = kubernetes.leaf
+}
 
 #resource "kubectl_manifest" "source_namespace" {
-#  provider  = kubectl.default_test-control-plane
+#  provider  = kubectl.leaf
 #  yaml_body = <<-YAML
 #    apiVersion: v1
 #    kind: Namespace
