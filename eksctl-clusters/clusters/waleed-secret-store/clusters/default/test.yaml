@@ -46,8 +46,6 @@ spec:
   - name: INSTANCE_TYPE
     value: t3.medium
   varsFrom:
-  - kind: ConfigMap
-    name: leaf-cluster-config
   - kind: Secret
     name: leaf-cluster-auth
   writeOutputsToSecret:

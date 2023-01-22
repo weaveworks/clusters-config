@@ -1,7 +1,7 @@
 variable "token" {
   type        = string
   description = "cluster token"
-  default     = "123"
+  default     = "leaf-cluster-auth"
 }
 variable "cluster_name" {
   type        = string

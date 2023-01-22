@@ -38,7 +38,7 @@ variable "branch" {
 variable "token" {
   type        = string
   description = "cluster token"
-  default = "123"
+  default = "leaf-cluster-auth"
 }
 
 variable "target_path" {
