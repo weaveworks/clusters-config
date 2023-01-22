@@ -1,7 +1,7 @@
 
-# module "tf-controller" {
-#   source = "./modules/tf-controller"
-# }
+module "tf-controller" {
+  source = "./modules/tf-controller"
+}
 
 # module "sync-secrets" {
 #   source = "./modules/sync-secrets"

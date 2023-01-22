@@ -1,11 +1,3 @@
-provider "aws" {
-  region = "eu-north-1"
-}
-
-data "aws_eks_cluster" "default_test-control-plane" {
-  name = "default_test-control-plane"
-}
-
 data "aws_iam_policy_document" "tf_controller_assume_role" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -18,7 +10,7 @@ data "aws_iam_policy_document" "tf_controller_assume_role" {
     }
 
     principals {
-      identifiers = ["arn:aws:iam::457472006214:oidc-provider/oidc.eks.eu-north-1.amazonaws.com/id/A2FF98C794569C1C9F6F6A251DCA2404"]
+      identifiers = ["arn:aws:iam::894516026745:oidc-provider/oidc.eks.eu-north-1.amazonaws.com/id/A2FF98C794569C1C9F6F6A251DCA2404"]
       type        = "Federated"
     }
   }
@@ -26,7 +18,7 @@ data "aws_iam_policy_document" "tf_controller_assume_role" {
 
 resource "aws_iam_role" "tf_controller" {
   assume_role_policy = data.aws_iam_policy_document.tf_controller_assume_role.json
-  name               = "default_test-control-plane-tf-controller"
+  name               = "test-tf-controller"
 }
 
 resource "aws_iam_role_policy_attachment" "tf_controller" {
@@ -34,4 +26,4 @@ resource "aws_iam_role_policy_attachment" "tf_controller" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# kubectl annotate -n flux-system serviceaccount tf-runner eks.amazonaws.com/role-arn="arn:aws:iam::894516026745:role/wge2205-tf-controller"
+# kubectl annotate -n flux-system serviceaccount tf-runner eks.amazonaws.com/role-arn="arn:aws:iam::894516026745:role/test-tf-controller"

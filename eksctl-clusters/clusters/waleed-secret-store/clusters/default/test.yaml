@@ -16,63 +16,63 @@ spec:
     name: test
 
 ---
-# apiVersion: infra.contrib.fluxcd.io/v1alpha1
-# kind: Terraform
-# metadata:
-#   annotations:
-#     kustomize.toolkit.fluxcd.io/prune: disabled
-#   labels:
-#     templates.weave.works/template-name: aws-eks
-#     templates.weave.works/template-namespace: default
-#   name: test-core
-#   namespace: flux-system
-# spec:
-#   approvePlan: auto
-#   destroyResourcesOnDeletion: true
-#   interval: 1h
-#   path: ./eksctl-clusters/leaf-terraform
-#   retryInterval: 20s
-#   sourceRef:
-#     kind: GitRepository
-#     name: flux-system
-#     namespace: flux-system
-#   vars:
-#   - name: CLUSTER_NAME
-#     value: test
-#   - name: AWS_REGION
-#     value: eu-north-1
-#   - name: target_path
-#     value: clusters/default/test
-#   - name: INSTANCE_TYPE
-#     value: t3.medium
-#   varsFrom:
-#   - kind: Secret
-#     name: test-kubeconfig
-#   writeOutputsToSecret:
-#     name: test-core-outputs
+apiVersion: infra.contrib.fluxcd.io/v1alpha1
+kind: Terraform
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: test-core
+  namespace: flux-system
+spec:
+  approvePlan: auto
+  destroyResourcesOnDeletion: true
+  interval: 1h
+  path: ./eksctl-clusters/leaf-terraform
+  retryInterval: 20s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  vars:
+  - name: CLUSTER_NAME
+    value: test
+  - name: AWS_REGION
+    value: eu-north-1
+  - name: target_path
+    value: clusters/default/test
+  - name: INSTANCE_TYPE
+    value: t3.medium
+  varsFrom:
+  - kind: Secret
+    name: test-kubeconfig
+  writeOutputsToSecret:
+    name: test-core-outputs
 
-# ---
-# apiVersion: cluster.x-k8s.io/v1beta1
-# kind: Cluster
-# metadata:
-#   labels:
-#     templates.weave.works/template-name: aws-eks
-#     templates.weave.works/template-namespace: default
-#   name: test
-#   namespace: default
-# spec:
-#   clusterNetwork:
-#     pods:
-#       cidrBlocks:
-#       - 10.120.0.0/20
-#   controlPlaneRef:
-#     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-#     kind: AWSManagedControlPlane
-#     name: test-control-plane
-#   infrastructureRef:
-#     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-#     kind: AWSManagedControlPlane
-#     name: test-control-plane
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: test
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 10.120.0.0/20
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: test-control-plane
+  infrastructureRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: test-control-plane
 
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
