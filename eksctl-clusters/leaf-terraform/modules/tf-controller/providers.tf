@@ -8,5 +8,9 @@ terraform {
       source  = "gitlabhq/gitlab"
       version = "~> 15.7"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.14"
+    }
   }
 }
