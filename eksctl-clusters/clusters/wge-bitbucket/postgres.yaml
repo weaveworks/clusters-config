@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: postgres
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: postgres
+  namespace: postgres
+spec:
+  interval: 10m
+  url: https://charts.bitnami.com/bitnami
