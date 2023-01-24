@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bitbucket
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: bitbucket
+  namespace: bitbucket
+spec:
+  interval: 10m
+  url: https://atlassian.github.io/data-center-helm-charts
+---
