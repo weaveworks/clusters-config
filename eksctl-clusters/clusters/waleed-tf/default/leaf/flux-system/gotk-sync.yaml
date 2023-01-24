@@ -11,7 +11,7 @@ spec:
     branch: cluster-waleed-tf
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/weaveworks/clusters-config
+  url: ssh://git@github.com/weaveworks/clusters-config.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
@@ -20,7 +20,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./eksctl-clusters/clusters/waleed-tf
+  path: ./eksctl-clusters/clusters/waleed-tf/default/leaf
   prune: true
   sourceRef:
     kind: GitRepository
