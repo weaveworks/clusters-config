@@ -13,7 +13,7 @@ data "aws_eks_cluster_auth" "leaf" {
 provider "kubectl" {
   host                   = data.aws_eks_cluster.leaf.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.leaf.certificate_authority[0].data)
-  token                  = var.token
+  token                  = data.aws_eks_cluster_auth.leaf.token
   load_config_file       = false
 }
 
