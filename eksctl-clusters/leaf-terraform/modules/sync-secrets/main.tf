@@ -17,11 +17,11 @@ data "local_file" "this_token" {
 
 
 data "aws_eks_cluster" "leaf" {
-  name = "default_test-control-plane"
+  name = "default_leaf-control-plane"
 }
 
 data "aws_eks_cluster_auth" "leaf" {
-  name = "default_test-control-plane"
+  name = "default_leaf-control-plane"
 }
 
 #provider "kubectl" {
@@ -33,11 +33,11 @@ data "aws_eks_cluster_auth" "leaf" {
 #}
 #
 #provider "kubectl" {
-#  host                   = data.aws_eks_cluster.default_test-control-plane.endpoint
-#  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default_test-control-plane.certificate_authority[0].data)
+#  host                   = data.aws_eks_cluster.default_leaf-control-plane.endpoint
+#  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default_leaf-control-plane.certificate_authority[0].data)
 #  token                  = var.token
 #  load_config_file       = false
-#  alias                  = "default_test-control-plane"
+#  alias                  = "default_leaf-control-plane"
 #}
 
 provider "kubernetes" {

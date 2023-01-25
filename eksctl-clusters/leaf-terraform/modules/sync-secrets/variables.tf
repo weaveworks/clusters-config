@@ -6,5 +6,5 @@ variable "token" {
 variable "cluster_name" {
   type        = string
   description = "cluster name"
-  default = "default_test-control-plane"
+  default = "default_leaf-control-plane"
 }

@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "tf_controller_assume_role" {
 
 resource "aws_iam_role" "tf_controller" {
   assume_role_policy = data.aws_iam_policy_document.tf_controller_assume_role.json
-  name               = "test-tf-controller"
+  name               = "leaf-tf-controller"
 }
 
 resource "aws_iam_role_policy_attachment" "tf_controller" {
@@ -26,4 +26,4 @@ resource "aws_iam_role_policy_attachment" "tf_controller" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# kubectl annotate -n flux-system serviceaccount tf-runner eks.amazonaws.com/role-arn="arn:aws:iam::894516026745:role/test-tf-controller"
+# kubectl annotate -n flux-system serviceaccount tf-runner eks.amazonaws.com/role-arn="arn:aws:iam::894516026745:role/leaf-tf-controller"
