@@ -1,0 +1,39 @@
+apiVersion: pipelines.weave.works/v1alpha1
+kind: Pipeline
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"repository_url":"https://github.com/weaveworks/clusters-config","head_branch":"wge-create-branch-kbf8wo","title":"Creates
+      resource foo","description":"This PR creates a pipeline-view instance","template_name":"pipeline-view","parameter_values":{"APP_NAME":"foo","APP_NAMESPACE":"foo","DEV_CLUSTER_NAME":"foo","DEV_CLUSTER_NAMESPACE":"foo","PROD_CLUSTER_NAME":"foo","PROD_CLUSTER_NAMESPACE":"foo","RESOURCE_NAME":"foo","RESOURCE_NAMESPACE":"foo","TEST_CLUSTER_NAME":"foo","TEST_CLUSTER_NAMESPACE":"foo"},"commit_message":"Creates
+      pipeline-view instance","credentials":{},"template_namespace":"flux-system","template_kind":"GitOpsTemplate"}'
+  labels:
+    templates.weave.works/template-name: pipeline-view
+    templates.weave.works/template-namespace: default
+  name: foo
+  namespace: foo
+spec:
+  appRef:
+    apiVersion: helm.toolkit.fluxcd.io/v2beta1
+    kind: HelmRelease
+    name: foo
+  environments:
+  - name: dev
+    targets:
+    - clusterRef:
+        kind: GitopsCluster
+        name: foo
+        namespace: foo
+      namespace: foo
+  - name: test
+    targets:
+    - clusterRef:
+        kind: GitopsCluster
+        name: foo
+        namespace: foo
+      namespace: foo
+  - name: prod
+    targets:
+    - clusterRef:
+        kind: GitopsCluster
+        name: foo
+        namespace: foo
+      namespace: foo
