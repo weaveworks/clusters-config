@@ -10,6 +10,12 @@ sedi(){
 }
 
 validateFlags(){
+  # Use --oss-tag with --weave-mode gitops only!
+  if [ ${OSS_TAG} ] && [ "${WW_MODE}" != "core" ]
+  then
+    echo -e "${ERROR} Can not use [--oss-tag] with --weave-mode "${WW_MODE}". It shoud be used only with [--weave-mode gitops]"
+  fi
+
   # Prevent using --weave-version and --weave-branch together!
   if [ $WEAVE_VERSION ] && [ $WEAVE_BRANCH ]
   then

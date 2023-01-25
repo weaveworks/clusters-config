@@ -10,6 +10,7 @@ usage() {
   echo "Usage: $0 --cluster-name <CLUSTER_NAME> \\"
   echo "       $blnk [--cluster-version <CLUSTER_VERSION>] \\"
   echo "       $blnk [--weave-mode <enterprise|core|leaf|none> {default core}]"
+  echo "       $blnk [--oss-tag <OSS_TAG> ]"
   echo "       $blnk [--weave-version <CHART_VERSION> ]"
   echo "       $blnk [--weave-branch <BRANCH_NAME> ]"
   echo "       $blnk [--enable-flagger]"
@@ -22,6 +23,7 @@ usage() {
   echo "  --cluster-name CLUSTER_NAME                -- Set cluster name"
   echo "  --cluster-version CLUSTER_VERSION          -- Set cluster version (default: 1.23)"
   echo "  --weave-mode <enterprise|core|leaf|none>   -- Select between installing WGE, WG-Core, leaf-cluster or not install any (enterprise|core|leaf|none)"
+  echo "  --oss-tag OSS_TAG                          -- Select a specific image tag for OSS (those tags are pulled from the private feature image registry!)"
   echo "  --weave-version CHART_VERSION              -- Select a specific helm chart version (currently supports enterprise charts only)"
   echo "  --weave-branch BRANCH_NAME                 -- Select a specific git branch for installation (currently supports enterprise branches only)"
   echo "  --enable-flagger                           -- Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf)"
@@ -40,6 +42,9 @@ defaults(){
   export ENABLE_POLICIES="false"
   export DELETE_AFTER="7"
   export SSL_CERTIFICATE_ARN="arn:aws:acm:eu-north-1:894516026745:certificate/5f8813f2-b630-4d0d-8c34-8fb68ec166ac"
+
+  # OSS image repo:
+  export OSS_REPO="hamada"
 }
 
 flags(){
@@ -62,6 +67,10 @@ flags(){
           echo -e "${ERROR} Invalid value of --weave-mode = ${WW_MODE}. Please select one of (enterprise, core, leaf or none)!"
           exit 1
         fi
+        ;;
+    --oss-tag)
+        shift
+        export OSS_TAG="$1"
         ;;
     --weave-version)
         shift
@@ -201,6 +210,9 @@ case $WW_MODE in
   core)
     USERNAME="wego-admin"
     PASSWORDHASH='$2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a' # password
+    OSS_REPO="ghcr.io/weaveworks/wego-app"
+    OSS_FB_REPO="ghcr.io/weaveworks/wego-app"
+    OSS_LATEST_TAG="latest"
 
     echo "Copying WeaveGitops templates..."
     cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/gitops-kustomization.yaml
@@ -208,6 +220,15 @@ case $WW_MODE in
 
     sedi 's/${USERNAME}/'"${USERNAME}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
     sedi 's/${PASSWORDHASH}/'"${PASSWORDHASH}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+    if [ "${OSS_TAG}" ]
+    then
+      echo "This tag will be used: "${OSS_TAG}""
+      sedi 's#${REPOSITORY}#'"${OSS_FB_REPO}"'#g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+      sedi 's/${TAG}/'"${OSS_TAG}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+    else
+      sedi 's#${REPOSITORY}#'"${OSS_REPO}"'#g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+      sedi 's/${TAG}/'"${OSS_LATEST_TAG}"'/g' ${CLUSTER_DIR}/gitops-kustomization.yaml
+    fi
     ;;
   enterprise)
     echo "Copying WGE templates..."
