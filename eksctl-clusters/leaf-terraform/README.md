@@ -13,10 +13,10 @@
 
   ```bash
   │ Error: POST https://api.github.com/repos/weaveworks/clusters-config/keys: 404 Not Found []
-│ 
-│   with github_repository_deploy_key.main,
-│   on main.tf line 126, in resource "github_repository_deploy_key" "main":
-│  126: resource "github_repository_deploy_key" "main" {
-│ 
+  │ 
+  │   with github_repository_deploy_key.main,
+  │   on main.tf line 126, in resource "github_repository_deploy_key" "main":
+  │  126: resource "github_repository_deploy_key" "main" {
+  │ 
   ```
 - needs to create the namespace secrets on the leaf cluster before applying
