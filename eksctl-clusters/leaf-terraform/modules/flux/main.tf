@@ -4,33 +4,6 @@ locals {
   known_hosts = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
 }
 
-provider "aws" {
-  region = "eu-north-1"
-}
-
-data "aws_eks_cluster" "leaf" {
-  name = "default_leaf-control-plane"
-}
-
-data "aws_eks_cluster_auth" "leaf" {
-  name = "default_leaf-control-plane"
-}
-
-provider "kubectl" {
-  host                   = data.aws_eks_cluster.leaf.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.leaf.certificate_authority[0].data)
-  token = data.aws_eks_cluster_auth.leaf.token
-  load_config_file       = false
-}
-
-
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.leaf.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.leaf.certificate_authority[0].data)
-  token = data.aws_eks_cluster_auth.leaf.token
-}
-
-
 resource "tls_private_key" "main" {
   algorithm   = "ECDSA"
   ecdsa_curve = "P256"
@@ -50,10 +23,6 @@ resource "kubernetes_namespace" "flux_system" {
   }
 }
 
-provider "github" {
-  owner = var.github_owner
-  token = var.github_token
-}
 
 ## Flux
 data "flux_install" "main" {

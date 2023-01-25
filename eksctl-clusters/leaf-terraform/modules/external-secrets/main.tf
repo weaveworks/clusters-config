@@ -1,23 +1,3 @@
-provider "aws" {
-  region = "eu-north-1"
-}
-
-data "aws_eks_cluster" "leaf" {
-  name = "default_leaf-control-plane"
-}
-
-data "aws_eks_cluster_auth" "leaf" {
-  name = "default_leaf-control-plane"
-}
-
-provider "kubectl" {
-  host                   = data.aws_eks_cluster.leaf.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.leaf.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.leaf.token
-  load_config_file       = false
-}
-
-
 resource "kubectl_manifest" "external_secrets_repo" {
   yaml_body = <<-YAML
     apiVersion: source.toolkit.fluxcd.io/v1beta1
