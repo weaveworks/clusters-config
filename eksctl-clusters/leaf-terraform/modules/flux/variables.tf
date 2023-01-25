@@ -14,7 +14,7 @@ variable "github_owner" {
 variable "github_token" {
   type        = string
   description = "github token"
-  default = "leaf-token"
+  default = "ssh-creds"
 }
 
 variable "repository_name" {
@@ -31,18 +31,18 @@ variable "repository_visibility" {
 
 variable "branch" {
   type        = string
-  default     = "cluster-waleed-secret-store"
+  default     = "cluster-waleed-tf"
   description = "branch name"
 }
 
 variable "token" {
   type        = string
   description = "cluster token"
-  default = "leaf-cluster-auth"
+  default = "leaf-kubeconfig"
 }
 
 variable "target_path" {
   type        = string
-  default     = "./eksctl-clusters/clusters/waleed-secret-store-leaf"
+  default     = "./eksctl-clusters/clusters/waleed-tf/default/leaf"
   description = "flux sync target path"
 }
