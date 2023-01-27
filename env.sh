@@ -73,14 +73,14 @@ _test_command_precommit(){
   fi
 }
 
-_test_direnv_active() {
+_test_var_direnv_active() {
   if [ -z "${DIRENV_ACTIVE}" ]; then
     echo "You must use \`direnv allow\` to source the environment variables"
     return 1
   fi
 }
 
-_test_gsts_username() {
+_test_var_gsts_username() {
   if [ -z "${GOOGLE_USERNAME}" ]; then
     printf "%s\n" "Please set GOOGLE_USERNAME to your work email address"
     return 1
@@ -88,7 +88,7 @@ _test_gsts_username() {
 }
 
 # gsts is a common alias for ZSH users, particularly those using oh-my-zsh. Prefix with `/usr/bin/env` # to avoid this
-_gsts_auth() {
+_test_success_gsts_auth() {
   /usr/bin/env gsts --aws-role-arn "${AWS_ROLE_ARN}" --force || return 1
 }
 
@@ -96,8 +96,8 @@ _test_command_aws || return 64
 _test_command_direnv || return 64
 _test_command_eksctl || return 64
 _test_command_precommit || return 64
-_test_direnv_active || return 64
-_test_gsts_username || return 65
-_gsts_auth || return 66
+_test_var_direnv_active || return 65
+_test_var_gsts_username || return 66
+_test_success_gsts_auth || return 67
 
 printf "Environment configured, authenticated to AWS as %s.\n" "${AWS_ROLE_ARN}"
