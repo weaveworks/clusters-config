@@ -63,6 +63,9 @@ Every provisioned cluster has a domain registered along with it and this domain 
     | ro@test.invalid         | password | read-only access to all namespaces     | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) |
     | ro-apps@test.invalid    | password | read-only access to **apps** namespace | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) "apps namespace only" | [wego-readonly-role](../eksctl-clusters/apps/common/dex/readonly-cluster-role.yaml) "apps namespace only" |
 
+## Pipeline Controller UI:
+By default, we will expose a URL for the pipeline controller. You can access it by using the following domain: promotions-<cluster_name>.eng-sandbox.weave.works
+
 ## Cluster TTL (time to live):
 Every cluster created by the `request-cluster` script runs for 7 days by default, then it will be auto deleted. To define the TTL in days, use `--delete-after` option while requesting the cluster. If you already provisioned your cluster, you can [extend TTL](#extending-your-cluster-ttl).
 
