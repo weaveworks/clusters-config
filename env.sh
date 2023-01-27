@@ -29,62 +29,75 @@ if [[ ${sourced} != "1" ]]; then
 fi
 
 # Test for presence of AWS CLI v2
-if ! command -v aws >/dev/null; then
-  echo "If you intend to manage clusters, please install the AWS CLI v2:"
-  printf "%s\n" "${_awsCliV2_docs[@]}"
-  return 64
-fi
+_test_command_aws() {
+  if ! command -v aws >/dev/null; then
+    echo "If you intend to manage clusters, please install the AWS CLI v2:"
+    printf "%s\n" "${_awsCliV2_docs[@]}"
+    return 1
+  fi
+}
 
 # Test for presence of direnv
-if ! command -v direnv >/dev/null; then
-  echo "If you intend to manage clusters, please install direnv:"
-  printf "%s\n" "${_direnv_docs[@]}"
-  return 64
-fi
+_test_command_direnv() {
+  if ! command -v direnv >/dev/null; then
+    echo "If you intend to manage clusters, please install direnv:"
+    printf "%s\n" "${_direnv_docs[@]}"
+    return 1
+  fi
+}
+
+# Test for presence of eksctl
+_test_command_eksctl(){
+  if ! command -v eksctl >/dev/null; then
+    echo "If you intend to manage clusters, please install eksctl:"
+    printf "%s\n" "${_eksctl_docs[@]}"
+    return 1
+  fi
+}
+
+# Test for presence of gsts
+test_command_gsts(){
+  if ! command -v gsts >/dev/null; then
+    echo "If you intend to manage clusters, please install gsts:"
+    printf "%s\n" "${_gsts_docs[@]}"
+    return 1
+  fi
+}
+
+# Test for presence of precommit
+_test_command_precommit(){
+  if ! command -v pre-commit >/dev/null; then
+    echo "If you intend to manage clusters, please install precommit:"
+    printf "%s\n" "${_precommit_docs[@]}"
+    return 1
+  fi
+}
 
 _test_direnv_active() {
   if [ -z "${DIRENV_ACTIVE}" ]; then
     echo "You must use \`direnv allow\` to source the environment variables"
-    return 65
+    return 1
   fi
 }
-_test_direnv_active || return 70
-
-# Test for presence of eksctl
-if ! command -v eksctl >/dev/null; then
-  echo "If you intend to manage clusters, please install eksctl:"
-  printf "%s\n" "${_eksctl_docs[@]}"
-  return 64
-fi
-
-# Test for presence of gsts
-if ! command -v gsts >/dev/null; then
-  echo "If you intend to manage clusters, please install gsts:"
-  printf "%s\n" "${_gsts_docs[@]}"
-  return 64
-fi
-
-# Test for presence of precommit
-if ! command -v pre-commit >/dev/null; then
-  echo "If you intend to manage clusters, please install precommit:"
-  printf "%s\n" "${_precommit_docs[@]}"
-  return 64
-fi
 
 _test_gsts_username() {
   if [ -z "${GOOGLE_USERNAME}" ]; then
     printf "%s\n" "Please set GOOGLE_USERNAME to your work email address"
-    return 65
+    return 1
   fi
 }
 
-_test_gsts_username || return 67
-
 # gsts is a common alias for ZSH users, particularly those using oh-my-zsh. Prefix with `/usr/bin/env` # to avoid this
 _gsts_auth() {
-  /usr/bin/env gsts --aws-role-arn "${AWS_ROLE_ARN}" --force || return 68
+  /usr/bin/env gsts --aws-role-arn "${AWS_ROLE_ARN}" --force || return 1
 }
 
-_gsts_auth || return 70
+_test_command_aws || return 64
+_test_command_direnv || return 64
+_test_command_eksctl || return 64
+_test_command_precommit || return 64
+_test_direnv_active || return 64
+_test_gsts_username || return 65
+_gsts_auth || return 66
 
 printf "Environment configured, authenticated to AWS as %s.\n" "${AWS_ROLE_ARN}"
