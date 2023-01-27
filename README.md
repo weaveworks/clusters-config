@@ -23,7 +23,7 @@ Configuration for engineering's ephemeral clusters
 - Authenticate in your CLI with `WeaveEksEditor` role:
     ```bash
     $ export GOOGLE_USERNAME=<YOUR_EMAIL>
-    $ source env.sh
+    $ source ./env.sh
     ✔ Login successful!
     Environment configured, authenticated to AWS as arn:aws:iam::894516026745:role/WeaveEksEditor.
     ```
