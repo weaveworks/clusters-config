@@ -74,9 +74,9 @@ _test_gsts_username || return 67
 
 # gsts is a common alias for ZSH users, particularly those using oh-my-zsh. Prefix with `/usr/bin/env` # to avoid this
 _gsts_auth() {
-  /usr/bin/env gsts --aws-role-arn "${AWS_ROLE_NAME}" --force || return 68
+  /usr/bin/env gsts --aws-role-arn "${AWS_ROLE_ARN}" --force || return 68
 }
 
 _gsts_auth || return 70
 
-printf "Environment configured, authenticated to AWS as %s.\n" "${AWS_ROLE_NAME}"
+printf "Environment configured, authenticated to AWS as %s.\n" "${AWS_ROLE_ARN}"
