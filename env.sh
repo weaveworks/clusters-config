@@ -25,7 +25,7 @@ _precommit_docs=(
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 if [[ ${sourced} != "1" ]]; then
   printf "Don't run %s, source it with \"source %s\"\n" "${0}" "${0}" >&2
-  return 63
+  exit 63
 fi
 
 # Test for presence of AWS CLI v2
