@@ -42,6 +42,14 @@ if ! command -v direnv >/dev/null; then
   return 64
 fi
 
+_test_direnv_active() {
+  if [ -z "${DIRENV_ACTIVE}" ]; then
+    echo "You must use \`direnv allow\` to source the environment variables"
+    return 65
+  fi
+}
+_test_direnv_active || return 70
+
 # Test for presence of eksctl
 if ! command -v eksctl >/dev/null; then
   echo "If you intend to manage clusters, please install eksctl:"
