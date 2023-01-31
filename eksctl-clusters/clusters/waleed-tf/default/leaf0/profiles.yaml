@@ -41,7 +41,7 @@ spec:
       installCRDs: true
     secretStores:
       branch: main
-      enabled: false
+      enabled: true
       path: .
       secretRef: ssh-creds
       url: ssh://git@github.com/waleedhammam/wge-dev
