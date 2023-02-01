@@ -26,11 +26,12 @@ spec:
               "--kubeconfig=/etc/gitops/value",
               "--owner=weaveworks",
               "--repository=clusters-config",
-              "--path=./eksctl/clusters/${CLUSTER_NAME}/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
+              "--path=./eksctl/clusters/waleed-terraform/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
+              "--token-auth=false"
             ]
           envFrom:
             - secretRef:
-                name: my-pat
+                name: flux-system
           env:
             - name: EXP_CLUSTER_RESOURCE_SET
               value: "true"
