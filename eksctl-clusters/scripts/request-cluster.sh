@@ -44,7 +44,9 @@ defaults(){
   export SSL_CERTIFICATE_ARN="arn:aws:acm:eu-north-1:894516026745:certificate/5f8813f2-b630-4d0d-8c34-8fb68ec166ac"
 
   # OSS image repo:
-  export OSS_REPO="hamada"
+  export OSS_REPO="ghcr.io/weaveworks/wego-app"
+  export OSS_FB_REPO="docker.io/weaveworks/gitops-oss-prs"
+  export OSS_LATEST_TAG="latest"
 }
 
 flags(){
@@ -210,9 +212,6 @@ case $WW_MODE in
   core)
     USERNAME="wego-admin"
     PASSWORDHASH='$2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a' # password
-    OSS_REPO="ghcr.io/weaveworks/wego-app"
-    OSS_FB_REPO="docker.io/weaveworks/gitops-oss-prs"
-    OSS_LATEST_TAG="latest"
 
     echo "Copying WeaveGitops templates..."
     cp -r ${PARENT_DIR}/apps/gitops/gitops-kustomization.yaml-template ${CLUSTER_DIR}/gitops-kustomization.yaml
