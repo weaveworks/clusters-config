@@ -7,7 +7,7 @@
 - Service account on AWS to authenticate the TF-Controller.
 - AdminRoleBinding for TF-Controller. [see here](../apps/tf-controller/rolebinding.yaml)
 - Cluster template with Terraform object points to tf-modules [see here](../clusters/waleed-terraform/capi-templates/aws-eks.yaml). This can be changed according to your setup
-- Leaf cluster terraform modules (sync-secrets, flux, external-secrets) managed by this module [here](main.tf)
+- Leaf cluster [terraform modules](https://github.com/weaveworks/clusters-config/tree/cluster-waleed-terraform/eksctl-clusters/leaf-terraform) (sync-secrets, flux, external-secrets) managed by this module [here](main.tf)
 - Github token for flux to be able to push files
 
 ## Steps
