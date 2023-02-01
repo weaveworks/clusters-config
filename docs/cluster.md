@@ -34,12 +34,22 @@ By default, flux will deploy the latest version of WGE and will reconcile new ve
 make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-version <WEAVE_VERSION> --team <TEAM_NAME>"
 ```
 
-## Develop and test your feature branch!
+## Develop and test your feature branch of WGE!
 You can deploy **WGE** from a feature branch and renconcile changes automatically. Use `--weave-branch` option while you are requesting the cluster.
 
 ```bash
 make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise --weave-branch <BRANCH_NAME> --team <TEAM_NAME>"
 ```
+
+## Develop and test your feature branch of gitops OSS!
+You can deploy **gitops OSS** from a feature branch and renconcile changes automatically. Use `--oss-tag` option while you are requesting the cluster.
+
+```bash
+make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode core --oss-tag <BRANCH_NAME> --team <TEAM_NAME>"
+```
+
+> **_Note:_** There is automatic build for gitops OSS feature brenches. You should buid the image on you local labtop, tag the image, then push it to `weaveworks/gitops-oss-prs` dockerhub repository.
+
 
 ## Accessing UI:
 
@@ -85,6 +95,7 @@ You can extend your cluster TTL by running:
 | <nobr>`--cluster-name`</nobr>    |         | Yes      | Cluster's Name. It should be unique |
 | <nobr>`--cluster-version`</nobr> | 1.23    | No       | Kubernetes cluster version |
 | <nobr>`--weave-mode`</nobr>      | core    | No       | Select between installing WGE, WG-Core, leaf-cluster or not install any (enterprise|core|leaf|none)". Leaf option is to create a cluster that will be used as leaf cluster. You still need to join that cluster to yor management cluster. |
+| <nobr>`----oss-tag`</nobr>       |         | No       | Select a specific tag of OSS (works only with --weave-mode=core) |
 | <nobr>`--weave-version`</nobr>   |         | No       | Select a specific released version (works only with --weave-mode=enterprise) |
 | <nobr>`--weave-branch`</nobr>    |         | No       | Select a specific git branch for installation (works only with --weave-mode=enterprise). Note: You can't use both `--weave-branch` and `--weave-version`|
 | <nobr>`--enable-flagger`</nobr>  | false   | No       | Flagger will be installed on the cluster (only available when --weave-mode=enterprise|leaf) |
