@@ -3,19 +3,19 @@ provider "aws" {
 }
 
 data "aws_eks_cluster" "this" {
-  name = "waleed-tf"
+  name = var.this_cluster_name
 }
 
 data "aws_eks_cluster_auth" "this" {
-  name = "waleed-tf"
+  name = var.this_cluster_name
 }
 
 data "aws_eks_cluster" "leaf" {
-  name = "default_leaf-control-plane"
+  name = var.cluster_name
 }
 
 data "aws_eks_cluster_auth" "leaf" {
-  name = "default_leaf-control-plane"
+  name = var.cluster_name
 }
 
 provider "kubectl" {
@@ -52,13 +52,12 @@ provider "kubernetes" {
 provider "github" {
   owner = var.github_owner
   token = var.github_token
+  alias = "github"
 }
 
 module "sync-secrets" {
   source = "./modules/sync-secrets"
   providers = {
-    aws             = aws
-    kubectl         = kubectl
     kubernetes.this = kubernetes.this
     kubernetes.leaf = kubernetes.leaf
   }
@@ -68,13 +67,19 @@ module "flux" {
   source     = "./modules/flux"
   depends_on = [module.sync-secrets]
   providers = {
-    kubectl = kubectl
-    flux    = flux
-    tls     = tls
+    kubectl.this = kubectl.this
+    kubectl.leaf = kubectl.leaf
+    flux         = flux
+    tls          = tls
+    github       = github
   }
 }
 
 module "external-secrets" {
   source     = "./modules/external-secrets"
   depends_on = [module.flux]
+  providers = {
+    kubectl.this = kubectl.this
+    kubectl.leaf = kubectl.leaf
+  }
 }

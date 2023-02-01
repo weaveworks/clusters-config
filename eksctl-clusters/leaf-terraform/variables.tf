@@ -5,6 +5,12 @@ variable "cluster_name" {
   default     = "default_leaf-control-plane"
 }
 
+variable "this_cluster_name" {
+  type        = string
+  description = "cluster name"
+  default     = "waleed-terraform"
+}
+
 variable "github_owner" {
   type        = string
   description = "github owner"
@@ -31,7 +37,7 @@ variable "repository_visibility" {
 
 variable "branch" {
   type        = string
-  default     = "cluster-waleed-tf"
+  default     = "cluster-waleed-terraform"
   description = "branch name"
 }
 
@@ -43,6 +49,6 @@ variable "token" {
 
 variable "target_path" {
   type        = string
-  default     = "./eksctl-clusters/clusters/waleed-tf/default/leaf"
+  default     = "./eksctl/clusters/waleed-terraform/default/leaf"
   description = "flux sync target path"
 }

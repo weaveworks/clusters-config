@@ -1,9 +1,25 @@
+resource "kubernetes_namespace" "flux_system" {
+  metadata {
+    name = "flux-system"
+  }
+
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].labels,
+    ]
+  }
+}
+
 data "kubernetes_secret_v1" "secret-to-sync-remote" {
   metadata {
-    name      = "ssh-creds"
-    namespace = "source-remote"
+    name      = "flux-system"
+    namespace = "flux-system"
   }
   provider = kubernetes.this
+  depends_on = [
+    kubernetes_namespace.flux_system
+  ]
 }
 
 resource "kubernetes_secret_v1" "target-to-sync-remote" {
