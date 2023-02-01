@@ -1,0 +1,107 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"head_branch":"create-clusters-branch-kyofo5","title":"Creates
+      cluster leaf0","description":"This PR creates a new cluster","template_name":"aws-eks","parameter_values":{"AWS_REGION":"eu-north-1","CLUSTER_NAME":"leaf0","INSTANCE_TYPE":"t3.medium","KUBERNETES_VERSION":"v1.24.1","OWNER_EMAIL":"waleed.hamam@weave.works","SSH_KEY_NAME":"waleed","WORKER_MACHINE_COUNT":"1"},"commit_message":"Creates
+      capi cluster","credentials":{},"values":[{"name":"external-secrets","version":"0.6.1","values":"ZXh0ZXJuYWwtc2VjcmV0czoKICBpbnN0YWxsQ1JEczogdHJ1ZQoKc2VjcmV0U3RvcmVzOgogIGVuYWJsZWQ6IGZhbHNlCiAgdXJsOiBzc2g6Ly9naXRAZ2l0aHViLmNvbS93YWxlZWRoYW1tYW0vd2dlLWRldiAgICMgdXJsIGZvciB0aGUgZ2l0IHJlcG9zaXRvcnkgdGhhdCBjb250YWlucyB0aGUgU2VjcmV0U3RvcmVzCiAgIyB0YWc6IHYxLjAuMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGlmIHlvdSB3b3VsZCBsaWtlIHRvIGRvd25sb2FkIHlvdXIgc2VjcmV0cyBmcm9tIHNwZWNpZmljIHRhZwogIGJyYW5jaDogbWFpbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGlmIHlvdSB3b3VsZCBsaWtlIHRvIGRvd25sb2FkIHlvdXIgc2VjcmV0cyBmcm9tIHNwZWNpZmljIGJyYW5jaAogIHBhdGg6IC4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgY291bGQgYmUgYSBwYXRoIHRvIHRoZSBzZWNyZXRzIGRpciBvciBhIGt1c3RvbWl6YXRpb24ueWFtbCBmaWxlIGZvciB0aGUgU2VjcmV0U3RvcmUgaW4gdGhlIEdpdFJlcG9zaXRvcnkKICBzZWNyZXRSZWY6IHNzaC1jcmVkcyAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIE5hbWUgb2YgdGhlIEs4cyBzZWNyZXQgd2l0aCBwcml2YXRlIHJlcG8gYXV0aCBjcmVkZW50aWFscyAocHJpdmF0ZSBrZXksIHB1YiBrZXksIGtub3duIGhvc3RzKQogICMgc291cmNlUmVmOiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgQ291bGQgc3BlY2lmeSBhIG5hbWUgZm9yIGFuIGV4aXN0aW5nIEdpdFNvdXJjZSByZWZlcmVuY2UgaW5zdGVhZCBvZiBjcmVhdGluZyBhIG5ldyBvbmUKICAjICAga2luZDogR2l0UmVwb3NpdG9yeQogICMgICBuYW1lOiBleHRlcm5hbC1zZWNyZXRzCiAgIyAgIG5hbWVzcGFjZTogZXh0ZXJuYWwtc2VjcmV0cwo=","layer":"layer-0","namespace":"external-secrets"}]}'
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+    weave.works/capi: bootstrap
+  name: leaf0
+  namespace: default
+spec:
+  capiClusterRef:
+    name: leaf0
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: leaf0
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 10.120.0.0/20
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: leaf0-control-plane
+  infrastructureRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: AWSManagedControlPlane
+    name: leaf0-control-plane
+
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: AWSManagedControlPlane
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: leaf0-control-plane
+  namespace: default
+spec:
+  additionalTags:
+    creator: waleed.hamam@weave.works
+  iamAuthenticatorConfig:
+    mapRoles:
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/AdministratorAccess
+      username: admin
+    - groups:
+      - system:masters
+      rolearn: arn:aws:iam::894516026745:role/WeaveEksEditor
+      username: admin
+  region: eu-north-1
+  sshKeyName: waleed
+  version: v1.24.1
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: leaf0-pool-0
+  namespace: default
+spec:
+  clusterName: leaf0
+  replicas: 1
+  template:
+    spec:
+      bootstrap:
+        dataSecretName: ""
+      clusterName: leaf0
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AWSManagedMachinePool
+        name: leaf0-pool-0
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AWSManagedMachinePool
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  labels:
+    templates.weave.works/template-name: aws-eks
+    templates.weave.works/template-namespace: default
+  name: leaf0-pool-0
+  namespace: default
+spec:
+  additionalTags:
+    creator: waleed.hamam@weave.works
+  instanceType: t3.medium
