@@ -211,7 +211,7 @@ case $WW_MODE in
     USERNAME="wego-admin"
     PASSWORDHASH='$2a$10$6ErJr5BDz4xpS9QxtqeveuEl9.1bioDeRHFLNgqP31oTYNht3EC.a' # password
     OSS_REPO="ghcr.io/weaveworks/wego-app"
-    OSS_FB_REPO="ghcr.io/weaveworks/wego-app"
+    OSS_FB_REPO="docker.io/weaveworks/gitops-oss-prs"
     OSS_LATEST_TAG="latest"
 
     echo "Copying WeaveGitops templates..."
