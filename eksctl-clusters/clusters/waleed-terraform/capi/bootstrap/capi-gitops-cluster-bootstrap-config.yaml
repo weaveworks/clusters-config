@@ -26,8 +26,9 @@ spec:
               "--kubeconfig=/etc/gitops/value",
               "--owner=weaveworks",
               "--repository=clusters-config",
-              "--path=./eksctl/clusters/waleed-terraform/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
-              "--token-auth=false"
+              "--path=./eksctl-clusters/clusters/waleed-terraform/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
+              "--token-auth=false",
+              "--branch=cluster-waleed-terraform",
             ]
           envFrom:
             - secretRef:
