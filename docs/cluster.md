@@ -45,10 +45,10 @@ make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode enterprise
 You can deploy **gitops OSS** from a feature branch and renconcile changes automatically. Use `--oss-tag` option while you are requesting the cluster.
 
 ```bash
-make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode core --oss-tag <BRANCH_NAME> --team <TEAM_NAME>"
+make request-cluster ARGS="--cluster-name <CLUSTER_NAME> --weave-mode core --oss-tag <OSS_TAG> --team <TEAM_NAME>"
 ```
 
-> **_Note:_** There is no automatic build for gitops OSS feature branches. You should buid the image on you local labtop, tag the image, then push it to `weaveworks/gitops-oss-prs` dockerhub repository.
+> **_Note:_** There is no automatic build for gitops OSS feature branches. You should buid the image on you local laptop, tag the image, then push it to `weaveworks/gitops-oss-prs` dockerhub repository.
 
 
 ## Accessing UI:
