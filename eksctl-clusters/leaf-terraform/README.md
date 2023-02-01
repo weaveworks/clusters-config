@@ -1,6 +1,6 @@
 # Bootstrapping secrets to leaf cluster using terraform
 
-## Requirements 
+## Requirements
 
 - Working management cluster and a leaf cluster.
 - TF-Controller installed on management cluster [see here](../apps/tf-controller/release.yaml).
@@ -12,10 +12,10 @@
 
 ## Steps
 
-1- Make your changes in the template according to your setup then add it to your cluster and make sure it's installed 
+1- Make your changes in the template according to your setup then add it to your cluster and make sure it's installed
 
 ```bash
-➜ k get CAPITemplate                                                                                                                             
+➜ k get CAPITemplate
 NAMESPACE   NAME      AGE
 default     aws-eks   6h40m
 
@@ -23,10 +23,10 @@ default     aws-eks   6h40m
 
 2- Create a service account with a proper access [see here](https://docs.gitops.weave.works/docs/terraform/aws-eks/) to authenticate tf-controller
 
-3- Install TF-Controller on the management cluster by making a kustomization to point to its location 
+3- Install TF-Controller on the management cluster by making a kustomization to point to its location
 
 - Kustomization file:
-  
+
 ```yaml
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
 kind: Kustomization
@@ -68,7 +68,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: tf-controller
-      version: '>=0.9.3'
+      version: ">=0.9.3"
   interval: 1h0s
   releaseName: tf-controller
   targetNamespace: flux-system
@@ -119,7 +119,7 @@ subjects:
     namespace: flux-system
 ```
 
-3- Configure the leaf-terraform modules with your required values (modify github branch, tokens, ...) 
+3- Configure the leaf-terraform modules with your required values (modify github branch, tokens, ...)
 
 4- Create a new cluster using the template we created before
 
@@ -141,7 +141,7 @@ subjects:
 
 - This is because the flux-system have to be applied before flux installation
 
-Temp fix using 
+Temp fix using
 
 ```bash
 ➜  flux git:(add-flux) ✗ tf apply -var "github_token=$GITHUB_TOKEN" --target=kubernetes_namespace.flux_system                                                          <aws:sts>
