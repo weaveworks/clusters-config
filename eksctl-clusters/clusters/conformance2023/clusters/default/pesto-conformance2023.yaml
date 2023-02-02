@@ -2,7 +2,8 @@ apiVersion: gitops.weave.works/v1alpha1
 kind: GitopsCluster
 metadata:
   annotations:
-    templates.weave.works/create-request: '{"repository_url":"https://github.com/weaveworks/clusters-config","head_branch":"wge-create-branch-xmfsek","title":"Creates
+    templates.weave.works/create-request:
+      '{"repository_url":"https://github.com/weaveworks/clusters-config","head_branch":"wge-create-branch-xmfsek","title":"Creates
       resource ","description":"This PR creates a aks-template instance","template_name":"aks-template","parameter_values":{"AZURE_CLIENT_ID":"626d016a-9788-442c-b062-3ed7e64340db","AZURE_CLUSTER_IDENTITY_SECRET_NAME":"cluster-identity-secret","AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE":"default","AZURE_LOCATION":"eastus","AZURE_NODE_MACHINE_TYPE":"Standard_D2s_v3","AZURE_RESOURCE_GROUP":"team-pesto-use1","AZURE_SUBSCRIPTION_ID":"ace37984-3d07-4051-9002-d5a52c0ae14b","AZURE_TENANT_ID":"3747a928-2079-440f-8f0f-ab1be2a7c058","CLUSTER_IDENTITY_NAME":"cluster-identity","CLUSTER_NAME":"pesto-conformance2023","KUBERNETES_VERSION":"1.25.5","NAMESPACE":"default","WORKER_MACHINE_COUNT":"3"},"commit_message":"Creates
       aks-template instance","credentials":{},"template_namespace":"default","template_kind":"GitOpsTemplate"}'
   labels:
@@ -27,7 +28,7 @@ spec:
   clusterNetwork:
     services:
       cidrBlocks:
-      - 192.168.0.0/16
+        - 192.168.0.0/16
   controlPlaneRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
     kind: AzureManagedControlPlane
@@ -83,7 +84,7 @@ metadata:
   namespace: default
 spec:
   clusterName: pesto-conformance2023
-  replicas: 3
+  replicas: 2
   template:
     metadata: {}
     spec:
