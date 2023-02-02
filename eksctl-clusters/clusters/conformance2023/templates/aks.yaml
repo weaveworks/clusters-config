@@ -11,29 +11,29 @@ spec:
     - name: CLUSTER_NAME
       default: "pesto-conformance2023"
     - name: AZURE_CLIENT_ID
-      default: 626d016a-9788-442c-b062-3ed7e64340db
+      default: "626d016a-9788-442c-b062-3ed7e64340db"
     - name: AZURE_CLUSTER_IDENTITY_SECRET_NAME
-      default: cluster-identity-secret
+      default: "cluster-identity-secret"
     - name: AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE
-      default: default
+      default: "default"
     - name: AZURE_LOCATION
-      default: eastus
+      default: "eastus"
     - name: AZURE_NODE_MACHINE_TYPE
-      default: Standard_D2s_v3
+      default: "Standard_D2s_v3"
     - name: AZURE_RESOURCE_GROUP
       default: "team-pesto-use1"
     - name: AZURE_SUBSCRIPTION_ID
-      default: ace37984-3d07-4051-9002-d5a52c0ae14b
+      default: "ace37984-3d07-4051-9002-d5a52c0ae14b"
     - name: AZURE_TENANT_ID
-      default: 3747a928-2079-440f-8f0f-ab1be2a7c058
+      default: "3747a928-2079-440f-8f0f-ab1be2a7c058"
     - name: CLUSTER_IDENTITY_NAME
-      default: cluster-identity
+      default: "cluster-identity"
     - name: KUBERNETES_VERSION
-      default: 1.25.5
+      default: "1.25.5"
     - name: NAMESPACE
-      default: default
+      default: "default"
     - name: WORKER_MACHINE_COUNT
-      default: 3
+      default: "3"
   resourcetemplates:
     - content:
         - apiVersion: gitops.weave.works/v1alpha1
