@@ -1,6 +1,6 @@
 # Bootstarp Flux on Leaf Cluster
 
-## Context: 
+## Context:
 
 When flux bootstrap, it uses the github-token to create a deploy key in the repo, so it can push its manifest to the repo. To do so, the github-token should belongs to a user with admin permission to the repo. Most of engineers have write or maintain access to "clusters-config" repo, so their tokens will not be able to create the deploy-key for Flux in the bootstrap process and flux will fail.
 
@@ -53,7 +53,7 @@ We have decided to go with [ **Copy managment cluster deploy key** ] solution. T
 
 Execution log example
 ```bash
-➜  kubectl get po -A --kubeconfig leaf.kubeconfig     
+➜  kubectl get po -A --kubeconfig leaf.kubeconfig
 NAMESPACE     NAME                       READY   STATUS    RESTARTS   AGE
 kube-system   aws-node-59f89             1/1     Running   0          14m
 kube-system   coredns-6c5cd9f6df-6hgn4   1/1     Running   0          19m
@@ -63,7 +63,7 @@ kube-system   kube-proxy-2zmq4           1/1     Running   0          14m
 ➜  kubectl get secret -A --kubeconfig leaf.kubeconfig
 No resources found
 
-➜  kubectl create ns flux-system  --kubeconfig leaf.kubeconfig                     
+➜  kubectl create ns flux-system  --kubeconfig leaf.kubeconfig
 namespace/flux-system created
 
 ➜  kubectl apply -f ../my-pat.yaml --kubeconfig leaf.kubeconfig -n flux-system
