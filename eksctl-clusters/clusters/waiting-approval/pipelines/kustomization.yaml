@@ -2,4 +2,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - pipeline-01.yaml
-- podinfo-01-dev.yaml
+# - podinfo-01-dev.yaml
+# - podinfo-01-prod.yaml
