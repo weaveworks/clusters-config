@@ -44,12 +44,12 @@ jobs:
           eksctl version
 
       - name: Install helm
-        uses: azure/setup-helm@v2.0
+        uses: azure/setup-helm@v3.5
         with:
           version: v3.8.2
 
       - name: Install kubectl
-        uses: Azure/setup-kubectl@v2.0
+        uses: Azure/setup-kubectl@v3.2
         with:
           version: v1.23.7
 
@@ -61,7 +61,7 @@ jobs:
           flux version --client
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::894516026745:role/WeaveEksGithubActions
           aws-region: ${{ env.AWS_REGION }}
