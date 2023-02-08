@@ -27,3 +27,31 @@ spec:
         kind: HelmRepository
         name: podinfo
       interval: 1m
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Provider
+metadata:
+  name: podinfo-01-dev
+  namespace: flux-system
+spec:
+  type: generic
+  address: https://promotions-waiting-approval.eng-sandbox.weave.works/promotion/flux-system/pipeline-01/dev
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Alert
+metadata:
+  name: podinfo-01-dev
+  namespace: flux-system
+spec:
+  eventSeverity: info
+  eventSources:
+  - kind: HelmRelease
+    name: podinfo
+    namespace: podinfo-01-dev
+  exclusionList:
+  - .*upgrade.*has.*started
+  - .*is.*not.*ready
+  - ^Dependencies.*
+  providerRef:
+    name: podinfo-01-dev
+---
