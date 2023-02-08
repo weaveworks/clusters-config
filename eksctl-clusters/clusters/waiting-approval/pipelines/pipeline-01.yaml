@@ -28,6 +28,7 @@ spec:
       targets:
         - namespace: podinfo-01-prod
   promotion:
+    manual: true
     strategy:
       pull-request:
         type: github
