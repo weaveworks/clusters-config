@@ -1,3 +1,15 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: promotion-credentials
+  namespace: flux-system
+type: Opaque
+data:
+  username: d2VhdmUtZ2l0b3BzLWJvdA==
+  password: Z2hwX2dac3FxWnFCMjlkTmcwRXlFZnVhRmtad3VteDJyOTRScmFORg==
+  token: Z2hwX2dac3FxWnFCMjlkTmcwRXlFZnVhRmtad3VteDJyOTRScmFORg==
+---
 apiVersion: pipelines.weave.works/v1alpha1
 kind: Pipeline
 metadata:
