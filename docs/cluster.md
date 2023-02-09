@@ -28,7 +28,7 @@
   ```
 
 ## Create kubeconfig for leaf clusters
-If you used `--weave-mode leaf`, you would need to create a kubeconfig file to use it to connect the leaf cluster with you management cluster. 
+If you used `--weave-mode leaf`, you would need to create a kubeconfig file to use it to connect the leaf cluster with you management cluster.
 
 To create the kubeconfig file, connect to your leaf cluster then run the following command:
 
