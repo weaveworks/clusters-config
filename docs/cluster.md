@@ -27,6 +27,17 @@
   eksctl utils write-kubeconfig --region eu-north-1 --cluster <CLUSTER_NAME> --kubeconfig=$HOME/.kube/config
   ```
 
+## Create kubeconfig for leaf clusters
+If you used `--weave-mode leaf`, you would need to create a kubeconfig file to use it to connect the leaf cluster with you management cluster. 
+
+To create the kubeconfig file, connect to your leaf cluster then run the following command:
+
+```bash
+make leaf-kubeconfig
+```
+
+The command will create a serviceaccount with cluster-admin access, then generates the kubeconfig file. The path of the file will be printed out.
+
 ## Deploy Specific Version of WGE:
 By default, flux will deploy the latest version of WGE and will reconcile new versions once released. To deploy specific release, use the `--weave-version` option.
 
