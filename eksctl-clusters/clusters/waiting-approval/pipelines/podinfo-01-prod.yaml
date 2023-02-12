@@ -22,7 +22,7 @@ spec:
   chart:
     spec:
       chart: podinfo
-      version: "6.0.3" # {"$promotion": "flux-system:pipeline-01:prod"}
+      version: "6.0.2" # {"$promotion": "flux-system:pipeline-01:prod"}
       sourceRef:
         kind: HelmRepository
         name: podinfo
