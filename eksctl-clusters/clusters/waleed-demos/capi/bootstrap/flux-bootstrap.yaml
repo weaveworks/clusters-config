@@ -26,7 +26,7 @@ spec:
               "--kubeconfig=/etc/gitops/value",
               "--owner=weaveworks",
               "--repository=clusters-config",
-              "--path=./clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
+              "--path=./eksctl-clusters/clusters/waleed-demos/clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
             ]
           envFrom:
             - secretRef:
