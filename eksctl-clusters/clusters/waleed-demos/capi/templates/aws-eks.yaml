@@ -35,6 +35,7 @@ spec:
       labels:
         weave.works/capi: bootstrap
         weave.works/flux: bootstrap
+        weave.works/secret: sync
     spec:
       capiClusterRef:
         name: "${CLUSTER_NAME}"

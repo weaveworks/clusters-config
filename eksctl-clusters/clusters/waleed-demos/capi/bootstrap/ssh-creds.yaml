@@ -6,7 +6,7 @@ metadata:
 spec:
   clusterSelector:
     matchLabels:
-      weave.works/flux: bootstrap
+      weave.works/secret: sync
   secretRef:
     name: ssh-creds
   targetNamespace: external-secrets
