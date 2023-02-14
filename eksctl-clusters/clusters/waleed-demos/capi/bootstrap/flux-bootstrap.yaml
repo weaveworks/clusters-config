@@ -24,13 +24,15 @@ spec:
               "bootstrap",
               "github",
               "--kubeconfig=/etc/gitops/value",
-              "--url=ssh://git@github.com/weaveworks/clusters-config",
-              "--branch=cluster-waleed-demos"
+              "--owner=weaveworks",
+              "--repository=clusters-config",
+              "--branch=cluster-waleed-demos",
               "--path=./eksctl-clusters/clusters/waleed-demos/clusters/{{ .ObjectMeta.Namespace }}/{{ .ObjectMeta.Name }}",
+              "--token-auth=false",
             ]
           envFrom:
             - secretRef:
-                name: flux-system
+                name: my-pat
           env:
             - name: EXP_CLUSTER_RESOURCE_SET
               value: "true"
