@@ -1,7 +1,7 @@
 apiVersion: capi.weave.works/v1alpha1
 kind: CAPITemplate
 metadata:
-  name: aws-eks
+  name: aws-eks-template
   namespace: default
 spec:
   description: AWS EKS Cluster
