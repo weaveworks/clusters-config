@@ -1,0 +1,12 @@
+apiVersion: capi.weave.works/v1alpha2
+kind: SecretSync
+metadata:
+  name: ssh-creds
+  namespace: external-secrets
+spec:
+  clusterSelector:
+    matchLabels:
+      weave.works/capi: bootstrap
+  secretRef:
+    name: ssh-creds
+  targetNamespace: external-secrets
