@@ -3,6 +3,8 @@ kind: CAPITemplate
 metadata:
   name: aws-eks-template
   namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "true"
 spec:
   description: AWS EKS Cluster
   params:
