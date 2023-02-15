@@ -3,7 +3,7 @@ kind: Kustomization
 metadata:
   creationTimestamp: null
   name: my-app
-  namespace: flux-system
+  namespace: team-podinfo
 spec:
   interval: 10m0s
   path: ./my-service-1/kustomize
