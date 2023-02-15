@@ -103,4 +103,6 @@ spec:
     spec:
       additionalTags:
         creator: ${OWNER_EMAIL}
+      labels:
+        test: test
       instanceType: ${INSTANCE_TYPE}
