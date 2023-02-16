@@ -104,5 +104,5 @@ spec:
       additionalTags:
         creator: ${OWNER_EMAIL}
       labels:
-        test: test
+        node-role.kubernetes.io/control-plane:
       instanceType: ${INSTANCE_TYPE}
