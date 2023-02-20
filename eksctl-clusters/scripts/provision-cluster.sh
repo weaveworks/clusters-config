@@ -87,7 +87,7 @@ eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_EDITOR_ARN} --group system:masters --username admin
 eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --region ${AWS_REGION} --arn ${WW_GITHUB_ACTIONS_ARN} --group system:masters --username admin
 
-timeout 15m cat <( waitDNSRecordCreated $CLUSTER_NAME.eng-sandbox.weave.works. )
+timeout 30m cat <( waitDNSRecordCreated $CLUSTER_NAME.eng-sandbox.weave.works. )
 EXIT_CODE=$(echo $?)
 if [ $EXIT_CODE -eq 124 ]
 then
@@ -95,7 +95,7 @@ then
   exit 1
 fi
 
-timeout 15m cat <( waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works. )
+timeout 30m cat <( waitDNSRecordCreated $CLUSTER_NAME-dex.eng-sandbox.weave.works. )
 EXIT_CODE=$(echo $?)
 if [ $EXIT_CODE -eq 124 ]
 then
