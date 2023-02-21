@@ -105,6 +105,7 @@ then
   kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-bootstrap-controller
   kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service
 elif [ ${CHECK_WGCORE_MODE} ]
+then
   kubectl rollout restart -n flux-system deployment ww-gitops-weave-gitops
 fi
 
