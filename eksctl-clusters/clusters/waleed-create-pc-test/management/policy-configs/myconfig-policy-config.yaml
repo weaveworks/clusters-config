@@ -1,0 +1,16 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: myconfig
+spec:
+  config:
+    policy-1:
+      parameters:
+        param-2: value-1
+  match:
+    resources:
+    - kind: Deployment
+      name: my-deployment
+      namespace: default
+status: {}
