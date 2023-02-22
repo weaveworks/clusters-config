@@ -1,0 +1,13 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: myconfig
+spec:
+  config: {}
+  match:
+    apps:
+    - kind: HelmRelease
+      name: my-app
+      namespace: flux-system
+status: {}
