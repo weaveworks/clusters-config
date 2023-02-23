@@ -22,6 +22,9 @@ provision-cluster: ## Provision a cluster.
 extend-ttl: ## Extend cluster ttl.
 	@./eksctl-clusters/scripts/extend-cluster-ttl.sh $(ARGS)
 
+leaf-kubeconfig: ## Create kubeconfig for leaf clusters created by this tool.
+	@./eksctl-clusters/scripts/create-kube-config.sh management-cluster default
+
 ##@ Utilities
 # Thanks to https://www.thapaliya.com/en/writings/well-documented-makefiles/
 help:  ## Display this help.
