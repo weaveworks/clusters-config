@@ -8,8 +8,8 @@ env:
   AWS_REGION: "eu-north-1"
   CLUSTERCTL_VERSION: "v1.2.3"
   CLUSTER_AWS_ADM_VERSION: "v1.5.0"
-  EKSCTL_VERSION: "v0.124.0"
-  FLUX_VERSION: "v0.36.0"
+  EKSCTL_VERSION: "v0.131.0"
+  FLUX_VERSION: "v0.40.1"
 
 jobs:
   provision-cluster:
