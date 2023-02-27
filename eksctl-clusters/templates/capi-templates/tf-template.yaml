@@ -1,0 +1,28 @@
+---
+apiVersion: clustertemplates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: tf-template
+  namespace: default
+spec:
+  description:
+    This is a sample WGE template that will be translated into a tf-controller specific template.
+  params:
+    - name: RESOURCE_NAME
+      description: Resource Name
+  resourcetemplates:
+    - content:
+      - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+        kind: Terraform
+        metadata:
+          name: ${RESOURCE_NAME}
+          namespace: flux-system
+        spec:
+          interval: 1h
+          path: ./eksctl-clusters/
+          approvePlan: auto
+          alwaysCleanupRunnerPod: true
+          sourceRef:
+            kind: GitRepository
+            name: flux-system
+            namespace: flux-system
