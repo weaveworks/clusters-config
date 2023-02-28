@@ -29,7 +29,7 @@ spec:
     crds: CreateReplace
     createNamespace: true
   interval: 1m0s
-  targetNamespace: flux-system
+  targetNamespace: ingress-nginx
   upgrade:
     crds: CreateReplace
   values:
