@@ -1,4 +1,3 @@
-
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
@@ -25,7 +24,7 @@ spec:
         name: weave-gitops-enterprise-charts
         namespace: flux-system
   dependsOn:
-  - name: cert-manager
+    - name: cert-manager
   interval: 10m0s
   install:
     crds: CreateReplace
@@ -45,7 +44,7 @@ spec:
         repositoryClustersPath: "./eksctl-clusters/clusters/${CLUSTER_NAME}"
         baseBranch: "${BRANCH_NAME}"
       oidc:
-        enabled: true
+        enabled: false
         issuerURL: https://${CLUSTER_NAME}-dex.eng-sandbox.weave.works
         redirectURL: https://${CLUSTER_NAME}.eng-sandbox.weave.works/oauth2/callback
         clientCredentialsSecret: oidc-auth
@@ -68,10 +67,10 @@ spec:
           annotations:
             external-dns.alpha.kubernetes.io/hostname: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
           hosts:
-          - host: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
-            paths:
-            - path: /
-              pathType: ImplementationSpecific
+            - host: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
     ingress:
       enabled: true
       className: "public-nginx"
