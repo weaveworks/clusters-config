@@ -1,0 +1,43 @@
+cluster:
+  id: 0
+  name: wge-2448
+egressMasqueradeInterfaces: eth0
+encryption:
+  nodeEncryption: false
+eni:
+  enabled: true
+hubble:
+  enabled: true
+  metrics:
+    enableOpenMetrics: true
+    enabled:
+      - dns
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction
+  relay:
+    enabled: true
+  tls:
+    ca:
+      cert: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNGRENDQWJxZ0F3SUJBZ0lVRHNiTHY2ZGFXYXhHYVNPZlpnM2hIYmNJM1BFd0NnWUlLb1pJemowRUF3SXcKYURFTE1Ba0dBMVVFQmhNQ1ZWTXhGakFVQmdOVkJBZ1REVk5oYmlCR2NtRnVZMmx6WTI4eEN6QUpCZ05WQkFjVApBa05CTVE4d0RRWURWUVFLRXdaRGFXeHBkVzB4RHpBTkJnTlZCQXNUQmtOcGJHbDFiVEVTTUJBR0ExVUVBeE1KClEybHNhWFZ0SUVOQk1CNFhEVEl6TURNd01UQTVOREl3TUZvWERUSTRNREl5T0RBNU5ESXdNRm93YURFTE1Ba0cKQTFVRUJoTUNWVk14RmpBVUJnTlZCQWdURFZOaGJpQkdjbUZ1WTJselkyOHhDekFKQmdOVkJBY1RBa05CTVE4dwpEUVlEVlFRS0V3WkRhV3hwZFcweER6QU5CZ05WQkFzVEJrTnBiR2wxYlRFU01CQUdBMVVFQXhNSlEybHNhWFZ0CklFTkJNRmt3RXdZSEtvWkl6ajBDQVFZSUtvWkl6ajBEQVFjRFFnQUVCMVl1amk4a1h5MkIxcjRrYTNscjM4L20KZ2VnbkNwcWlEb2IyYlpZYkhQc3luc2RnVTMyMUVXZlBxMmdrYzdHL2EvM2ZiV3dvMDJiNGRqYlpvVTJiS3FOQwpNRUF3RGdZRFZSMFBBUUgvQkFRREFnRUdNQThHQTFVZEV3RUIvd1FGTUFNQkFmOHdIUVlEVlIwT0JCWUVGSkpZCnJCQTNnaHNEVmtJRGovMWh4YVFQSDNXZk1Bb0dDQ3FHU000OUJBTUNBMGdBTUVVQ0lRQzBuWUNteWdwZGw1bm4KdlI2SGtKcTJPUnZxdGJOeDB4TlkzWklPckNmWTRBSWdiUlg1eWRVTzdQTnh5VWdkdmxjcEhqQ1JRZ051UFhaZQovQ29iSmgvanJYWT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+      key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUtyaTE1TFJvRVFFNnZRSGJHWUptSUc4MmQxUGVaNE9ydGRWdTE4bGtEb0FvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFQjFZdWppOGtYeTJCMXI0a2EzbHIzOC9tZ2VnbkNwcWlEb2IyYlpZYkhQc3luc2RnVTMyMQpFV2ZQcTJna2M3Ry9hLzNmYld3bzAyYjRkamJab1UyYktnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
+ipam:
+  mode: eni
+kubeProxyReplacement: disabled
+nodeinit:
+  enabled: true
+operator:
+  prometheus:
+    enabled: true
+  replicas: 1
+prometheus:
+  enabled: true
+serviceAccounts:
+  cilium:
+    name: cilium
+  operator:
+    name: cilium-operator
+tunnel: disabled

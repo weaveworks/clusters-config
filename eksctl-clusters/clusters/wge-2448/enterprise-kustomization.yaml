@@ -17,3 +17,36 @@ spec:
       CLUSTER_NAME: wge-2448
       BRANCH_NAME: cluster-wge-2448
       CHART_REPO: https://charts.dev.wkp.weave.works/releases/charts-v3
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: l7-ingress-visibility-wge
+  namespace: flux-system
+spec:
+  description: L7 policy
+  endpointSelector: { }
+  ingress:
+    - toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+          rules:
+            http:
+              - method: POST
+                path: "/v1/objects$"
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "allow-all-within-namespace"
+  namespace: flux-system
+spec:
+  description: "Allow all within namespace"
+  endpointSelector: { }
+  ingress:
+    - fromEndpoints:
+        - { }
+  egress:
+    - toEndpoints:
+        - { }
