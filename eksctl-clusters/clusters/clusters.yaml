@@ -1,0 +1,8 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  name: leaf-cluster-1
+  namespace: flux-system
+spec:
+  secretRef:
+    name: leaf-cluster-1-kubeconfig

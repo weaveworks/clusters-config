@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: cilium-monitoring
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: grafana-wge-2448.eng-sandbox.weave.works
+spec:
+  ingressClassName: public-nginx
+  rules:
+    - host: grafana-wge-2448.eng-sandbox.weave.works
+      http:
+        paths:
+          - backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+            path: /
+            pathType: ImplementationSpecific
