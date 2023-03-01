@@ -1,19 +1,22 @@
 #following https://docs.cilium.io/en/v1.13/observability/grafana/#install-metrics
 #remember policy enforcement https://docs.cilium.io/en/v1.12/policy/intro/
 
+all: cilium networking monitoring
+
 cilium:
 	cilium install --cluster-name=wge-2448 --helm-values cilium-values.yaml
 	cilium hubble enable #i think this should not be needed but does not seem to work hubble without
 
 networking:
-	kubectl apply -f /Users/enekofb/projects/github.com/weaveworks/clusters-config/eksctl-clusters/clusters/netwoking.yaml
+	kubectl apply -f netwoking.yaml
 
 monitoring:
 	kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/master/examples/kubernetes/addons/prometheus/monitoring-example.yaml
 
-cilium-uninstall:
+uninstall:
 	cilium uninstall
-	kubectl delete -f https://raw.githubusercontent.com/cilium/cilium/1.13.0/examples/kubernetes/addons/prometheus/monitoring-example.yaml
+	kubectl delete -f netwoking.yaml || true
+	kubectl delete -f https://raw.githubusercontent.com/cilium/cilium/master/examples/kubernetes/addons/prometheus/monitoring-example.yaml || true
 
 add-repos:
 	helm repo add cilium https://helm.cilium.io
