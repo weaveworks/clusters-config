@@ -11,13 +11,12 @@ networking:
 	kubectl apply -f netwoking.yaml
 
 monitoring:
-	kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/master/examples/kubernetes/addons/prometheus/monitoring-example.yaml
-	kubectl apply -f monitoring.yaml
+	kubectl apply -f monitoring/
 
 uninstall:
 	cilium uninstall
 	kubectl delete -f netwoking.yaml || true
-	kubectl delete -f https://raw.githubusercontent.com/cilium/cilium/master/examples/kubernetes/addons/prometheus/monitoring-example.yaml || true
+	kubectl delete -f monitoring/
 
 leaf:
 	kubectl apply -f clusters.yaml
