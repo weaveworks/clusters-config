@@ -1,0 +1,21 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synthetic-traffic
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traffic
+  template:
+    metadata:
+      labels:
+        app: traffic
+    spec:
+      containers:
+        - name: main
+          image: docker.io/enekofb/synthetic:latest
+          imagePullPolicy: Always
+
