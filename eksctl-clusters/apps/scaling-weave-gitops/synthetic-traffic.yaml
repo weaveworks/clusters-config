@@ -1,0 +1,33 @@
+#secrets created offline
+#kubectl create secret generic prod-db-secret --from-literal=username=produser --from-literal=password=Y4nys7f11
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: synthetic-traffic
+  namespace: flux-system
+  labels:
+    app: synthetic-traffic
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 0
+      template:
+        spec:
+          containers:
+            - name: cypress
+              image: docker.io/enekofb/synthetic:7
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: CYPRESS_WEGO_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: synthetic-traffic
+                      key: username
+                - name: CYPRESS_WEGO_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: synthetic-traffic
+                      key: password
+          restartPolicy: OnFailure
