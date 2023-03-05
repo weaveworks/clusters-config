@@ -17,7 +17,7 @@ spec:
         spec:
           containers:
             - name: cypress
-              image: docker.io/enekofb/synthetic:8
+              image: docker.io/enekofb/synthetic:9
               imagePullPolicy: IfNotPresent
               args: [ "-P","meilisearch" ]
-          restartPolicy: OnFailure
+          restartPolicy: Never
