@@ -1,0 +1,18 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: l7-ingress-visibility
+  namespace: meilisearch
+spec:
+  description: L7 policy
+  endpointSelector: { }
+  ingress:
+    - toPorts:
+        - ports:
+            - port: "7700"
+              protocol: TCP
+          rules:
+            http:
+              - method: POST
+                path: "/indexes/movies/search$"
