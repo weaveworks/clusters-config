@@ -1,0 +1,23 @@
+#secrets created offline
+#kubectl create secret generic prod-db-secret --from-literal=username=produser --from-literal=password=Y4nys7f11
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: meilisearch-synthetic-traffic
+  namespace: flux-system
+  labels:
+    app: meilisearch
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 0
+      template:
+        spec:
+          containers:
+            - name: cypress
+              image: docker.io/enekofb/synthetic:8
+              imagePullPolicy: IfNotPresent
+              args: [ "-P","meilisearch" ]
+          restartPolicy: OnFailure
