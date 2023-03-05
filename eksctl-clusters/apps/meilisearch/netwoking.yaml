@@ -16,3 +16,5 @@ spec:
             http:
               - method: POST
                 path: "/indexes/movies/search$"
+              - method: GET
+                path: "/indexes/movies/search$"
