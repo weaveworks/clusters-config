@@ -99,19 +99,19 @@ data:
               "mappings": [],
               "min": 0,
               "thresholds": {
-                "mode": "percentage",
+                "mode": "absolute",
                 "steps": [
                   {
-                    "color": "red",
+                    "color": "green",
                     "value": null
                   },
                   {
-                    "color": "green",
-                    "value": 99
+                    "color": "red",
+                    "value": 0.25
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "s"
             },
             "overrides": []
           },
@@ -121,7 +121,7 @@ data:
             "x": 0,
             "y": 5
           },
-          "id": 23,
+          "id": 37,
           "options": {
             "colorMode": "value",
             "graphMode": "area",
@@ -129,7 +129,7 @@ data:
             "orientation": "auto",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "mean"
               ],
               "fields": "",
               "values": false
@@ -145,14 +145,14 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(rate(hubble_http_request_duration_seconds_bucket{cluster=~\"${cluster}\", destination_namespace=~\"${destination_namespace}\", destination_workload=~\"${destination_workload}\", reporter=\"${reporter}\", source_namespace=~\"${source_namespace}\", source_workload=~\"${source_workload}\", le=\"0.5\"}[$__rate_interval])) / sum(rate(hubble_http_request_duration_seconds_count{cluster=~\"${cluster}\", destination_namespace=~\"${destination_namespace}\", destination_workload=~\"${destination_workload}\", reporter=\"${reporter}\", source_namespace=~\"${source_namespace}\", source_workload=~\"${source_workload}\"}[$__rate_interval]))",
+              "expr": "histogram_quantile(0.95, sum(rate(hubble_http_request_duration_seconds_bucket{cluster=~\"${cluster}\", destination_namespace=~\"${destination_namespace}\", destination_workload=~\"${destination_workload}\", reporter=\"${reporter}\"}[$__rate_interval])) by (le))",
               "interval": "",
-              "legendFormat": "{{ cluster }} {{ method }} {{ source_namespace }}/{{ source_workload }}",
+              "legendFormat": "P50",
               "range": true,
               "refId": "A"
             }
           ],
-          "title": "KR1 p95 latency < 250ms.",
+          "title": "p95  < 250 ms",
           "type": "stat"
         },
         {
@@ -168,19 +168,19 @@ data:
               "mappings": [],
               "min": 0,
               "thresholds": {
-                "mode": "percentage",
+                "mode": "absolute",
                 "steps": [
                   {
-                    "color": "red",
+                    "color": "green",
                     "value": null
                   },
                   {
-                    "color": "green",
-                    "value": 99
+                    "color": "red",
+                    "value": 1
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "s"
             },
             "overrides": []
           },
@@ -190,7 +190,7 @@ data:
             "x": 8,
             "y": 5
           },
-          "id": 21,
+          "id": 40,
           "options": {
             "colorMode": "value",
             "graphMode": "area",
@@ -198,7 +198,7 @@ data:
             "orientation": "auto",
             "reduceOptions": {
               "calcs": [
-                "lastNotNull"
+                "mean"
               ],
               "fields": "",
               "values": false
@@ -214,41 +214,84 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(rate(hubble_http_request_duration_seconds_bucket{cluster=~\"${cluster}\", destination_namespace=~\"${destination_namespace}\", destination_workload=~\"${destination_workload}\", reporter=\"${reporter}\", source_namespace=~\"${source_namespace}\", source_workload=~\"${source_workload}\", le=\"1.0\"}[$__rate_interval])) / sum(rate(hubble_http_request_duration_seconds_count{cluster=~\"${cluster}\", destination_namespace=~\"${destination_namespace}\", destination_workload=~\"${destination_workload}\", reporter=\"${reporter}\", source_namespace=~\"${source_namespace}\", source_workload=~\"${source_workload}\"}[$__rate_interval]))",
+              "expr": "histogram_quantile(0.99, sum(rate(hubble_http_request_duration_seconds_bucket{cluster=~\"${cluster}\", destination_namespace=~\"${destination_namespace}\", destination_workload=~\"${destination_workload}\", reporter=\"${reporter}\"}[$__rate_interval])) by (le))",
               "interval": "",
-              "legendFormat": "{{ cluster }} {{ method }} {{ source_namespace }}/{{ source_workload }}",
+              "legendFormat": "P50",
               "range": true,
               "refId": "A"
             }
           ],
-          "title": "KR2 p99 latency < 1 second.",
+          "title": "p99 < 1secs",
           "type": "stat"
         },
         {
           "datasource": {
-            "type": "datasource",
-            "uid": "grafana"
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
           },
-          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 3
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
           "gridPos": {
             "h": 5,
-            "w": 7,
+            "w": 8,
             "x": 16,
             "y": 5
           },
-          "id": 25,
+          "id": 39,
           "options": {
-            "code": {
-              "language": "plaintext",
-              "showLineNumbers": false,
-              "showMiniMap": false
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
             },
-            "content": "# SLO\n\nWe aim for \n\n- SLO of 99% < 1 sec\n- SLO of 99.9% < 2 sec",
-            "mode": "markdown"
+            "textMode": "auto"
           },
           "pluginVersion": "9.3.6",
-          "title": "SLOs",
-          "type": "text"
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "histogram_quantile(0.999, sum(rate(hubble_http_request_duration_seconds_bucket{cluster=~\"${cluster}\", destination_namespace=~\"${destination_namespace}\", destination_workload=~\"${destination_workload}\", reporter=\"${reporter}\"}[$__rate_interval])) by (le))",
+              "interval": "",
+              "legendFormat": "P50",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "p99.9 <  3 secs",
+          "type": "stat"
         },
         {
           "datasource": {
@@ -315,14 +358,14 @@ data:
             "x": 0,
             "y": 10
           },
-          "id": 18,
+          "id": 38,
           "options": {
             "legend": {
               "calcs": [
                 "mean"
               ],
               "displayMode": "list",
-              "placement": "bottom",
+              "placement": "right",
               "showLegend": true
             },
             "tooltip": {
@@ -374,7 +417,7 @@ data:
               "refId": "C"
             }
           ],
-          "title": "Request Duration",
+          "title": "Latencies",
           "type": "timeseries"
         },
         {
@@ -392,7 +435,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -455,7 +499,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -739,13 +784,13 @@ data:
         ]
       },
       "time": {
-        "from": "now-5m",
+        "from": "now-30m",
         "to": "now"
       },
       "timepicker": {},
       "timezone": "",
       "title": "Scaling Weave Gtiops",
       "uid": "3g264CZVzA",
-      "version": 8,
+      "version": 9,
       "weekStart": ""
     }

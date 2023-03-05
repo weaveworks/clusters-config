@@ -2,6 +2,8 @@ FROM cypress/included:12.7.0
 
 WORKDIR /e2e
 
-COPY cypress/ ./cypress/
+COPY wge/cypress/ ./wge/cypress/
+COPY wge/cypress.config.js ./wge/
 
-COPY cypress.config.js .
+COPY meilisearch/cypress/ ./meilisearch/cypress/
+COPY meilisearch/cypress.config.js ./meilisearch/
