@@ -1,0 +1,61 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: meilisearch
+  namespace: flux-system
+spec:
+  interval: 10m
+  url: https://meilisearch.github.io/meilisearch-kubernetes
+
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: meilisearch
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: meilisearch
+      sourceRef:
+        kind: HelmRepository
+        name: meilisearch
+        namespace: flux-system
+  interval: 10m0s
+  releaseName: meilisearch
+  targetNamespace: meilisearch
+  install:
+    crds: CreateReplace
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+  values:
+    image:
+      repository: getmeili/meilisearch
+      tag: v1.0.0
+    # Environment loaded into the configMap
+    environment:
+      MEILI_NO_ANALYTICS: true
+      MEILI_ENV: development
+      # For production deployment, the environment MEILI_MASTER_KEY is required.
+      # If MEILI_ENV is set to "production" without setting MEILI_MASTER_KEY, this
+      # chart will automatically create a secure MEILI_MASTER_KEY and push it as a
+      # secret. Otherwise the below value of MEILI_MASTER_KEY will be used instead.
+      # MEILI_MASTER_KEY:
+    auth:
+      # Use an existing Kubernetes secret for the MEILI_MASTER_KEY
+      existingMasterKeySecret: ""
+
+    resources: { }
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
