@@ -9,7 +9,7 @@ import (
 
 func main() {
 	client := meilisearch.NewClient(meilisearch.ClientConfig{
-		Host: "http://localhost:7700",
+		Host: "http://meilisearch.meilisearch.svc.cluster.local:7700/",
 	})
 
 	jsonFile, err := os.Open("movies.json")
