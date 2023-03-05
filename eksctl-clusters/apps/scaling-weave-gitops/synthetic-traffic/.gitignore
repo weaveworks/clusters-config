@@ -1,1 +1,4 @@
 .terraform/
+node_modules
+package-lock.json
+cypress.env.json
