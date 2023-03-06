@@ -19,7 +19,7 @@ spec:
           namespace: flux-system
         spec:
           interval: 1h
-          path: ./eksctl-clusters/
+          path: ./eksctl-clusters/tf
           approvePlan: auto
           alwaysCleanupRunnerPod: true
           sourceRef:
