@@ -1,5 +1,5 @@
 ---
-apiVersion: templates.weave.works/v1alpha2
+apiVersion: clustertemplates.weave.works/v1alpha1
 kind: GitOpsTemplate
 metadata:
   name: tf-template
