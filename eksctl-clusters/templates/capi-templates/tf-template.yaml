@@ -1,5 +1,5 @@
 ---
-apiVersion: templates.weave.works/v1alpha2
+apiVersion: clustertemplates.weave.works/v1alpha2
 kind: GitOpsTemplate
 metadata:
   name: eks-leaf-cluster
@@ -31,13 +31,13 @@ spec:
     - path: eksctl-clusters/clusters/saeed-terraform/clusters/{{ .params.CLUSTER_NAME }}.yaml
       content:
       - apiVersion: gitops.weave.works/v1alpha1
-          kind: GitopsCluster
-          metadata:
-            name: '{{ .params.CLUSTER_NAME }}'
-            namespace: flux-system
-          spec:
-            secretRef:
-              name: '{{ .params.CLUSTER_NAME }}-kubeconfig'
+        kind: GitopsCluster
+        metadata:
+          name: '{{ .params.CLUSTER_NAME }}'
+          namespace: flux-system
+        spec:
+          secretRef:
+            name: '{{ .params.CLUSTER_NAME }}-kubeconfig'
       - apiVersion: infra.contrib.fluxcd.io/v1alpha1
         kind: Terraform
         metadata:
