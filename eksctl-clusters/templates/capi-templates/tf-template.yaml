@@ -16,16 +16,15 @@ spec:
     - name: CLUSTER_VERSION
       description: Version of the cluster.
       options: ["1.23", "1.24"]
-      default: "1.24"
     - name: AWS_REGION
       description: AWS region to deploy cluster.
-      default: eu-north-1
+      options: ["eu-north-1"]
     - name: INSTANCE_TYPE
       description: Instance type of nodes in cluster.
-      default: "t3.medium"
+      options: ["t3.medium"]
     - name: AMI_TYPE
       description: AMI.
-      default: "ami-03f710e174aa82316"
+      options: ["ami-03f710e174aa82316"]
   resourcetemplates:
     - path: eksctl-clusters/clusters/saeed-terraform/clusters/{{ .params.CLUSTER_NAME }}.yaml
       content:
