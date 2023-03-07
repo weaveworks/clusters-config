@@ -1,0 +1,46 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"repository_url":"https://github.com/weaveworks/clusters-config","head_branch":"wge-create-branch-zgxxbs","title":"Creates
+      resource hh","description":"This PR creates a eks-leaf-cluster instance","template_name":"eks-leaf-cluster","parameter_values":{"CLUSTER_NAME":"hh"},"commit_message":"Creates
+      eks-leaf-cluster instance","credentials":{},"template_namespace":"default","template_kind":"GitOpsTemplate"}'
+  labels:
+    templates.weave.works/template-name: eks-leaf-cluster
+    templates.weave.works/template-namespace: default
+  name: hh
+  namespace: flux-system
+spec:
+  secretRef:
+    name: hh-kubeconfig
+
+---
+apiVersion: infra.contrib.fluxcd.io/v1alpha1
+kind: Terraform
+metadata:
+  labels:
+    templates.weave.works/template-name: eks-leaf-cluster
+    templates.weave.works/template-namespace: default
+  name: hh
+  namespace: flux-system
+spec:
+  alwaysCleanupRunnerPod: true
+  approvePlan: auto
+  destroyResourcesOnDeletion: true
+  interval: 1h
+  path: ./eksctl-clusters/tf
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  vars:
+  - name: cluster_name
+    value: '{{ .params.CLUSTER_NAME }}'
+  - name: cluster_version
+    value: '{{ .params.CLUSTER_VERSION }}'
+  - name: region
+    value: '{{ .params.AWS_REGION }}'
+  - name: ami_type
+    value: '{{ .params.AMI_TYPE }}'
+  writeOutputsToSecret:
+    name: hh-core-outputs
