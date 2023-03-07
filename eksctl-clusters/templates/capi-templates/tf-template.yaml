@@ -6,16 +6,16 @@ metadata:
   namespace: default
   labels:
     weave.works/template-type: terraform
-  annotations:
-    templates.weave.works/profiles-enabled: "true"
+  # annotations:
+  #   templates.weave.works/profiles-enabled: "true"
 spec:
   description: This is a sample WGE template that will be translated into a tf-controller specific template.
   params:
     - name: CLUSTER_VERSION
       description: Version of the cluster.
       # options: ['1.23', '1.24']
-    - name: CLUSTER_NAME
-      description: Name of the cluster.
+    # - name: CLUSTER_NAME
+    #   description: Name of the cluster.
     - name: AWS_REGION
       description: AWS region to deploy cluster.
       # options: ['eu-north-1']
