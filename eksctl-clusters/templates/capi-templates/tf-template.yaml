@@ -31,15 +31,15 @@ spec:
       - apiVersion: gitops.weave.works/v1alpha1
         kind: GitopsCluster
         metadata:
-          name: '{{ .params.CLUSTER_NAME }}'
+          name: "${CLUSTER_NAME}"
           namespace: flux-system
         spec:
           secretRef:
-            name: '{{ .params.CLUSTER_NAME }}-kubeconfig'
+            name: "${CLUSTER_NAME}-kubeconfig"
       - apiVersion: infra.contrib.fluxcd.io/v1alpha1
         kind: Terraform
         metadata:
-          name: ${CLUSTER_NAME}
+          name: "${CLUSTER_NAME}"
           namespace: flux-system
         spec:
           interval: 1h
@@ -48,7 +48,7 @@ spec:
           destroyResourcesOnDeletion: true
           alwaysCleanupRunnerPod: true
           writeOutputsToSecret:
-              name: '{{ .params.CLUSTER_NAME }}-core-outputs'
+              name: "${CLUSTER_NAME}-core-outputs"
           vars:
             - name: cluster_name
               value: '{{ .params.CLUSTER_NAME }}'
