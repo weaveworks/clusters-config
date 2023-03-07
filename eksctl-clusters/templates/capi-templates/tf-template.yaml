@@ -31,11 +31,11 @@ spec:
       - apiVersion: gitops.weave.works/v1alpha1
         kind: GitopsCluster
         metadata:
-          name: "${CLUSTER_NAME}"
+          name: "hh"
           namespace: flux-system
-        spec:
-          secretRef:
-            name: "${CLUSTER_NAME}-kubeconfig"
+        # spec:
+        #   secretRef:
+        #     name: "${CLUSTER_NAME}-kubeconfig"
       # - apiVersion: infra.contrib.fluxcd.io/v1alpha1
       #   kind: Terraform
       #   metadata:
