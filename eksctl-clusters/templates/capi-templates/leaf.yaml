@@ -52,15 +52,6 @@ spec:
             destroyResourcesOnDeletion: true
             writeOutputsToSecret:
               name: '{{ .params.CLUSTER_NAME }}-core-outputs'
-            backendConfig:
-              customConfiguration: |
-                backend "s3" {
-                  bucket         = "dish-20276-terraform-state"
-                  key            = "leaf-clusters/{{ .params.CLUSTER_NAME }}/leaf-cluster-core/terraform.tfstate"
-                  region         = "{{ .params.AWS_REGION }}"
-                  encrypt        = true
-                  dynamodb_table = "dish-20276-terraform-state"
-                }
             vars:
               - name: cluster_name
                 value: '{{ .params.CLUSTER_NAME }}'
@@ -74,56 +65,6 @@ spec:
                 value: '{{ .params.PUBLIC_SUBNET_COUNT }}'
               - name: private_subnet_count
                 value: '{{ .params.PRIVATE_SUBNET_COUNT }}'
-            sourceRef:
-              kind: GitRepository
-              name: terraform
-              namespace: flux-system
-        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
-          kind: Terraform
-          metadata:
-            name: '{{ .params.CLUSTER_NAME }}-config'
-            namespace: flux-system
-          spec:
-            dependsOn:
-              - name: '{{ .params.CLUSTER_NAME }}-core'
-            interval: 1h
-            retryInterval: 20s
-            path: ./cluster-templates/leaf-cluster-config
-            approvePlan: auto
-            destroyResourcesOnDeletion: true
-            backendConfig:
-              customConfiguration: |
-                backend "s3" {
-                  bucket         = "dish-20276-terraform-state"
-                  key            = "leaf-clusters/{{ .params.CLUSTER_NAME }}/leaf-cluster-config/terraform.tfstate"
-                  region         = "{{ .params.AWS_REGION }}"
-                  encrypt        = true
-                  dynamodb_table = "dish-20276-terraform-state"
-                }
-            vars:
-              - name: cluster_name
-                value: '{{ .params.CLUSTER_NAME }}'
-              - name: region
-                value: '{{ .params.AWS_REGION }}'
-              - name: target_path
-                value: 'clusters/default/{{ .params.CLUSTER_NAME }}'
-              - name: desired_size
-                value: '{{ .params.DESIRED_SIZE }}'
-              - name: min_size
-                value: '{{ .params.MIN_SIZE }}'
-              - name: max_size
-                value: '{{ .params.MAX_SIZE }}'
-              - name: capacity_type
-                value: '{{ .params.CAPACITY_TYPE }}'
-              - name: instance_type
-                value: '{{ .params.INSTANCE_TYPE }}'
-              - name: shrink
-                value: '{{ .params.SHRINK }}'
-            varsFrom:
-              - kind: ConfigMap
-                name: leaf-cluster-config
-              - kind: Secret
-                name: leaf-cluster-auth
             sourceRef:
               kind: GitRepository
               name: terraform
