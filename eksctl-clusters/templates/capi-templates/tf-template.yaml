@@ -8,7 +8,7 @@ metadata:
   # annotations:
   #   templates.weave.works/profiles-enabled: "true"
 spec:
-  description: This is a sample WGE template that will be translated into a tf-controller specific template.
+  description: tf.
   renderType: templating
   params:
     - name: CLUSTER_NAME
