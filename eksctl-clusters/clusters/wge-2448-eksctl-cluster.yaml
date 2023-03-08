@@ -7,27 +7,27 @@ metadata:
   version: "1.24"
   tags:
     environment: "wge-2448"
-    delete-after: "10"
+    delete-after: "20"
     team: "platform"
 
 iam:
   withOIDC: true
   serviceRoleARN: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
   serviceAccounts:
-  - metadata:
-      name: kustomize-controller
-      namespace: flux-system
-    attachPolicyARNs:
-    - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
-    roleName: eksctl-wge-2448-sops-decrypt-role
-    roleOnly: true
-  - metadata:
-      name: external-dns
-      namespace: external-dns
-    attachPolicyARNs:
-    - "arn:aws:iam::894516026745:policy/AllowExternalDNSUpdates"
-    roleName: eksctl-wge-2448-route53-external-dns-role
-    roleOnly: false # create role and annotated service account
+    - metadata:
+        name: kustomize-controller
+        namespace: flux-system
+      attachPolicyARNs:
+        - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
+      roleName: eksctl-wge-2448-sops-decrypt-role
+      roleOnly: true
+    - metadata:
+        name: external-dns
+        namespace: external-dns
+      attachPolicyARNs:
+        - "arn:aws:iam::894516026745:policy/AllowExternalDNSUpdates"
+      roleName: eksctl-wge-2448-route53-external-dns-role
+      roleOnly: false # create role and annotated service account
 
 # Enable private access to the API server.
 vpc:
