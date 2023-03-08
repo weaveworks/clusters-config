@@ -8,7 +8,7 @@ metadata:
   # annotations:
   #   templates.weave.works/profiles-enabled: "true"
 spec:
-  description: tf.
+  description: This is a sample WGE template that will be translated into a tf-controller specific template.
   renderType: templating
   params:
     - name: CLUSTER_NAME
@@ -16,6 +16,7 @@ spec:
     - name: CLUSTER_VERSION
       description: Version of the cluster.
       options: ['1.23', '1.24']
+      default: "1.24"
     - name: AWS_REGION
       description: AWS region to deploy cluster.
       default: eu-north-1
@@ -48,7 +49,6 @@ spec:
             path: ./eksctl-clusters/tf
             approvePlan: auto
             destroyResourcesOnDeletion: true
-            alwaysCleanupRunnerPod: true
             writeOutputsToSecret:
                 name: '{{ .params.CLUSTER_NAME }}-core-outputs'
             vars:
