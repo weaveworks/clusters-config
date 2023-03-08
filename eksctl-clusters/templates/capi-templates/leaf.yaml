@@ -7,49 +7,27 @@ metadata:
     weave.works/template-type: terraform
   annotations:
     templates.weave.works/profiles-enabled: "true"
-    templates.weave.works/kustomizations-enabled: "false"
-    templates.weave.works/credentials-enabled: "false"
+    # templates.weave.works/kustomizations-enabled: "false"
+    # templates.weave.works/credentials-enabled: "false"
 spec:
-  description: Template for creating new EKS leaf clusters.
+  description: This is a sample WGE template that will be translated into a tf-controller specific template.
   renderType: templating
   params:
     - name: CLUSTER_NAME
       description: Name of the cluster.
     - name: CLUSTER_VERSION
       description: Version of the cluster.
-      options: ["1.20", "1.21", "1.22", "1.23", "1.24"]
-      default: "1.23"
+      options: ['1.23', '1.24']
+      default: "1.24"
     - name: AWS_REGION
       description: AWS region to deploy cluster.
-      default: us-east-1
-    - name: VPC_CIDR
-      description: IPv4 cidr range for VPC.
-      default: 10.0.0.0/16
-    - name: PUBLIC_SUBNET_COUNT
-      description: Number of public subnets to create.
-      default: "3"
-    - name: PRIVATE_SUBNET_COUNT
-      description: Number of private subnets to create.
-      default: "3"
-    - name: DESIRED_SIZE
-      description: Desired number of nodes in cluster.
-      default: "2"
-    - name: MIN_SIZE
-      description: Min number of nodes in cluster.
-      default: "1"
-    - name: MAX_SIZE
-      description: Max number of nodes in cluster.
-      default: "3"
-    - name: CAPACITY_TYPE
-      description: Capacity type of nodes in cluster.
-      options: ["ON_DEMAND", "SPOT"]
-      default: "SPOT"
+      default: eu-north-1
     - name: INSTANCE_TYPE
       description: Instance type of nodes in cluster.
-      default: "t3.medium"
-    - name: SHRINK
-      description: Shrink application node groups to zero.
-      default: "false"
+      options: ['t3.medium']
+    - name: AMI_TYPE
+      description: AMI.
+      options: ['ami-03f710e174aa82316']
   resourcetemplates:
     - path: clusters/management/clusters/{{ .params.CLUSTER_NAME }}.yaml
       content:
