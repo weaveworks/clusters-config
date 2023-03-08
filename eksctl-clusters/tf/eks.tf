@@ -7,14 +7,14 @@ terraform {
   }
 }
 
-variable "cluster_name" {}
-variable "cluster_version" {}
-variable "instance_types" {}
-variable "ami_type" {}
+variable "cluster_name" {default= "saeed-test-eks"}
+variable "cluster_version" {default= "1.24"}
+variable "instance_types" {default= "t3.medium"}
+variable "ami_type" {default= "ami-03f710e174aa82316"}
 variable "region" {default= "eu-north-1"}
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-variable "aws_role_arn" {}
+# variable "aws_access_key" {}
+# variable "aws_secret_key" {}
+# variable "aws_role_arn" {}
 
 
 provider "aws" {
