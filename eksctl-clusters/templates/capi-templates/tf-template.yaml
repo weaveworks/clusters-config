@@ -31,36 +31,36 @@ spec:
   resourcetemplates:
     - path: 'eksctl-clusters/clusters/saeed-terraform/clusters/a.yaml'
       content:
-        - apiVersion: gitops.weave.works/v1alpha1
-          kind: GitopsCluster
-          metadata:
-              name: '{{ .params.CLUSTER_NAME }}'
+      - apiVersion: gitops.weave.works/v1alpha1
+        kind: GitopsCluster
+        metadata:
+            name: '{{ .params.CLUSTER_NAME }}'
+          namespace: flux-system
+        spec:
+          secretRef:
+              name: '{{ .params.CLUSTER_NAME }}-kubeconfig'
+      - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+        kind: Terraform
+        metadata:
+            name: '{{ .params.CLUSTER_NAME }}'
+          namespace: flux-system
+        spec:
+          interval: 1h
+          path: ./eksctl-clusters/tf
+          approvePlan: auto
+          destroyResourcesOnDeletion: true
+          writeOutputsToSecret:
+              name: '{{ .params.CLUSTER_NAME }}-core-outputs'
+          vars:
+            - name: cluster_name
+              value: '{{ .params.CLUSTER_NAME }}'
+            - name: cluster_version
+              value: '{{ .params.CLUSTER_VERSION }}'
+            - name: region
+              value: '{{ .params.AWS_REGION }}'
+            - name: ami_type
+              value: '{{ .params.AMI_TYPE }}'
+          sourceRef:
+            kind: GitRepository
+            name: flux-system
             namespace: flux-system
-          spec:
-            secretRef:
-                name: '{{ .params.CLUSTER_NAME }}-kubeconfig'
-        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
-          kind: Terraform
-          metadata:
-              name: '{{ .params.CLUSTER_NAME }}'
-            namespace: flux-system
-          spec:
-            interval: 1h
-            path: ./eksctl-clusters/tf
-            approvePlan: auto
-            destroyResourcesOnDeletion: true
-            writeOutputsToSecret:
-                name: '{{ .params.CLUSTER_NAME }}-core-outputs'
-            vars:
-              - name: cluster_name
-                value: '{{ .params.CLUSTER_NAME }}'
-              - name: cluster_version
-                value: '{{ .params.CLUSTER_VERSION }}'
-              - name: region
-                value: '{{ .params.AWS_REGION }}'
-              - name: ami_type
-                value: '{{ .params.AMI_TYPE }}'
-            sourceRef:
-              kind: GitRepository
-              name: flux-system
-              namespace: flux-system
