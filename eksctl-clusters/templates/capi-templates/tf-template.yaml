@@ -1,4 +1,3 @@
----
 apiVersion: templates.weave.works/v1alpha2
 kind: GitOpsTemplate
 metadata:
