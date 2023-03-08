@@ -27,7 +27,7 @@ spec:
       options: ['t3.medium']
     - name: AMI_TYPE
       description: AMI.
-      options: ['ami-03f710e174aa82316']
+      options: ['AL2_x86_64']
   resourcetemplates:
     - path: 'eksctl-clusters/clusters/saeed-terraform/clusters/{{ .params.CLUSTER_NAME }}.yaml'
       content:

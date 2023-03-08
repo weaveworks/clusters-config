@@ -10,7 +10,7 @@ terraform {
 variable "cluster_name" {default= "saeed-test-eks"}
 variable "cluster_version" {default= "1.24"}
 variable "instance_types" {default= "t3.medium"}
-variable "ami_type" {default= "ami-03f710e174aa82316"}
+variable "ami_type" {default= "AL2_x86_64"}
 variable "region" {default= "eu-north-1"}
 # variable "aws_access_key" {}
 # variable "aws_secret_key" {}
@@ -19,12 +19,12 @@ variable "region" {default= "eu-north-1"}
 
 provider "aws" {
   region = var.region
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
+  # access_key = var.aws_access_key
+  # secret_key = var.aws_secret_key
 
-  assume_role {
-    role_arn    = var.aws_role_arn
-  }
+  # assume_role {
+  #   role_arn    = var.aws_role_arn
+  # }
 }
 
 provider "kubernetes" {
@@ -87,7 +87,7 @@ module "eks" {
       desired_size = 2
       subnet_ids = ["subnet-0b836507495991415", "subnet-0cb479c06a51a041d"]
 
-      instance_types = var.instance_types
+      instance_types = [var.instance_types]
       ami_type = var.ami_type
       capacity_type  = "ON_DEMAND"
       attach_cluster_primary_security_group = true
