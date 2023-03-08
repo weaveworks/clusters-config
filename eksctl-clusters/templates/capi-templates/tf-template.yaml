@@ -1,7 +1,7 @@
 apiVersion: templates.weave.works/v1alpha2
 kind: GitOpsTemplate
 metadata:
-  name: eks-leaf-cluster
+  name: hamada
   namespace: default
   labels:
     weave.works/template-type: terraform
@@ -11,11 +11,12 @@ spec:
   description: This is a sample WGE template that will be translated into a tf-controller specific template.
   renderType: templating
   params:
+    - name: CLUSTER_NAME
+      description: Name of the cluster.
     - name: CLUSTER_VERSION
       description: Version of the cluster.
       options: ['1.23', '1.24']
-    - name: CLUSTER_NAME
-      description: Name of the cluster.
+
     - name: AWS_REGION
       description: AWS region to deploy cluster.
       options: ['eu-north-1']
@@ -63,4 +64,3 @@ spec:
             kind: GitRepository
             name: flux-system
             namespace: flux-system
-      

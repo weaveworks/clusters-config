@@ -47,7 +47,7 @@ spec:
           spec:
             interval: 1h
             retryInterval: 20s
-            path: ./cluster-templates/leaf-cluster-core
+            path: ./eksctl-clusters/tf
             approvePlan: auto
             destroyResourcesOnDeletion: true
             writeOutputsToSecret:
@@ -59,12 +59,8 @@ spec:
                 value: '{{ .params.CLUSTER_VERSION }}'
               - name: region
                 value: '{{ .params.AWS_REGION }}'
-              - name: vpc_cidr
-                value: '{{ .params.VPC_CIDR }}'
-              - name: public_subnet_count
-                value: '{{ .params.PUBLIC_SUBNET_COUNT }}'
-              - name: private_subnet_count
-                value: '{{ .params.PRIVATE_SUBNET_COUNT }}'
+              - name: ami_type
+                value: '{{ .params.AMI_TYPE }}'
             sourceRef:
               kind: GitRepository
               name: terraform
