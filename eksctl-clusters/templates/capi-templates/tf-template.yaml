@@ -18,6 +18,7 @@ spec:
       options: ['1.23', '1.24']
     - name: AWS_REGION
       description: AWS region to deploy cluster.
+      default: eu-north-1
       options: ['eu-north-1']
     - name: INSTANCE_TYPE
       description: Instance type of nodes in cluster.
@@ -27,20 +28,20 @@ spec:
       options: ['ami-03f710e174aa82316']
 
   resourcetemplates:
-    - path: "eksctl-clusters/clusters/saeed-terraform/clusters/${CLUSTER_NAME}.yaml"
+    - path: eksctl-clusters/clusters/saeed-terraform/clusters/{{ .params.CLUSTER_NAME }}.yaml
       content:
       - apiVersion: gitops.weave.works/v1alpha1
         kind: GitopsCluster
         metadata:
-          name: "${CLUSTER_NAME}"
+            name: '{{ .params.CLUSTER_NAME }}'
           namespace: flux-system
         spec:
           secretRef:
-            name: "${CLUSTER_NAME}-kubeconfig"
+              name: '{{ .params.CLUSTER_NAME }}-kubeconfig'
       - apiVersion: infra.contrib.fluxcd.io/v1alpha1
         kind: Terraform
         metadata:
-          name: "${CLUSTER_NAME}"
+            name: '{{ .params.CLUSTER_NAME }}'
           namespace: flux-system
         spec:
           interval: 1h
@@ -49,7 +50,7 @@ spec:
           destroyResourcesOnDeletion: true
           alwaysCleanupRunnerPod: true
           writeOutputsToSecret:
-              name: "${CLUSTER_NAME}-core-outputs"
+              name: '{{ .params.CLUSTER_NAME }}-core-outputs'
           vars:
             - name: cluster_name
               value: '{{ .params.CLUSTER_NAME }}'
