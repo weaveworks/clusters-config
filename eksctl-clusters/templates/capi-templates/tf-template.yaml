@@ -28,7 +28,7 @@ spec:
       options: ['ami-03f710e174aa82316']
 
   resourcetemplates:
-    - path: 'eksctl-clusters/clusters/saeed-terraform/clusters/{{ .params.CLUSTER_NAME }}.yaml'
+    - path: 'eksctl-clusters/clusters/saeed-terraform/clusters/a.yaml'
       content:
         - apiVersion: gitops.weave.works/v1alpha1
           kind: GitopsCluster
