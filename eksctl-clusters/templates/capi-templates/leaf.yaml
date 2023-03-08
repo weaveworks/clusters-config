@@ -29,7 +29,7 @@ spec:
       description: AMI.
       options: ['ami-03f710e174aa82316']
   resourcetemplates:
-    - path: clusters/management/clusters/{{ .params.CLUSTER_NAME }}.yaml
+    - path: 'clusters/management/clusters/{{ .params.CLUSTER_NAME }}.yaml'
       content:
         - apiVersion: gitops.weave.works/v1alpha1
           kind: GitopsCluster
