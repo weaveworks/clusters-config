@@ -1,7 +1,7 @@
 apiVersion: templates.weave.works/v1alpha2
 kind: GitOpsTemplate
 metadata:
-  name: leaf
+  name: leaf-eks
   namespace: default
   labels:
     weave.works/template-type: terraform
