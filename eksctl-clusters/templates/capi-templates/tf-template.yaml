@@ -1,7 +1,7 @@
 apiVersion: templates.weave.works/v1alpha2
 kind: GitOpsTemplate
 metadata:
-  name: hamada
+  name: eks-leaf-cluster
   namespace: default
   labels:
     weave.works/template-type: terraform
