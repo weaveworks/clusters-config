@@ -41,7 +41,7 @@ spec:
   - name: region
     value: eu-north-1
   - name: ami_type
-    value: ami-03f710e174aa82316
+    value: AL2_x86_64
   writeOutputsToSecret:
     name: saeed-test-eks-core-outputs
   runnerPodTemplate:
