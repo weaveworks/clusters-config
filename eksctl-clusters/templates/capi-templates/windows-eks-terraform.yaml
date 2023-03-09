@@ -1,7 +1,7 @@
 apiVersion: templates.weave.works/v1alpha2
 kind: GitOpsTemplate
 metadata:
-  name: leaf-eks-2
+  name: windows-eks-terraform
   namespace: default
   labels:
     weave.works/template-type: terraform
@@ -10,7 +10,7 @@ metadata:
     # templates.weave.works/kustomizations-enabled: "false"
     # templates.weave.works/credentials-enabled: "false"
 spec:
-  description: This is a sample WGE template that will be translated into a tf-controller specific template.
+  description: Create Windows EKS cluster using Terraform.
   renderType: templating
   params:
     - name: CLUSTER_NAME
@@ -24,10 +24,10 @@ spec:
       default: eu-north-1
     - name: INSTANCE_TYPE
       description: Instance type of nodes in cluster.
-      options: ['t3.medium']
+      options: ['t3.medium', 't3.large']
     - name: AMI_TYPE
       description: AMI.
-      options: ['AL2_x86_64']
+      options: ['WINDOWS_CORE_2019_x86_64', 'WINDOWS_FULL_2019_x86_64', 'WINDOWS_CORE_2022_x86_64', 'WINDOWS_FULL_2022_x86_64']
   resourcetemplates:
     - path: 'eksctl-clusters/clusters/saeed-terraform/clusters/{{ .params.CLUSTER_NAME }}.yaml'
       content:
@@ -47,7 +47,7 @@ spec:
           spec:
             interval: 1h
             retryInterval: 20s
-            path: ./eksctl-clusters/tf
+            path: ./eksctl-clusters/tf/eks-windows
             approvePlan: auto
             destroyResourcesOnDeletion: true
             writeOutputsToSecret:
