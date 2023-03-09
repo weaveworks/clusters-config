@@ -44,3 +44,8 @@ spec:
     value: ami-03f710e174aa82316
   writeOutputsToSecret:
     name: saeed-test-eks-core-outputs
+  runnerPodTemplate:
+    spec:
+      envFrom:
+      - secretRef:
+          name: aws-credentials

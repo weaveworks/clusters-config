@@ -52,6 +52,11 @@ spec:
             destroyResourcesOnDeletion: true
             writeOutputsToSecret:
               name: '{{ .params.CLUSTER_NAME }}-core-outputs'
+            runnerPodTemplate:
+              spec:
+                envFrom:
+                - secretRef:
+                    name: aws-credentials
             vars:
               - name: cluster_name
                 value: '{{ .params.CLUSTER_NAME }}'
