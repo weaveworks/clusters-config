@@ -2,11 +2,11 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: saeed-terraform
+  name: saeed-terraform-2
   region: eu-north-1
   version: "1.24"
   tags:
-    environment: "saeed-terraform"
+    environment: "saeed-terraform-2"
     delete-after: "7"
     team: "blazing-bonfire"
 
@@ -19,14 +19,14 @@ iam:
       namespace: flux-system
     attachPolicyARNs:
     - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
-    roleName: eksctl-saeed-terraform-sops-decrypt-role
+    roleName: eksctl-saeed-terraform-2-sops-decrypt-role
     roleOnly: true
   - metadata:
       name: external-dns
       namespace: external-dns
     attachPolicyARNs:
     - "arn:aws:iam::894516026745:policy/AllowExternalDNSUpdates"
-    roleName: eksctl-saeed-terraform-route53-external-dns-role
+    roleName: eksctl-saeed-terraform-2-route53-external-dns-role
     roleOnly: false # create role and annotated service account
 
 # Enable private access to the API server.
@@ -36,7 +36,7 @@ vpc:
     publicAccess: true
 
 nodeGroups:
-  - name: saeed-terraform-ng-1
+  - name: saeed-terraform-2-ng-1
     instanceType: t3.medium
     minSize: 3
     maxSize: 3
@@ -44,7 +44,7 @@ nodeGroups:
     volumeSize: 10
     privateNetworking: true
     tags:
-      environment: "saeed-terraform"
+      environment: "saeed-terraform-2"
       delete-after: "7"
       team: "blazing-bonfire"
     propagateASGTags: true
@@ -58,6 +58,6 @@ gitops:
       owner: "weaveworks"
       repository: "clusters-config"
       private: "true"
-      branch: "cluster-saeed-terraform"
+      branch: "cluster-saeed-terraform-2"
       namespace: "flux-system"
-      path: "eksctl-clusters/clusters/saeed-terraform"
+      path: "eksctl-clusters/clusters/saeed-terraform-2"

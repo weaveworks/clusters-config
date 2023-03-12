@@ -29,7 +29,7 @@ spec:
       description: AMI.
       options: ['WINDOWS_CORE_2019_x86_64', 'WINDOWS_FULL_2019_x86_64', 'WINDOWS_CORE_2022_x86_64', 'WINDOWS_FULL_2022_x86_64']
   resourcetemplates:
-    - path: 'eksctl-clusters/clusters/saeed-terraform/clusters/{{ .params.CLUSTER_NAME }}.yaml'
+    - path: 'eksctl-clusters/clusters/saeed-terraform-2/clusters/{{ .params.CLUSTER_NAME }}.yaml'
       content:
         - apiVersion: gitops.weave.works/v1alpha1
           kind: GitopsCluster
