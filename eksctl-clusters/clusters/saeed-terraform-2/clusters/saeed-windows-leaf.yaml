@@ -1,0 +1,52 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  annotations:
+    templates.weave.works/create-request: '{"repository_url":"https://github.com/weaveworks/clusters-config","head_branch":"wge-create-branch-x8egh8","title":"Creates
+      resource saeed-windows-leaf","description":"This PR creates a windows-eks-terraform
+      instance","template_name":"windows-eks-terraform","parameter_values":{"AMI_TYPE":"WINDOWS_FULL_2022_x86_64","AWS_REGION":"eu-north-1","CLUSTER_NAME":"saeed-windows-leaf","CLUSTER_VERSION":"1.24"},"commit_message":"Creates
+      windows-eks-terraform instance","credentials":{},"template_namespace":"default","template_kind":"GitOpsTemplate"}'
+  labels:
+    templates.weave.works/template-name: windows-eks-terraform
+    templates.weave.works/template-namespace: default
+  name: saeed-windows-leaf
+  namespace: flux-system
+spec:
+  secretRef:
+    name: saeed-windows-leaf-kubeconfig
+
+---
+apiVersion: infra.contrib.fluxcd.io/v1alpha1
+kind: Terraform
+metadata:
+  labels:
+    templates.weave.works/template-name: windows-eks-terraform
+    templates.weave.works/template-namespace: default
+  name: saeed-windows-leaf-core
+  namespace: flux-system
+spec:
+  approvePlan: auto
+  destroyResourcesOnDeletion: true
+  interval: 1h
+  path: ./eksctl-clusters/tf/eks-windows
+  retryInterval: 20s
+  runnerPodTemplate:
+    spec:
+      envFrom:
+      - secretRef:
+          name: aws-credentials
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  vars:
+  - name: cluster_name
+    value: saeed-windows-leaf
+  - name: cluster_version
+    value: "1.24"
+  - name: region
+    value: eu-north-1
+  - name: ami_type
+    value: WINDOWS_FULL_2022_x86_64
+  writeOutputsToSecret:
+    name: saeed-windows-leaf-core-outputs
