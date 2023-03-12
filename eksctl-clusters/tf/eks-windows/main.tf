@@ -1,11 +1,11 @@
 data "aws_eks_cluster" "cluster" {
   count = 1
-  name  = module.eks.cluster_name
+  name  = module.eks.cluster_id
 }
 
 data "aws_eks_cluster_auth" "cluster" {
   count = 1
-  name  = module.eks.cluster_name
+  name  = module.eks.cluster_id
 }
 
 module "eks" {
