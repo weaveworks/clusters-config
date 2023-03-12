@@ -3,17 +3,17 @@ kind: GitopsCluster
 metadata:
   annotations:
     templates.weave.works/create-request: '{"repository_url":"https://github.com/weaveworks/clusters-config","head_branch":"wge-create-branch-x8egh8","title":"Creates
-      resource saeed-windows-leaf","description":"This PR creates a windows-eks-terraform
-      instance","template_name":"windows-eks-terraform","parameter_values":{"AMI_TYPE":"WINDOWS_FULL_2022_x86_64","AWS_REGION":"eu-north-1","CLUSTER_NAME":"saeed-windows-leaf","CLUSTER_VERSION":"1.24"},"commit_message":"Creates
+      resource saeed-win-lf","description":"This PR creates a windows-eks-terraform
+      instance","template_name":"windows-eks-terraform","parameter_values":{"AMI_TYPE":"WINDOWS_FULL_2022_x86_64","AWS_REGION":"eu-north-1","CLUSTER_NAME":"saeed-win-lf","CLUSTER_VERSION":"1.24"},"commit_message":"Creates
       windows-eks-terraform instance","credentials":{},"template_namespace":"default","template_kind":"GitOpsTemplate"}'
   labels:
     templates.weave.works/template-name: windows-eks-terraform
     templates.weave.works/template-namespace: default
-  name: saeed-windows-leaf
+  name: saeed-win-lf
   namespace: flux-system
 spec:
   secretRef:
-    name: saeed-windows-leaf-kubeconfig
+    name: saeed-win-lf-kubeconfig
 
 ---
 apiVersion: infra.contrib.fluxcd.io/v1alpha1
@@ -22,7 +22,7 @@ metadata:
   labels:
     templates.weave.works/template-name: windows-eks-terraform
     templates.weave.works/template-namespace: default
-  name: saeed-windows-leaf-core
+  name: saeed-win-lf-core
   namespace: flux-system
 spec:
   approvePlan: auto
@@ -42,7 +42,7 @@ spec:
     namespace: flux-system
   vars:
   - name: cluster_name
-    value: saeed-windows-leaf
+    value: saeed-win-lf
   - name: cluster_version
     value: "1.24"
   - name: region
@@ -50,4 +50,4 @@ spec:
   - name: ami_type
     value: WINDOWS_FULL_2022_x86_64
   writeOutputsToSecret:
-    name: saeed-windows-leaf-core-outputs
+    name: saeed-win-lf-core-outputs
