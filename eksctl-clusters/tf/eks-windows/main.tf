@@ -17,9 +17,9 @@ module "eks" {
 
   cluster_endpoint_public_access  = true
 
-  vpc_id     = "vpc-0317580fde8817c2a"
-  subnet_ids = ["subnet-0b836507495991415", "subnet-0cb479c06a51a041d"]
-  control_plane_subnet_ids= ["subnet-0b836507495991415", "subnet-0cb479c06a51a041d"]
+  vpc_id     = "vpc-045742fef0eb917ca"
+  subnet_ids = ["subnet-046cd28b75a57a334", "subnet-0ee390305504205db"]
+  control_plane_subnet_ids= ["subnet-046cd28b75a57a334", "subnet-0ee390305504205db"]
 
   node_security_group_tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = null
@@ -36,7 +36,7 @@ module "eks" {
       min_size     = 2
       max_size     = 4
       desired_size = 2
-      subnet_ids = ["subnet-0b836507495991415", "subnet-0cb479c06a51a041d"]
+      subnet_ids = ["subnet-046cd28b75a57a334", "subnet-0ee390305504205db"]
 
       instance_types = [var.instance_types]
       ami_type = var.ami_type
