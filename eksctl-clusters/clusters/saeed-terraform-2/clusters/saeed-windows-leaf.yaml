@@ -26,6 +26,7 @@ metadata:
   namespace: flux-system
 spec:
   approvePlan: auto
+  storeReadablePlan: human
   destroyResourcesOnDeletion: true
   interval: 1h
   path: ./eksctl-clusters/tf/eks-windows

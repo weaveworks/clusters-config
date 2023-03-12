@@ -49,6 +49,7 @@ spec:
             retryInterval: 20s
             path: ./eksctl-clusters/tf/eks-windows
             approvePlan: auto
+            storeReadablePlan: human
             destroyResourcesOnDeletion: true
             writeOutputsToSecret:
               name: '{{ .params.CLUSTER_NAME }}-core-outputs'
