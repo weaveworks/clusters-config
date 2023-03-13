@@ -1,12 +1,12 @@
-data "aws_eks_cluster" "cluster" {
-  count = 1
-  name  = var.cluster_name
-}
+# data "aws_eks_cluster" "cluster" {
+#   count = 1
+#   name  = module.eks.cluster_name
+# }
 
-data "aws_eks_cluster_auth" "cluster" {
-  count = 1
-  name  = var.cluster_name
-}
+# data "aws_eks_cluster_auth" "cluster" {
+#   count = 1
+#   name  = module.eks.cluster_name
+# }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -31,8 +31,22 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    default = {
-      name         = "${var.cluster_name}-nodes"
+    linux = {
+      name         = "${var.cluster_name}-lnx"
+      min_size     = 1
+      max_size     = 1
+      desired_size = 1
+      subnet_ids = ["subnet-046cd28b75a57a334", "subnet-0ee390305504205db"]
+
+      instance_types = [var.instance_types]
+      ami_type = var.linux_ami_type
+      capacity_type  = "ON_DEMAND"
+      attach_cluster_primary_security_group = true
+
+    }
+    
+    windows = {
+      name         = "${var.cluster_name}-wnds"
       min_size     = 2
       max_size     = 4
       desired_size = 2

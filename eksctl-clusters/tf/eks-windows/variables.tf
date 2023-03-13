@@ -20,3 +20,7 @@ variable "instance_types" {
 variable "ami_type" {
   description = "Nodes AMI type"
 }
+
+variable "linux_ami_type" {
+  description = "Linux Node AMI type"
+}
