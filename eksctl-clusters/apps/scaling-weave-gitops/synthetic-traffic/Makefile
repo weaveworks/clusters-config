@@ -1,4 +1,4 @@
-TAG=12
+TAG=13
 
 build:
 	docker buildx build --platform linux/amd64,linux/arm64/v8 -t docker.io/enekofb/synthetic:$(TAG) -t docker.io/enekofb/synthetic:latest . --push
@@ -9,3 +9,6 @@ run-wge: build
 
 run-meilisearch: build
 	docker run -it docker.io/enekofb/synthetic:$(TAG) -P meilisearch -c baseUrl=http://host.docker.internal:7700
+
+run-cypress-wge:
+	cd wge && npx cypress open

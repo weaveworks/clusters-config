@@ -18,3 +18,13 @@ spec:
                 path: "/indexes/movies/search$"
               - method: GET
                 path: "/indexes/movies/search$"
+    - toPorts:
+        - ports:
+            - port: "7700"
+              protocol: TCP
+          rules:
+            http:
+              - method: POST
+                path: "/indexes/applications/search$"
+              - method: GET
+                path: "/indexes/applications/search$"
