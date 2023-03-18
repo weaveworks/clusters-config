@@ -33,6 +33,12 @@ spec:
   upgrade:
     crds: Skip
   values:
+    cluster-controller:
+      enabled: false
+    templates-controller:
+      enabled: false
+    gitopssets-controller:
+      enabled: false
     config:
       capi:
         templates:
