@@ -9,7 +9,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./eksctl-clusters/apps/enterprise-scaling
+  path: ./eksctl-clusters/apps/enterprise/enterprise-app-scaling
   prune: true
   validation: client
   postBuild:
