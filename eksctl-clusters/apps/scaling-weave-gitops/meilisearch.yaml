@@ -9,7 +9,7 @@ metadata:
   labels:
     app: meilisearch
 spec:
-  schedule: "* * * * *"
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 0
