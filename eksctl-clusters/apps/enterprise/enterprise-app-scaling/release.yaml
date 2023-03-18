@@ -33,6 +33,8 @@ spec:
   upgrade:
     crds: Skip
   values:
+    clusterBootstrapController:
+      enabled: false
     cluster-controller:
       enabled: false
     templates-controller:
