@@ -22,5 +22,5 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: nginx-164
-        namespace: 
+        namespace: flux-stress
       interval: 1m
