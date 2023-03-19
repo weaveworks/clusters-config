@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: flux-system
 resources:
   - wge.yaml
-  - meilisearch.yaml
