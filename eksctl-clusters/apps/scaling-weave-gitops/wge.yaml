@@ -9,7 +9,7 @@ metadata:
   labels:
     app: wge
 spec:
-  schedule: "*/5 * * * *"
+  schedule: "*/2 * * * *"
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 0
