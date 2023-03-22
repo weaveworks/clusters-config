@@ -16,7 +16,7 @@ spec:
     substitute:
       CLUSTER_NAME: wge-2448
       BRANCH_NAME: cluster-wge-2448
-      CHART_REPO: https://charts.dev.wkp.weave.works/releases/charts-v3
+      CHART_REPO: https://charts.dev.wkp.weave.works/dev/branches/jp-oidc2
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
