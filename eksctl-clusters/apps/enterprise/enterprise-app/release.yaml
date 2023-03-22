@@ -52,7 +52,7 @@ spec:
       enabled: false
     enablePipelines: true
     enableTerraformUI: true
-    enableExplorer: false
+    enableExplorer: true
     policy-agent:
       enabled: true
       config:
