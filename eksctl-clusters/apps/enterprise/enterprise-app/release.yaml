@@ -35,6 +35,8 @@ spec:
   values:
     images:
       collector: docker.io/enekofb/collector:collector-ind-eca34cc8
+    clustersService:
+      args: [ "--dev-mode" ]
     config:
       capi:
         templates:
