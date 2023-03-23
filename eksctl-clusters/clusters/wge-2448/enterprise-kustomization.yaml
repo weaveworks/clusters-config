@@ -35,6 +35,9 @@ spec:
             http:
               - method: POST
                 path: "/v1/objects$"
+              - method: POST
+                path: "/v1/query$"
+
 ---
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
