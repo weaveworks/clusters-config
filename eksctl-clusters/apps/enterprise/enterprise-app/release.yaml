@@ -55,6 +55,16 @@ spec:
     enablePipelines: true
     enableTerraformUI: true
     enableExplorer: false
+    # Configuration for query collector component
+    collector:
+      # feature flag to deploy it
+      enabled: false
+      clusterNamespace: ""
+      # configuration to configure the client to write event
+      queryServer:
+        # base url endpoint like https://clusters-service
+        url: http://clusters-service:8000
+
     policy-agent:
       enabled: true
       config:
@@ -90,7 +100,3 @@ spec:
           paths:
             - path: /
               pathType: ImplementationSpecific
-    collector:
-      queryServer:
-        url: http://clusters-service:8000
-      clusterNamespace: ""
