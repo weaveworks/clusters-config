@@ -60,6 +60,8 @@ spec:
       config:
         accountId: "${CLUSTER_NAME}-user"
         clusterId: "${CLUSTER_NAME}"
+    templates-controller:
+      enabled: false
     pipeline-controller:
       promotion:
         service:
