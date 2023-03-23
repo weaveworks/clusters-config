@@ -93,3 +93,4 @@ spec:
     collector:
       queryServer:
         url: http://clusters-service:8000
+      clusterNamespace: ""
