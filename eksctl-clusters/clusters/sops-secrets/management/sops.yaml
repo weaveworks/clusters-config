@@ -11,7 +11,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: eksctl-clusters/clusters/sops-secrets/management/secrets-age
+  path: ./secrets-age
   decryption:
     provider: sops
     secretRef:
