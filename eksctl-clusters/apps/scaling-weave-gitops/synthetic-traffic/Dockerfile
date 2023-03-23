@@ -5,5 +5,5 @@ WORKDIR /e2e
 COPY wge/cypress/ ./wge/cypress/
 COPY wge/cypress.config.js ./wge/
 
-COPY meilisearch/cypress/ ./meilisearch/cypress/
-COPY meilisearch/cypress.config.js ./meilisearch/
+COPY wge-scaling/cypress/ ./wge-scaling/cypress/
+COPY wge-scaling/cypress.config.js ./wge-scaling/
