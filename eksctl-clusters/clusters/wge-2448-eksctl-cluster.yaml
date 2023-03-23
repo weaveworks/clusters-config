@@ -39,8 +39,8 @@ nodeGroups:
   - name: wge-2448-ng-1
     instanceType: t3.medium
     minSize: 3
-    maxSize: 3
-    desiredCapacity: 3
+    maxSize: 4
+    desiredCapacity: 4
     volumeSize: 10
     privateNetworking: true
     tags:
