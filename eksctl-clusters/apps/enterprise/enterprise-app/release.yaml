@@ -33,6 +33,8 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
+    images:
+      collector: docker.io/enekofb/collector:collector-ind-eca34cc8
     config:
       capi:
         templates:
@@ -86,3 +88,6 @@ spec:
           paths:
             - path: /
               pathType: ImplementationSpecific
+    collector:
+      queryServer:
+        url: http://clusters-service:8000
