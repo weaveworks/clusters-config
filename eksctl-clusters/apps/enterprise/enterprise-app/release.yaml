@@ -33,10 +33,6 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
-    images:
-      collector: docker.io/enekofb/collector:collector-ind-eca34cc8
-    clustersService:
-      args: [ "--dev-mode" ]
     config:
       capi:
         templates:
@@ -57,16 +53,6 @@ spec:
     enablePipelines: true
     enableTerraformUI: true
     enableExplorer: true
-    # Configuration for query collector component
-    collector:
-      # feature flag to deploy it
-      enabled: true
-      clusterNamespace: "flux-system"
-      # configuration to configure the client to write event
-      queryServer:
-        # base url endpoint like https://clusters-service
-        url: http://clusters-service:8000
-
     policy-agent:
       enabled: true
       config:
