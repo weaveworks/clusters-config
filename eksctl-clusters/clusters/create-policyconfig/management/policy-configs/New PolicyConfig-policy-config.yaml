@@ -1,0 +1,19 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: New PolicyConfig
+spec:
+  config:
+    weave.policies.tenancy.bar-tenant-allowed-application-deploy:
+      parameters:
+        service_account_name: 'bar-tenant '
+  match:
+    apps:
+    - kind: HelmRelease
+      name: ingress-nginx
+      namespace: flux-system
+    - kind: HelmRelease
+      name: dex
+      namespace: dex
+status: {}
