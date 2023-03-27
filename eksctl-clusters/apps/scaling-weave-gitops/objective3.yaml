@@ -11,9 +11,11 @@ metadata:
     objective: o3
 spec:
   schedule: "* * * * *"
+  startingDeadlineSeconds: 45
+  concurrencyPolicy: "Forbid"
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: 0
+      ttlSecondsAfterFinished: 60
       template:
         spec:
           containers:
