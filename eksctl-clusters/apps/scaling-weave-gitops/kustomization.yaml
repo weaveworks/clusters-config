@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: flux-system
 resources:
   - objective2.yaml
-  - objective3.yaml

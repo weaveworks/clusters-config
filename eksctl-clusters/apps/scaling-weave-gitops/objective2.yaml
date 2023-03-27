@@ -18,7 +18,7 @@ spec:
         spec:
           containers:
             - name: cypress
-              image: docker.io/enekofb/synthetic:16
+              image: docker.io/enekofb/synthetic:18
               imagePullPolicy: IfNotPresent
               args: [ "--spec","cypress/e2e/objective2/**/*" ]
               env:
