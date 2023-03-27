@@ -11,6 +11,6 @@ spec:
   match:
     apps:
     - kind: HelmRelease
-      name: dex
-      namespace: dex
+      name: ingress-nginx
+      namespace: flux-system
 status: {}
