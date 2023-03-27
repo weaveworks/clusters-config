@@ -1,0 +1,45 @@
+#secrets created offline
+#kubectl create secret generic prod-db-secret --from-literal=username=produser --from-literal=password=Y4nys7f11
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scaling-o3-st
+  namespace: flux-system
+  labels:
+    app: scaling-weave-gitops
+    objective: o3
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 0
+      template:
+        spec:
+          containers:
+            - name: cypress
+              image: docker.io/enekofb/synthetic:18
+              imagePullPolicy: IfNotPresent
+              args: [ "--spec","cypress/e2e/objective2/**/*" ]
+              env:
+                - name: CYPRESS_WEGO_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: synthetic-traffic
+                      key: username
+                - name: CYPRESS_WEGO_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: synthetic-traffic
+                      key: password
+                - name: CYPRESS_LEAF_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: synthetic-traffic
+                      key: leafUrl
+                - name: CYPRESS_LEAF_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: synthetic-traffic
+                      key: leafToken
+          restartPolicy: Never
