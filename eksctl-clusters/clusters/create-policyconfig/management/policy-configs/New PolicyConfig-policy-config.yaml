@@ -7,13 +7,12 @@ spec:
   config:
     weave.policies.tenancy.bar-tenant-allowed-application-deploy:
       parameters:
-        service_account_name: 'bar-tenant '
+        namespaces:
+        - bar-ns
+        - ' foobar-ns'
+        - ' bar-tenant'
   match:
-    apps:
-    - kind: HelmRelease
-      name: ingress-nginx
-      namespace: flux-system
-    - kind: HelmRelease
-      name: dex
-      namespace: dex
+    workspaces:
+    - bar-tenant
+    - foo-tenant
 status: {}
