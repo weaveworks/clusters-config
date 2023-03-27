@@ -2,7 +2,7 @@ apiVersion: pac.weave.works/v2beta2
 kind: PolicyConfig
 metadata:
   creationTimestamp: null
-  name: New PolicyConfig
+  name: policy-config
 spec:
   config:
     weave.policies.tenancy.bar-tenant-allowed-application-deploy:
