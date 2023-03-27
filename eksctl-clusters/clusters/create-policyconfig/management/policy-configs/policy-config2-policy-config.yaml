@@ -1,0 +1,16 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: policy-config2
+spec:
+  config:
+    weave.policies.container-prohibit-image-tag:
+      parameters:
+        exclude_namespace: latest
+  match:
+    apps:
+    - kind: HelmRelease
+      name: dex
+      namespace: dex
+status: {}
