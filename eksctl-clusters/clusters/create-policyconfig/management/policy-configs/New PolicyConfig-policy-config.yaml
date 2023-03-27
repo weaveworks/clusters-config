@@ -9,10 +9,28 @@ spec:
       parameters:
         namespaces:
         - bar-ns
-        - ' foobar-ns'
-        - ' bar-tenant'
+        - ' foobar-ns '
   match:
-    workspaces:
-    - bar-tenant
-    - foo-tenant
+    apps:
+    - kind: HelmRelease
+      name: dex
+      namespace: dex
+    - kind: HelmRelease
+      name: ingress-nginx
+      namespace: flux-system
+    - kind: Kustomization
+      name: podinfo
+      namespace: apps
+    - kind: Kustomization
+      name: enterprise
+      namespace: flux-system
+    - kind: Kustomization
+      name: flux-system
+      namespace: flux-system
+    - kind: Kustomization
+      name: common
+      namespace: flux-system
+    - kind: HelmRelease
+      name: weave-gitops-enterprise
+      namespace: flux-system
 status: {}
