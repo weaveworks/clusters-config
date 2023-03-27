@@ -1,0 +1,15 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: myconfig
+spec:
+  config:
+    my-policy:
+      parameters:
+        test: test
+  match:
+    workspaces:
+    - ws-1
+    - ws-2
+status: {}
