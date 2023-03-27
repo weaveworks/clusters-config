@@ -10,7 +10,7 @@ metadata:
     app: scaling-weave-gitops
     objective: o2
 spec:
-  schedule: "* * * * *"
+  schedule: "*/2 * * * *"
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 0
