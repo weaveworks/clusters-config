@@ -41,7 +41,7 @@ npx cypress run --spec "cypress/e2e/objective3/**/*"
 
 Running them via make:
 
-make run-objective-3
+`make run-objective-3`
 
 ```bash
 ➜  synthetic-traffic git:(add-scaling-o3) ✗ make run-objective3                                                                                                                                                                      <aws:sts>
@@ -62,6 +62,8 @@ npx cypress run --spec "cypress/e2e/objective3/**/*"
 
 Use `make build` to build the docker image
 
+//TODO: needs a proper repo
+
 ### How can i deploy the tests?
 
 They are an application deployed in https://wge-2448.eng-sandbox.weave.works using
@@ -69,25 +71,9 @@ this [kustomization](./kustomization.yaml)
 
 ### How do i build the grafana dashboard?
 
-against the This is an application to measure progress of
-
-how to measure slos
-
-1. tag tests
-2. run them via jobs
-3. measure metrics via kube state metrics
-
-`cypress run --record --tag "staging"`
-
-https://github.com/kubernetes/kube-state-metrics/blob/main/docs/job-metrics.md
-
-sli = good events / total event
-good events = jobs succeded over time
-total events = total jobs executed
-
-therefore steps are
-
-1. given a job - for example O3
-2. when scheulded over time
-3. then sli and slo calculated based on the previous metrics
-
+1. Go to the project
+   dashboard https://grafana-wge-2448.eng-sandbox.weave.works/d/3g264CZVzA/scaling-weave-gtiops?orgId=1&refresh=5s
+2. Select the objective row
+3. Add a panel and set the krs that you want to measure
+4. Save it and export it
+   to https://github.com/weaveworks/clusters-config/tree/cluster-wge-2448/eksctl-clusters/clusters/monitoring
