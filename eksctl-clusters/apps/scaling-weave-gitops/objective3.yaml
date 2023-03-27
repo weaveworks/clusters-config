@@ -4,8 +4,8 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: scaling-o3-st
-  namespace: scaling-objective2
+  name: scaling-objective3-st
+  namespace: scaling-objective3
   labels:
     app: scaling-weave-gitops
     objective: o3
