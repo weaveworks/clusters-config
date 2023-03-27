@@ -1,0 +1,18 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: Test policy config name
+spec:
+  config:
+    weave.policies.tenancy.bar-tenant-allowed-application-deploy:
+      parameters:
+        namespaces:
+        - bar-ns
+        - ' foobar-ns'
+        - ' bar-tenant2'
+        - bar-ten
+  match:
+    workspaces:
+    - bar-tenant
+status: {}
