@@ -10,7 +10,7 @@ spec:
         exclude_namespace: latest
   match:
     apps:
-    - kind: HelmRelease
-      name: ingress-nginx
+    - kind: Kustomization
+      name: enterprise
       namespace: flux-system
 status: {}
