@@ -4,10 +4,11 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: wge-synthetic-traffic
+  name: scaling-objective2-st
   namespace: flux-system
   labels:
-    app: wge
+    app: scaling-weave-gitops
+    objective: o2
 spec:
   schedule: "* * * * *"
   jobTemplate:
@@ -17,9 +18,9 @@ spec:
         spec:
           containers:
             - name: cypress
-              image: docker.io/enekofb/synthetic:16
+              image: docker.io/enekofb/synthetic:18
               imagePullPolicy: IfNotPresent
-              args: [ "-P","wge" ]
+              args: [ "--spec","cypress/e2e/objective2/**/*" ]
               env:
                 - name: CYPRESS_WEGO_USERNAME
                   valueFrom:
@@ -31,4 +32,4 @@ spec:
                     secretKeyRef:
                       name: synthetic-traffic
                       key: password
-          restartPolicy: OnFailure
+          restartPolicy: Never
