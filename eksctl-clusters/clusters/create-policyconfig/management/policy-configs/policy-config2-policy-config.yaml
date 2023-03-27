@@ -5,12 +5,13 @@ metadata:
   name: policy-config2
 spec:
   config:
-    weave.policies.container-prohibit-image-tag:
+    weave.policies.tenancy.bar-tenant-allowed-application-deploy:
       parameters:
-        exclude_namespace: latest
+        namespaces:
+        - bar-ns
+        - ' foobar-ns'
+        - ' bar-tenant'
   match:
-    apps:
-    - kind: Kustomization
-      name: enterprise
-      namespace: flux-system
+    workspaces:
+    - bar-tenant
 status: {}
