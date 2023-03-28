@@ -21,7 +21,7 @@ describe('objective3: results are complete and consistent', () => {
             cy.log("found items:" + expectedNumItems)
         })
 
-        const checkAndReload = (offset, limit) => {
+        const getPagedHelmReleases = (offset, limit) => {
             cy.request({
                 method: 'POST',
                 url: "/v1/query",
@@ -45,10 +45,10 @@ describe('objective3: results are complete and consistent', () => {
                     return
                 }
                 currentNumItems += objects.length
-                checkAndReload(offset + limit, limit)
+                getPagedHelmReleases(offset + limit, limit)
             })
         }
-        checkAndReload(0, 25)
+        getPagedHelmReleases(0, 25)
     })
     it('should see consistent result on kustomization', () => {
         let expectedNumItems = 0
@@ -69,7 +69,7 @@ describe('objective3: results are complete and consistent', () => {
             cy.log("found items:" + expectedNumItems)
         })
 
-        const checkAndReload = (offset, limit) => {
+        const getPagedKustomizations = (offset, limit) => {
             cy.request({
                 method: 'POST',
                 url: "/v1/query",
@@ -93,9 +93,9 @@ describe('objective3: results are complete and consistent', () => {
                     return
                 }
                 currentNumItems += objects.length
-                checkAndReload(offset + limit, limit)
+                getPagedKustomizations(offset + limit, limit)
             })
         }
-        checkAndReload(0, 25)
+        getPagedKustomizations(0, 25)
     })
 })
