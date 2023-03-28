@@ -557,41 +557,16 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "KR1 - slo as 100% same queries over the same data returns the same complete data",
+      "description": "Acceptance Criteria = KR1 - slo as 100% same queries over the same data returns the same complete data",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -608,7 +583,20 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 162
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -616,19 +604,19 @@
         "x": 0,
         "y": 25
       },
-      "id": 43,
+      "id": 45,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": true
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showHeader": true,
+        "sortBy": []
       },
+      "pluginVersion": "9.3.6",
       "targets": [
         {
           "datasource": {
@@ -636,57 +624,36 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "kube_job_status_succeeded{exported_namespace=\"scaling-objective3\"}",
+          "exemplar": false,
+          "expr": "count by (exported_pod)(kube_pod_status_phase{exported_namespace=\"scaling-objective3\", phase=\"Succeeded\"} == 1)",
+          "format": "table",
+          "instant": true,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "KR1 - Complete queries",
-      "type": "timeseries"
+      "title": "Queries within Acceptance Criteria",
+      "type": "table"
     },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "KR1 - slo as 100% same queries over the same data returns the same complete data",
+      "description": "Acceptance Criteria = KR1 - slo as 100% same queries over the same data returns the same complete data",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false
           },
           "mappings": [],
+          "noValue": "no queries outside acceptance criteria",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -709,34 +676,36 @@
         "x": 12,
         "y": 25
       },
-      "id": 44,
+      "id": 46,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": true
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showHeader": true
       },
+      "pluginVersion": "9.3.6",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "editorMode": "builder",
-          "expr": "kube_job_status_failed{exported_namespace=\"scaling-objective3\"}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count by (exported_pod)(kube_pod_status_phase{exported_namespace=\"scaling-objective3\", phase=\"Failed\"} == 1)",
+          "format": "table",
+          "instant": true,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "KR1 - Failed queries",
-      "type": "timeseries"
+      "title": "Queries outside Acceptance Criteria",
+      "type": "table"
     },
     {
       "collapsed": true,
@@ -957,13 +926,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Scaling Weave Gtiops",
   "uid": "3g264CZVzA",
-  "version": 11,
+  "version": 18,
   "weekStart": ""
 }
