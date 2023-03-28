@@ -20,7 +20,7 @@ describe('objective4: information is realtime for new data', () => {
                 }, "interval": "1m"
             }
         }
-        //When created a resource
+        //Given a new helm release
         cy.request({
             method: 'POST',
             url: Cypress.env('LEAF_URL') + "/apis/helm.toolkit.fluxcd.io/v2beta1/namespaces/scaling-objective4/helmreleases?fieldManager=kubectl-client-side-apply&fieldValidation=Strict",
@@ -54,6 +54,7 @@ describe('objective4: information is realtime for new data', () => {
         let maxTimes = 5
         let times = 0
         const findCreatedHelmRelease = () => {
+            //When search within latency
             cy.request({
                 method: 'POST',
                 url: "/v1/query",
@@ -66,9 +67,10 @@ describe('objective4: information is realtime for new data', () => {
                     }], "limit": "25", "offset": "0"
                 }
             }).as('explorer')
-            //then i have the complete data set
+            //Then I found it within explorer
             cy.get('@explorer').then((response) => {
                 let objects = response.body.objects
+
                 if (objects.length === 1) {
                     cy.log("found helm release")
                     return
