@@ -2,7 +2,7 @@ const uuid = () => Cypress._.random(0, 1e6)
 const id = uuid()
 const helmReleaseName = `podinfo-st-${id}`
 
-describe('objective4: information is realtime for new and updated data', () => {
+describe('objective4: information is realtime for new data', () => {
     beforeEach(() => {
         let helmRelease = {
             "apiVersion": "helm.toolkit.fluxcd.io/v2beta1",
