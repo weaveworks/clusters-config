@@ -1,0 +1,14 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: Test policy config name
+spec:
+  config:
+    weave.policies.containers-minimum-replica-count:
+      parameters:
+        replica_count: 21
+  match:
+    workspaces:
+    - bar-tenant
+status: {}
