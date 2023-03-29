@@ -1,0 +1,17 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: test-policy
+spec:
+  config:
+    weave.policies.containers-minimum-replica-count:
+      parameters:
+        exclude_namespaces:
+        - test
+  match:
+    apps:
+    - kind: Kustomization
+      name: shared-secrets
+      namespace: flux-system
+status: {}
