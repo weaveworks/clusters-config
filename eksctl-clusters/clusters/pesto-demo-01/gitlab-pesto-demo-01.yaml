@@ -1,0 +1,14 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: gitlab-pesto-demo-01
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  secretRef:
+    name: gitlab-pesto-demo-01
+  url: ssh://git@gitlab.git.dev.weave.works/wge/pesto-demo-01.git
+
