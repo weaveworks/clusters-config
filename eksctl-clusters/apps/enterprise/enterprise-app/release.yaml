@@ -1,4 +1,23 @@
-
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: weave-gitops-enterprise-main
+  namespace: flux-system
+spec:
+  interval: 10m
+  secretRef:
+    name: weave-gitops-enterprise-main
+  url: https://charts.wge.dev.weave.works
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: weave-gitops-enterprise-main
+  namespace: flux-system
+data:
+  username: d2dlLWhlbG0tYm90
+  password: Qi1OUHlkbjlpZkdNcWNNNw==
+---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
@@ -22,10 +41,10 @@ spec:
       version: ">= 0.0.0-0"
       sourceRef:
         kind: HelmRepository
-        name: weave-gitops-enterprise-charts
+        name: weave-gitops-enterprise-main
         namespace: flux-system
   dependsOn:
-  - name: cert-manager
+    - name: cert-manager
   interval: 10m0s
   install:
     crds: CreateReplace
@@ -68,10 +87,10 @@ spec:
           annotations:
             external-dns.alpha.kubernetes.io/hostname: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
           hosts:
-          - host: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
-            paths:
-            - path: /
-              pathType: ImplementationSpecific
+            - host: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
     ingress:
       enabled: true
       className: "public-nginx"
