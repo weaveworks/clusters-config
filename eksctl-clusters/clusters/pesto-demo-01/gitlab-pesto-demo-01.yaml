@@ -4,6 +4,8 @@ kind: GitRepository
 metadata:
   name: gitlab-pesto-demo-01
   namespace: flux-system
+  annotations:
+    weave.works/repo-role: "default"
 spec:
   interval: 1m0s
   ref:
