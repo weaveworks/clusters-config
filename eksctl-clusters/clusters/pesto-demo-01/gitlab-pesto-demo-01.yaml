@@ -13,4 +13,16 @@ spec:
   secretRef:
     name: gitlab-pesto-demo-01
   url: ssh://git@gitlab.git.dev.weave.works/wge/pesto-demo-01.git
-
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: gitlab-pesto-demo-01
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./clusters/management
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: gitlab-pesto-demo-01
