@@ -1,0 +1,16 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  creationTimestamp: null
+  name: podinfo App kustomization
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./my-service-1/kustomize
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: podinfo
+    namespace: apps
+  targetNamespace: default
+status: {}
