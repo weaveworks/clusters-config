@@ -1,0 +1,17 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  labels:
+    templates.weave.works/template-name: vcluster-template-development
+    templates.weave.works/template-namespace: default
+  name: clusters-bases-kustomization
+  namespace: flux-system
+  annotations:
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-yw2hkd\",\"title\":\"Create resource test17apr\",\"description\":\"This PR creates a vcluster-template-development instance\",\"template_name\":\"vcluster-template-development\",\"parameter_values\":{\"CLUSTER_NAME\":\"test17apr\",\"KUBERNETES_VERSION\":\"1.23.3\",\"NAMESPACE\":\"default\"},\"commit_message\":\"Create vcluster-template-development instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"GitOpsTemplate\"}"
+spec:
+  interval: 10m0s
+  path: clusters/bases
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
