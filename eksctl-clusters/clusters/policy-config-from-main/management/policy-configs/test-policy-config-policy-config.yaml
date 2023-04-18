@@ -7,7 +7,7 @@ spec:
   config:
     weave.policies.containers-minimum-replica-count-acceptance-test:
       parameters:
-        replica_count: 4
+        replica_count: 2
   match:
     apps:
     - kind: Kustomization
