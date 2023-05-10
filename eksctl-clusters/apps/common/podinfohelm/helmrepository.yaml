@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: podinfo
+  namespace: apps
+spec:
+  interval: 10m
+  provider: generic
+  timeout: 60s
+  url: https://stefanprodan.github.io/podinfo
