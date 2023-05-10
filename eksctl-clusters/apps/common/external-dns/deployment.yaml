@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: external-dns
 spec:
-  replicas: 2
+  replicas: 5
   strategy:
     type: Recreate
   selector:
