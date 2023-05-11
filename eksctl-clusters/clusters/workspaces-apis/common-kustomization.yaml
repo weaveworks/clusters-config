@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: common
+  namespace: flux-system
+spec:
+  interval: 30s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./eksctl-clusters/apps/common
+  prune: true
+  validation: client
+  postBuild:
+    substitute:
+      CLUSTER_NAME: workspaces-apis
+      SSL_CERTIFICATE_ARN: arn:aws:acm:eu-north-1:894516026745:certificate/5f8813f2-b630-4d0d-8c34-8fb68ec166ac
