@@ -8,7 +8,8 @@ Configuration for engineering's ephemeral clusters
 ## Getting Started
 ### Required dependencies
 - [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-- [direnv](https://direnv.net/)
+- [direnv](https://direnv.net/),
+[configured for your shell](https://direnv.net/docs/hook.html)
 - [eksctl](https://eksctl.io/introduction/#installation)
 - [gsts](https://github.com/ruimarinho/gsts)
 - [pre-commit](https://pre-commit.com/)
@@ -23,7 +24,6 @@ Configuration for engineering's ephemeral clusters
 - Authenticate in your CLI with `WeaveEksEditor` role:
     ```bash
     $ export GOOGLE_USERNAME=<YOUR_EMAIL>
-    $ source .envrc
     $ source ./env.sh
     ✔ Login successful!
     Environment configured, authenticated to AWS as arn:aws:iam::894516026745:role/WeaveEksEditor.
