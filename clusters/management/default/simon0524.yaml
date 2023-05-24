@@ -1,0 +1,52 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  labels:
+    templates.weave.works/template-name: vcluster-template-development
+    templates.weave.works/template-namespace: default
+    weave.works/capi: bootstrap
+  name: simon0524
+  namespace: default
+  annotations:
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-e4huhd\",\"title\":\"Create resource simon0524\",\"description\":\"This PR creates a vcluster-template-development instance\",\"template_name\":\"vcluster-template-development\",\"parameter_values\":{\"CLUSTER_NAME\":\"simon0524\",\"KUBERNETES_VERSION\":\"1.23.3\",\"NAMESPACE\":\"default\"},\"commit_message\":\"Create vcluster-template-development instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"GitOpsTemplate\"}"
+spec:
+  capiClusterRef:
+    name: simon0524
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: vcluster-template-development
+    templates.weave.works/template-namespace: default
+  name: simon0524
+  namespace: default
+spec:
+  controlPlaneRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+    kind: VCluster
+    name: simon0524
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+    kind: VCluster
+    name: simon0524
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: VCluster
+metadata:
+  labels:
+    templates.weave.works/template-name: vcluster-template-development
+    templates.weave.works/template-namespace: default
+  name: simon0524
+  namespace: default
+spec:
+  helmRelease:
+    values: |
+      storage:
+        persistence: false
+      syncer:
+        extraArgs:
+          - "--tls-san=simon0524.default.svc"
+  kubernetesVersion: 1.23.3
