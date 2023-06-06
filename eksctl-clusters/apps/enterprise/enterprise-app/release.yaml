@@ -1,4 +1,3 @@
-
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
@@ -25,7 +24,7 @@ spec:
         name: weave-gitops-enterprise-charts
         namespace: flux-system
   dependsOn:
-  - name: cert-manager
+    - name: cert-manager
   interval: 10m0s
   install:
     crds: CreateReplace
@@ -34,6 +33,9 @@ spec:
   upgrade:
     crds: CreateReplace
   values:
+    global:
+      capiEnabled: false
+
     config:
       capi:
         templates:
@@ -58,6 +60,8 @@ spec:
       config:
         accountId: "${CLUSTER_NAME}-user"
         clusterId: "${CLUSTER_NAME}"
+    templates-controller:
+      enabled: false
     pipeline-controller:
       promotion:
         service:
@@ -68,10 +72,10 @@ spec:
           annotations:
             external-dns.alpha.kubernetes.io/hostname: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
           hosts:
-          - host: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
-            paths:
-            - path: /
-              pathType: ImplementationSpecific
+            - host: promotions-${CLUSTER_NAME}.eng-sandbox.weave.works
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
     ingress:
       enabled: true
       className: "public-nginx"
