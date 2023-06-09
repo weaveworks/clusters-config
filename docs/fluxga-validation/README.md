@@ -70,14 +70,16 @@ flux bootstrap github \
 
 ![flux ga](./imgs/flux-ga-management.png)
 
-- Upgraded happened but the following errors
+Upgraded happened but the following errors
 
 ```
 ◎ waiting for Kustomization "flux-system/flux-system" to be reconciled
-✗ Kustomization/flux-system/shared-secrets dry-run failed, error: failed to prune fields: failed add back owned items: failed to convert merged object at version kustomize.toolkit.fluxcd.io/v1: .spec.validation: field not declared in schema
+✗ Kustomization/flux-system/shared-secrets dry-run failed, error: failed to prune fields:
+failed add back owned items: failed to convert merged object at version kustomize.toolkit.fluxcd.io/v1: .spec.validation: field not declared in schema
 ```
 
-
+Fix: remove removed field `the deprecated field .spec.validation was removed `
+as suggested in https://github.com/fluxcd/flux2/releases/tag/v2.0.0-rc.1
 
 
 
