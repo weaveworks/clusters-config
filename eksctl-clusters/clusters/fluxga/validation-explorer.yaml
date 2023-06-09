@@ -13,7 +13,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./eksctl-clusters/apps/fluxga/validation/explorer
+  path: ./eksctl-clusters/apps/validation/explorer
   targetNamespace: explorer-validation
   prune: true
   validation: client
