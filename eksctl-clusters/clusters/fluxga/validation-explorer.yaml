@@ -16,4 +16,3 @@ spec:
   path: ./eksctl-clusters/apps/validation/explorer
   targetNamespace: explorer-validation
   prune: true
-  validation: client
