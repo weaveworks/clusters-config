@@ -101,12 +101,12 @@ CHECK_ENTERPRISE_MODE=$(ls -d ${WGE_KUSTOMIZATION} 2> /dev/null || true )
 CHECK_WGCORE_MODE=$(ls -d ${WGCORE_KUSTOMIZATION} 2> /dev/null || true )
 if [ ${CHECK_ENTERPRISE_MODE} ]
 then
-  kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-cluster-controller
-  kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-bootstrap-controller
-  kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service
+  kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-cluster-controller || true
+  kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-bootstrap-controller || true
+  kubectl rollout restart -n flux-system deployment weave-gitops-enterprise-mccp-cluster-service || true
 elif [ ${CHECK_WGCORE_MODE} ]
 then
-  kubectl rollout restart -n flux-system deployment ww-gitops-weave-gitops
+  kubectl rollout restart -n flux-system deployment ww-gitops-weave-gitops || true
 fi
 
 echo -e "${SUCCESS} Cluster is ready!"
