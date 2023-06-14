@@ -10,4 +10,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: validate-fluxga
-    namespace: flux-system
+    namespace: apps

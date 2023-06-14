@@ -22,28 +22,42 @@ Feature: Can Create GitopsSets with Wego and Flux GA
 
 > Then a PR with the external secret manifest has been created
 
-https://github.com/weaveworks/clusters-config/pull/440
+https://github.com/weaveworks/clusters-config/pull/444
+
+https://fluxga.eng-sandbox.weave.works/gitopssets
+
+![gitopssets-created.png](imgs/gitopssets-created.png)
 
 ## Can View GitopsSet
 
 ```gherkin
-Feature: Can View External Secret with Wego and Flux GA
+Feature: Can View GitopsSets with Wego and Flux GA
   As a weave gitops platform engineer
-  I want to view an External secrets using Weave Gitops EE with FluxGA installed
+  I want to view different gitopssets versions via Weave Gitops EE with FluxGA
 
-  Scenario:
-    Given a external secrets in management cluster
-    When go to the secrets UI
-    Then I could see the secret listed
-    When I click into the secrets details
-    Then I could see the external secrets details view
+  Scenario Outline:
+    Given a gitopsset <resourceName> that generates <gvk> is created
+    When i click into gitopsets UI
+    Then i see it listed
+    When i click into the element
+    Then i see its detail view without errors
+    When i view the generated element via the UI
+    Then i see its detail view without errors
+
+    Examples:
+      | resourceName   | gvk                                               |
+      | gitopsset-ga   | kustomize.toolkit.fluxcd.io/v1/Kustomization      |
+      | gitopsset-beta | kustomize.toolkit.fluxcd.io/v1beta2/Kustomization |
 ```
 
-> Then I could see the secret listed
+>     Then i see it listed
 
-![secrets-view-external-secret.png](imgs/secrets-view-external-secret.png)
+![gitopssets-created.png](imgs/gitopssets-created.png)
 
-> Then I could see the external secrets details view
 
-![secrets-view-external-secret-details.png](imgs/secrets-view-external-secret-details.png)
+>     Then i see it its detail view without errors
+
+
+>     Then i see it its detail view without errors
+
 

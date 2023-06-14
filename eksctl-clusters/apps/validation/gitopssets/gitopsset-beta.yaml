@@ -15,7 +15,7 @@ spec:
         kind: Kustomization
         apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
         metadata:
-          name: "{{ .Element.env }}-demo"
+          name: "{{ .Element.env }}-beta"
           namespace: apps
           labels:
             app.kubernetes.io/name: go-demo
