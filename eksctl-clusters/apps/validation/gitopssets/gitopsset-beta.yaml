@@ -1,0 +1,31 @@
+apiVersion: templates.weave.works/v1alpha1
+kind: GitOpsSet
+metadata:
+  name: gitopsset-beta
+spec:
+  # the controller will impersonate this service account
+  serviceAccountName: validate-fluxga
+  generators:
+    - list:
+        elements:
+          - env: production
+            team: ops-team
+  templates:
+    - content:
+        kind: Kustomization
+        apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+        metadata:
+          name: "{{ .Element.env }}-demo"
+          namespace: apps
+          labels:
+            app.kubernetes.io/name: go-demo
+            app.kubernetes.io/instance: "{{ .Element.env }}"
+            com.example/team: "{{ .Element.team }}"
+        spec:
+          interval: 5m
+          path: "./kustomize"
+          targetNamespace: apps
+          prune: true
+          sourceRef:
+            kind: GitRepository
+            name: podinfo
