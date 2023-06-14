@@ -1,17 +1,3 @@
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: flux-system-validation-gitopssets
-  namespace: flux-system
-spec:
-  interval: 1m0s
-  ref:
-    branch: validate-gitopssets
-  secretRef:
-    name: flux-system
-  url: ssh://git@github.com/weaveworks/clusters-config
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -21,6 +7,6 @@ spec:
   interval: 1m0s
   sourceRef:
     kind: GitRepository
-    name: flux-system-validation-gitopssets
+    name: flux-system
   path: ./eksctl-clusters/apps/validation/gitopssets
   prune: true
