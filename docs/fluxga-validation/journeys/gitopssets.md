@@ -57,7 +57,13 @@ Feature: Can View GitopsSets with Wego and Flux GA
 
 >     Then i see it its detail view without errors
 
+Beta
 
->     Then i see it its detail view without errors
+![gitopssets-validation-gitopsset-beta-details.png](imgs%2Fgitopssets-validation-gitopsset-beta-details.png)
+![gitopssets-validation-kustomization-beta-details.png](imgs%2Fgitopssets-validation-kustomization-beta-details.png)
 
+GA
+
+![gitopssets-validation-gitopsset-ga-details.png](imgs%2Fgitopssets-validation-gitopsset-ga-details.png)
+![gitopssets-validation-kustomization-ga-details.png](imgs%2Fgitopssets-validation-kustomization-ga-details.png)
 
