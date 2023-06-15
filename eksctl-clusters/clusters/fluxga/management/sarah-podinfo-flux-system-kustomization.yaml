@@ -3,7 +3,7 @@ kind: Kustomization
 metadata:
   creationTimestamp: null
   name: sarah-podinfo
-  namespace: flux-system
+  namespace: test-ns1
 spec:
   interval: 10m0s
   path: ./kustomize
