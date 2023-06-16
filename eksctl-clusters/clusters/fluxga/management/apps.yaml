@@ -1,0 +1,30 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: podinfo-testfluxga-v1
+  namespace: apps
+spec:
+  interval: 10m
+  targetNamespace: apps
+  sourceRef:
+    kind: GitRepository
+    name: podinfo-testfluxga-v1
+  path: "./kustomize"
+  prune: true
+  timeout: 1m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: podinfo-testfluxga-v1beta2
+  namespace: apps
+spec:
+  interval: 10m
+  targetNamespace: apps
+  sourceRef:
+    kind: GitRepository
+    name: podinfo-testfluxga-v1beta2
+  path: "./kustomize"
+  prune: true
+  timeout: 1m
