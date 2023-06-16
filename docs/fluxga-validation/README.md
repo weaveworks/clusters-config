@@ -81,6 +81,20 @@ failed add back owned items: failed to convert merged object at version kustomiz
 Fix: remove removed field `the deprecated field .spec.validation was removed `
 as suggested in https://github.com/fluxcd/flux2/releases/tag/v2.0.0-rc.1
 
+### I could upgrade from flux 2.0.0-rc.3 o 2.0.0-rc.5
 
+```bash
+➜ brew upgrade flux                                                                                           <aws:sts>
+Running `brew update --auto-update`...
 
+Warning: Treating flux as a formula. For the cask, use homebrew/cask/flux
+==> Upgrading 1 outdated package:
+fluxcd/tap/flux 2.0.0-rc.3 -> 2.0.0-rc.5
+```
+
+```bash
+flux bootstrap github --owner=weaveworks --repository=clusters-config \                           <aws:sts>
+--branch=cluster-fluxga --namespace=flux-system --path=eksctl-clusters/clusters/fluxga --personal \
+--components-extra image-reflector-controller,image-automation-controller
+```
 

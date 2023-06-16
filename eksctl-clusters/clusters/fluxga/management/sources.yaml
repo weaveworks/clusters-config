@@ -1,0 +1,22 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: podinfo-testfluxga-v1
+  namespace: apps
+spec:
+  interval: 10m
+  ref:
+    branch: master
+  url: https://github.com/stefanprodan/podinfo
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: podinfo-testfluxga-v1beta2
+  namespace: apps
+spec:
+  interval: 10m
+  ref:
+    branch: master
+  url: https://github.com/stefanprodan/podinfo
