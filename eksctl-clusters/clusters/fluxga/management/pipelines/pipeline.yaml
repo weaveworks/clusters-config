@@ -17,3 +17,5 @@ spec:
     - namespace: pipelines-prod
   promotion:
     manual: true
+    strategy:
+      notification: {}
