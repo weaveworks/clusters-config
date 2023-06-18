@@ -1,0 +1,31 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: test-policy-config
+spec:
+  config:
+    weave.policies.bucket-insecure-connections:
+      parameters:
+        exclude_label_key: test_key
+        exclude_label_value: test_values
+        exclude_namespaces:
+        - policy-system
+  match:
+    apps:
+    - kind: Kustomization
+      name: podinfo
+      namespace: apps
+    - kind: Kustomization
+      name: shared-secrets
+      namespace: flux-system
+    - kind: Kustomization
+      name: flux-system
+      namespace: flux-system
+    - kind: Kustomization
+      name: common
+      namespace: flux-system
+    - kind: HelmRelease
+      name: weave-gitops-enterprise
+      namespace: flux-system
+status: {}
