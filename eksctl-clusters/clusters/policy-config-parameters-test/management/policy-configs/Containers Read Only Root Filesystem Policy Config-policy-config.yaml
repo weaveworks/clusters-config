@@ -1,0 +1,18 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: Containers Read Only Root Filesystem Policy Config
+spec:
+  config:
+    weave.policies.containers-read-only-root-filesystem-acceptance-test:
+      parameters:
+        exclude_label_key: test_key
+        exclude_label_value: test_value
+        read_only: false
+  match:
+    apps:
+    - kind: Kustomization
+      name: podinfo
+      namespace: apps
+status: {}
