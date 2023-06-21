@@ -16,3 +16,19 @@ metadata:
   namespace: default
 stringData:
     token: fd1f6cc9-e60f-4a4e-94db-58d66120a889
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: on-call-webapp
+  namespace: default
+spec:
+  summary: "production cluster"
+  providerRef:
+    name: opsgenie
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: '*'
+    - kind: Kustomization
+      name: '*'
