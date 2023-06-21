@@ -5,7 +5,7 @@ metadata:
   namespace: apps
 spec:
   type: opsgenie
-  address: https://api.opsgenie.com/v2/alerts
+  address: https://api.eu.opsgenie.com/v2/alerts
   secretRef:
     name: opsgenie-token
 ---
