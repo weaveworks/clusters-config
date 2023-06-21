@@ -15,7 +15,7 @@ metadata:
   name: opsgenie-token
   namespace: apps
 stringData:
-    token: fd1f6cc9-e60f-4a4e-94db-58d66120a889
+    token: 2b7ee35c-46cc-4138-832c-894fe444eb95
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
