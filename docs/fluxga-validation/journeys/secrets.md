@@ -25,6 +25,26 @@ Feature: Can Create Secrets with Wego and Flux GA
       | sops-kustomization-beta | kustomize.toolkit.fluxcd.io/v1beta2/Kustomization | sops-secret-beta |
 ```
 
+> Then a PR with the encrypted secret has been created to the secrets path in the
+
+https://github.com/weaveworks/clusters-config/pull/454
+
+![reconciled kustomizations with sops secrets](imgs/sops-1.png)
+
+
+> Then kubernetes secret has been created with the expected value
+
+![shown secret is created](imgs/sops2.png)
+
+![shown secret is created](imgs/sops3.png)
+
+```bash
+➜  clusters-config git:(cluster-fluxga) k get secret -n default                                                                            <aws:sts>
+NAME      TYPE     DATA   AGE
+test      Opaque   1      3m28s
+test-ga   Opaque   1      63s
+```
+
 ## Can Create External Secret
 
 ```gherkin
