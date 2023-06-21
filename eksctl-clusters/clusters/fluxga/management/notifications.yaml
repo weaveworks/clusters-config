@@ -1,8 +1,18 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Provider
 metadata:
-  name: podinfo-01-dev
-  namespace: flux-system
+  name: opsgenie
+  namespace: default
 spec:
-  type: generic
-  address: https://promotions-fluxga.eng-sandbox.weave.works/promotion/flux-system/podinfo-01/dev
+  type: opsgenie
+  address: https://api.opsgenie.com/v2/alerts
+  secretRef:
+    name: opsgenie-token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: opsgenie-token
+  namespace: default
+stringData:
+    token: fd1f6cc9-e60f-4a4e-94db-58d66120a889
