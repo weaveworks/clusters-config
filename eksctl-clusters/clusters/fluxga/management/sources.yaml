@@ -16,7 +16,7 @@ metadata:
   name: podinfo-testfluxga-v1beta2
   namespace: apps
 spec:
-  interval: 10m
+  interval: 15m
   ref:
     branch: master
   url: https://github.com/stefanprodan/podinfo
