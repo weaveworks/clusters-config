@@ -1,35 +1,8 @@
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
 metadata:
-  name: podinfo
-  namespace: default
+  name: podinfo-01-dev
+  namespace: flux-system
 spec:
-  interval: 5m
-  url: https://github.com/yiannistri/podinfo
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: webhook-token
-  namespace: default
-type: Opaque
-stringData:
-  token: 3FxY369Qq8JN
----
-apiVersion: notification.toolkit.fluxcd.io/v1
-kind: Receiver
-metadata:
-  name: github-receiver
-  namespace: default
-spec:
-  type: github
-  events:
-    - "ping"
-    - "push"
-  secretRef:
-    name: webhook-token
-  resources:
-    - apiVersion: source.toolkit.fluxcd.io/v1
-      kind: GitRepository
-      name: podinfo
+  type: generic
+  address: https://promotions-fluxga.eng-sandbox.weave.works/promotion/flux-system/podinfo-01/dev
