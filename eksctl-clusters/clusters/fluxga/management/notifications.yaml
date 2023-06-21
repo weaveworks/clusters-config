@@ -8,6 +8,15 @@ spec:
   interval: 5m
   url: https://github.com/yiannistri/podinfo
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webhook-token
+  namespace: default
+type: Opaque
+stringData:
+  token: 3FxY369Qq8JN
+---
 apiVersion: notification.toolkit.fluxcd.io/v1
 kind: Receiver
 metadata:
@@ -19,7 +28,7 @@ spec:
     - "ping"
     - "push"
   secretRef:
-    name: receiver-token
+    name: webhook-token
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1
       kind: GitRepository
