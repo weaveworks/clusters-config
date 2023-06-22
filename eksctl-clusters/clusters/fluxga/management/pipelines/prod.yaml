@@ -24,5 +24,5 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: podinfo
-      version: 6.0.0
+      version: 6.0.0 # {"$promotion": "flux-system:pipelines:prod"}
   interval: 1m
