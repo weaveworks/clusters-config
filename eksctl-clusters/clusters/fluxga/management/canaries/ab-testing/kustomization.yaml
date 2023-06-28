@@ -2,5 +2,5 @@ namespace: ab-testing
 resources:
   - namespace.yaml
   - deployment.yaml
-  # - hpa.yaml
+  - hpa.yaml
   # - canary.yaml
