@@ -1,0 +1,77 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: podinfo
+spec:
+  provider: istio
+  # deployment reference
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: podinfo
+  # HPA reference (optional)
+  autoscalerRef:
+    apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    name: podinfo
+  # the maximum time in seconds for the canary deployment
+  # to make progress before it is rollback (default 600s)
+  progressDeadlineSeconds: 60
+  service:
+    # ClusterIP port number
+    port: 9898
+    # container port number or name
+    targetPort: 9898
+    # Istio gateways (optional)
+    gateways:
+    - istio-system/public-gateway
+    hosts:
+    - app.example.com
+    # Istio traffic policy (optional)
+    trafficPolicy:
+      tls:
+        # use ISTIO_MUTUAL when mTLS is enabled
+        mode: DISABLE
+  analysis:
+    # schedule interval (default 60s)
+    interval: 1m
+    # max number of failed metric checks before rollback
+    threshold: 2
+    # total number of iterations
+    iterations: 10
+    # canary match condition
+    match:
+      - headers:
+          user-agent:
+            regex: ".*Firefox.*"
+      - headers:
+          cookie:
+            regex: "^(.*?;)?(type=insider)(;.*)?$"
+    # Istio Prometheus checks
+    metrics:
+      - name: request-success-rate
+        thresholdRange:
+          min: 99
+        interval: 1m
+      - name: request-duration
+        thresholdRange:
+          max: 500
+        interval: 30s
+    # testing (optional)
+    webhooks:
+      - name: acceptance-test
+        type: pre-rollout
+        timeout: 30s
+        url: http://flagger-loadtester.istio-system/
+        metadata:
+          type: bash
+          cmd: "curl -sd 'test' http://podinfo-canary.ab-testing:9898/token | grep token"
+          logCmdOutput: "true"
+      - name: load-test
+        type: rollout
+        timeout: 15s
+        url: http://flagger-loadtester.istio-system/
+        metadata:
+          type: cmd
+          cmd: "hey -z 15m -q 10 -c 2 -H 'Cookie: type=insider' http://podinfo-canary.ab-testing:9898/"
+          logCmdOutput: "true"
