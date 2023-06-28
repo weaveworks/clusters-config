@@ -1,0 +1,132 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: istio-base
+  namespace: istio-system
+spec:
+  interval: 10m0s
+  chart:
+    spec:
+      chart: base
+      version: 1.14.1
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: flux-system
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: istiod
+  namespace: istio-system
+spec:
+  dependsOn:
+    - name: istio-base
+  interval: 10m0s
+  chart:
+    spec:
+      chart: istiod
+      version: 1.14.1
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: flux-system
+  values:
+    global:
+      proxy:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: istio-ingress
+  namespace: istio-ingress
+spec:
+  dependsOn:
+    - name: istiod
+      namespace: istio-system
+  interval: 10m0s
+  chart:
+    spec:
+      chart: gateway
+      version: 1.14.1
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: flux-system
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: flagger
+  namespace: istio-system
+spec:
+  dependsOn:
+    - name: istiod
+  interval: 10m0s
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  chart:
+    spec:
+      chart: flagger
+      version: 1.21.0
+      sourceRef:
+        kind: HelmRepository
+        name: flagger
+        namespace: flux-system
+  values:
+    meshProvider: istio
+    prometheus:
+      install: true
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: flagger-grafana
+  namespace: istio-system
+spec:
+  dependsOn:
+    - name: flagger
+  interval: 10m0s
+  chart:
+    spec:
+      chart: grafana
+      version: 1.7.0
+      sourceRef:
+        kind: HelmRepository
+        name: flagger
+        namespace: flux-system
+  values:
+    url: http://flagger-prometheus.istio-system:9090
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: flagger-loadtester
+  namespace: istio-system
+spec:
+  dependsOn:
+    - name: flagger
+  interval: 10m0s
+  chart:
+    spec:
+      chart: loadtester
+      version: 0.22.0
+      sourceRef:
+        kind: HelmRepository
+        name: flagger
+        namespace: flux-system
+  values:
+    istio:
+      enabled: true
+      host: flagger-loadtester.istio-system
+      gateway:
+        enabled: true
