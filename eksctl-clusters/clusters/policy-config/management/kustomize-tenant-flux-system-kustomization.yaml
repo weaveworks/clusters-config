@@ -1,0 +1,18 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  creationTimestamp: null
+  name: kustomize-tenant
+  namespace: flux-system
+  labels:
+    toolkit.fluxcd.io/tenant: dev-tenant
+spec:
+  interval: 10m0s
+  path: ./kustomize
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: podinfo
+    namespace: apps
+  targetNamespace: dev-ns
+status: {}
