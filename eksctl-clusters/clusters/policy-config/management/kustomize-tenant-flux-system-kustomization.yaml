@@ -4,6 +4,8 @@ metadata:
   creationTimestamp: null
   name: kustomize-tenant
   namespace: flux-system
+  labels:
+    toolkit.fluxcd.io/tenant: dev-tenant
 spec:
   interval: 10m0s
   path: ./kustomize
