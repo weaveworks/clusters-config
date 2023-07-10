@@ -1,0 +1,15 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: new-policy-config
+spec:
+  config:
+    weave.policies.tenancy.dev-team-allowed-clusters:
+      parameters:
+        cluster_secrets:
+        - dev.kubeconfig002
+  match:
+    workspaces:
+    - test-team
+status: {}
