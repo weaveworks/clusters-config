@@ -6,9 +6,9 @@ metadata:
     templates.weave.works/template-namespace: default
     weave.works/capi: bootstrap
   name: dev
-  namespace: dev-namespace
+  namespace: test-namespace
   annotations:
-    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-rm676\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"dev-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-2lhuq\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"test-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
     templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/namespace-issue-test/clusters/default/dev.yaml\"]}"
 spec:
   capiClusterRef:
@@ -22,7 +22,7 @@ metadata:
     templates.weave.works/template-name: test-tagreed
     templates.weave.works/template-namespace: default
   name: dev
-  namespace: dev-namespace
+  namespace: test-namespace
 spec:
   clusterNetwork:
     pods:
@@ -43,13 +43,13 @@ kind: AWSManagedControlPlane
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled
-    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-rm676\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"dev-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-2lhuq\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"test-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
     templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/namespace-issue-test/clusters/default/dev.yaml\"]}"
   labels:
     templates.weave.works/template-name: test-tagreed
     templates.weave.works/template-namespace: default
   name: dev-control-plane
-  namespace: dev-namespace
+  namespace: test-namespace
 spec:
   additionalTags:
     creator: tagreed.anany@weave.works
@@ -73,13 +73,13 @@ kind: MachinePool
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled
-    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-rm676\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"dev-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-2lhuq\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"test-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
     templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/namespace-issue-test/clusters/default/dev.yaml\"]}"
   labels:
     templates.weave.works/template-name: test-tagreed
     templates.weave.works/template-namespace: default
   name: dev-pool-0
-  namespace: dev-namespace
+  namespace: test-namespace
 spec:
   clusterName: dev
   replicas: 1
@@ -99,13 +99,13 @@ kind: AWSManagedMachinePool
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled
-    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-rm676\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"dev-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-2lhuq\",\"base_branch\":\"cluster-namespace-issue-test\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a test-tagreed instance\",\"template_name\":\"test-tagreed\",\"parameter_values\":{\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"dev\",\"CLUSTER_NAMESPACE\":\"test-namespace\",\"INSTANCE_TYPE\":\"t3.medium\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"OWNER_EMAIL\":\"tagreed.anany@weave.works\",\"SSH_KEY_NAME\":\"weave-gitops-pesto\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create test-tagreed instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
     templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/namespace-issue-test/clusters/default/dev.yaml\"]}"
   labels:
     templates.weave.works/template-name: test-tagreed
     templates.weave.works/template-namespace: default
   name: dev-pool-0
-  namespace: dev-namespace
+  namespace: test-namespace
 spec:
   additionalTags:
     creator: tagreed.anany@weave.works
