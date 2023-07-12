@@ -1,0 +1,16 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: xx
+spec:
+  config:
+    weave.policies.containers-minimum-replica-count:
+      parameters:
+        replica_count: 3
+  match:
+    apps:
+    - kind: Kustomization
+      name: podinfo
+      namespace: apps
+status: {}
