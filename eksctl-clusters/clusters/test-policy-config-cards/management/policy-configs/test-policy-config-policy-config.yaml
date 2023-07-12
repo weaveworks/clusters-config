@@ -1,0 +1,41 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: test-policy-config
+spec:
+  config:
+    weave.policies.container-image-pull-policy-acceptance-test:
+      parameters:
+        exclude_label_key: test_key
+        exclude_label_value: test_values
+    weave.policies.container-running-as-root-acceptance-test:
+      parameters:
+        exclude_namespace:
+        - kube-system
+        - flux-system
+        - test-systems
+    weave.policies.containers-minimum-replica-count-acceptance-test:
+      parameters:
+        exclude_label_key: test_key
+        exclude_label_value: test_value
+        exclude_namespaces:
+        - test-system
+        replica_count: 1
+    weave.policies.containers-read-only-root-filesystem-acceptance-test:
+      parameters:
+        exclude_label_key: test_key
+        exclude_label_value: test_values
+        read_only: false
+    weave.policies.containers-running-with-privilege-escalation-acceptance-test:
+      parameters:
+        allow_privilege_escalation: true
+  match:
+    apps:
+    - kind: Kustomization
+      name: podinfo
+      namespace: apps
+    - kind: HelmRelease
+      name: dex
+      namespace: dex
+status: {}
