@@ -1,0 +1,19 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: dev-policy-config
+spec:
+  config:
+    weave.policies.containers-minimum-replica-count-acceptance-test:
+      parameters:
+        replica_count: 4
+    weave.policies.containers-running-with-privilege-escalation-acceptance-test:
+      parameters:
+        allow_privilege_escalation: true
+  match:
+    apps:
+    - kind: Kustomization
+      name: shared-secrets
+      namespace: flux-system
+status: {}
