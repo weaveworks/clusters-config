@@ -8,6 +8,8 @@ spec:
   params:
     - name: CLUSTER_NAME
       description: The name for this cluster.
+    - name: CLUSTER_NAMESPACE
+      description: The namespace for this cluster.
     - name: AWS_REGION
       description: AWS Region to create cluster
       options: ['eu-north-1']
@@ -30,7 +32,7 @@ spec:
       kind: GitopsCluster
       metadata:
         name: "${CLUSTER_NAME}"
-        namespace: default
+        namespace: "${CLUSTER_NAMESPACE}"
         labels:
           weave.works/capi: bootstrap
       spec:
@@ -41,7 +43,7 @@ spec:
       kind: Cluster
       metadata:
         name: ${CLUSTER_NAME}
-        namespace: default
+        namespace: ${CLUSTER_NAMESPACE}
       spec:
         clusterNetwork:
           pods:
@@ -60,7 +62,7 @@ spec:
       kind: AWSManagedControlPlane
       metadata:
         name: ${CLUSTER_NAME}-control-plane
-        namespace: default
+        namespace: ${CLUSTER_NAMESPACE}
       spec:
         additionalTags:
           creator: ${OWNER_EMAIL}
@@ -82,7 +84,7 @@ spec:
       kind: MachinePool
       metadata:
         name: ${CLUSTER_NAME}-pool-0
-        namespace: default
+        namespace: ${CLUSTER_NAMESPACE}
       spec:
         clusterName: ${CLUSTER_NAME}
         replicas: ${WORKER_MACHINE_COUNT}
@@ -100,7 +102,7 @@ spec:
       kind: AWSManagedMachinePool
       metadata:
         name: ${CLUSTER_NAME}-pool-0
-        namespace: default
+        namespace: ${CLUSTER_NAMESPACE}
       spec:
         additionalTags:
           creator: ${OWNER_EMAIL}
