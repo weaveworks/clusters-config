@@ -1,0 +1,63 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: test-cluster-details-issue
+  region: eu-north-1
+  version: "1.24"
+  tags:
+    environment: "test-cluster-details-issue"
+    delete-after: "10"
+    team: "timberwolf"
+
+iam:
+  withOIDC: true
+  serviceRoleARN: "arn:aws:iam::894516026745:role/WeaveEksClusterRole"
+  serviceAccounts:
+  - metadata:
+      name: kustomize-controller
+      namespace: flux-system
+    attachPolicyARNs:
+    - "arn:aws:iam::894516026745:policy/WeaveSopsKmsDecrypt"
+    roleName: eksctl-test-cluster-details-issue-sops-decrypt-role
+    roleOnly: true
+  - metadata:
+      name: external-dns
+      namespace: external-dns
+    attachPolicyARNs:
+    - "arn:aws:iam::894516026745:policy/AllowExternalDNSUpdates"
+    roleName: eksctl-test-cluster-details-issue-route53-external-dns-role
+    roleOnly: false # create role and annotated service account
+
+# Enable private access to the API server.
+vpc:
+  clusterEndpoints:
+    privateAccess: true
+    publicAccess: true
+
+nodeGroups:
+  - name: test-cluster-details-issue-ng-1
+    instanceType: t3.medium
+    minSize: 3
+    maxSize: 3
+    desiredCapacity: 3
+    volumeSize: 10
+    privateNetworking: true
+    tags:
+      environment: "test-cluster-details-issue"
+      delete-after: "10"
+      team: "timberwolf"
+    propagateASGTags: true
+    iam:
+      instanceProfileARN: "arn:aws:iam::894516026745:instance-profile/WeaveEksWorkerNodeRole"
+
+gitops:
+  flux:
+    gitProvider: github
+    flags:
+      owner: "weaveworks"
+      repository: "clusters-config"
+      private: "true"
+      branch: "cluster-test-cluster-details-issue"
+      namespace: "flux-system"
+      path: "eksctl-clusters/clusters/test-cluster-details-issue"
