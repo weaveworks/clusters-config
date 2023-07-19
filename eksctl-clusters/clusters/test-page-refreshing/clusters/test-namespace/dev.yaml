@@ -1,0 +1,124 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  labels:
+    templates.weave.works/template-name: capa-cluster-template-eks
+    templates.weave.works/template-namespace: default
+    weave.works/flux: bootstrap
+  name: dev
+  namespace: test-namespace
+  annotations:
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-xyprno\",\"base_branch\":\"cluster-test-page-refreshing\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a capa-cluster-template-eks instance\",\"template_name\":\"capa-cluster-template-eks\",\"parameter_values\":{\"AWS_NODE_MACHINE_TYPE\":\"t3.small\",\"AWS_REGION\":\"eu-north-1\",\"AWS_SSH_KEY_NAME\":\"weave-gitops-pesto\",\"CLUSTER_NAME\":\"dev\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"NAMESPACE\":\"test-namespace\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create capa-cluster-template-eks instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/test-page-refreshing/clusters/test-namespace/dev.yaml\"]}"
+spec:
+  capiClusterRef:
+    name: dev
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: capa-cluster-template-eks
+    templates.weave.works/template-namespace: default
+  name: dev
+  namespace: test-namespace
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+    kind: AWSManagedControlPlane
+    name: dev-control-plane
+  infrastructureRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+    kind: AWSManagedControlPlane
+    name: dev-control-plane
+
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta2
+kind: AWSManagedControlPlane
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-xyprno\",\"base_branch\":\"cluster-test-page-refreshing\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a capa-cluster-template-eks instance\",\"template_name\":\"capa-cluster-template-eks\",\"parameter_values\":{\"AWS_NODE_MACHINE_TYPE\":\"t3.small\",\"AWS_REGION\":\"eu-north-1\",\"AWS_SSH_KEY_NAME\":\"weave-gitops-pesto\",\"CLUSTER_NAME\":\"dev\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"NAMESPACE\":\"test-namespace\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create capa-cluster-template-eks instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/test-page-refreshing/clusters/test-namespace/dev.yaml\"]}"
+  labels:
+    templates.weave.works/template-name: capa-cluster-template-eks
+    templates.weave.works/template-namespace: default
+  name: dev-control-plane
+  namespace: test-namespace
+spec:
+  region: eu-north-1
+  sshKeyName: weave-gitops-pesto
+  version: v1.24.1
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-xyprno\",\"base_branch\":\"cluster-test-page-refreshing\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a capa-cluster-template-eks instance\",\"template_name\":\"capa-cluster-template-eks\",\"parameter_values\":{\"AWS_NODE_MACHINE_TYPE\":\"t3.small\",\"AWS_REGION\":\"eu-north-1\",\"AWS_SSH_KEY_NAME\":\"weave-gitops-pesto\",\"CLUSTER_NAME\":\"dev\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"NAMESPACE\":\"test-namespace\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create capa-cluster-template-eks instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/test-page-refreshing/clusters/test-namespace/dev.yaml\"]}"
+  labels:
+    templates.weave.works/template-name: capa-cluster-template-eks
+    templates.weave.works/template-namespace: default
+  name: dev-md-0
+  namespace: test-namespace
+spec:
+  clusterName: dev
+  replicas: 1
+  selector:
+    matchLabels: null
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+          kind: EKSConfigTemplate
+          name: dev-md-0
+      clusterName: dev
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+        kind: AWSMachineTemplate
+        name: dev-md-0
+      version: v1.24.1
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta2
+kind: AWSMachineTemplate
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-xyprno\",\"base_branch\":\"cluster-test-page-refreshing\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a capa-cluster-template-eks instance\",\"template_name\":\"capa-cluster-template-eks\",\"parameter_values\":{\"AWS_NODE_MACHINE_TYPE\":\"t3.small\",\"AWS_REGION\":\"eu-north-1\",\"AWS_SSH_KEY_NAME\":\"weave-gitops-pesto\",\"CLUSTER_NAME\":\"dev\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"NAMESPACE\":\"test-namespace\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create capa-cluster-template-eks instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/test-page-refreshing/clusters/test-namespace/dev.yaml\"]}"
+  labels:
+    templates.weave.works/template-name: capa-cluster-template-eks
+    templates.weave.works/template-namespace: default
+  name: dev-md-0
+  namespace: test-namespace
+spec:
+  template:
+    spec:
+      iamInstanceProfile: nodes.cluster-api-provider-aws.sigs.k8s.io
+      instanceType: t3.small
+      sshKeyName: weave-gitops-pesto
+
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
+kind: EKSConfigTemplate
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-xyprno\",\"base_branch\":\"cluster-test-page-refreshing\",\"title\":\"Create resource dev\",\"description\":\"This PR creates a capa-cluster-template-eks instance\",\"template_name\":\"capa-cluster-template-eks\",\"parameter_values\":{\"AWS_NODE_MACHINE_TYPE\":\"t3.small\",\"AWS_REGION\":\"eu-north-1\",\"AWS_SSH_KEY_NAME\":\"weave-gitops-pesto\",\"CLUSTER_NAME\":\"dev\",\"KUBERNETES_VERSION\":\"v1.24.1\",\"NAMESPACE\":\"test-namespace\",\"WORKER_MACHINE_COUNT\":\"1\"},\"commit_message\":\"Create capa-cluster-template-eks instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"CAPITemplate\"}"
+    templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/test-page-refreshing/clusters/test-namespace/dev.yaml\"]}"
+  labels:
+    templates.weave.works/template-name: capa-cluster-template-eks
+    templates.weave.works/template-namespace: default
+  name: dev-md-0
+  namespace: test-namespace
+spec:
+  template: {}
