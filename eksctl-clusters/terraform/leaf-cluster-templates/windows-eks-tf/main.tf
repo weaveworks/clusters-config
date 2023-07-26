@@ -158,7 +158,7 @@ module "leaf_config" {
   # repository_name        = "eks-wge-management-cwcloudtest"
   github_owner           = "weaveworks"
   repository_name        = "clusters-config"
-  branch                 = "saeed-case"
+  branch                 = "cluster-saeed-case"
 }
 
 #Below added by Paulo F.
