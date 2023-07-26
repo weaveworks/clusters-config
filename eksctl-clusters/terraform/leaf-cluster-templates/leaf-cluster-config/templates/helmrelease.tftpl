@@ -1,0 +1,64 @@
+#
+# DO NOT EDIT - This file is managed by Terraform
+#
+---
+%{ if create_namespace == true ~}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${namespace}
+---
+%{ endif ~}
+%{ if create_repository == true ~}
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: ${repository_name}
+  namespace: ${namespace}
+spec:
+  interval: ${repository_sync_interval}
+  url: ${repository_url}
+%{ if repository_secret != null ~}
+  secretRef:
+    name: ${repository_secret}
+%{ endif ~}
+---
+%{ endif ~}
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ${name}
+  namespace: ${namespace}
+spec:
+  chart:
+    spec:
+      chart: ${chart}
+      %{~ if version != null ~}
+      version: ${version}
+      %{~ endif ~}
+      sourceRef:
+        kind: HelmRepository
+        name: ${repository_name}
+  %{~ if length(depends_on) > 0 ~}
+  dependsOn:
+    %{~ for depends in depends_on ~}
+    - name: ${depends}
+    %{~ endfor ~}
+  %{~ endif ~}
+  interval: 10m0s
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  %{~ if values != null ~}
+  values:
+    ${indent(4, values)}
+  %{~ endif ~}
+%{~ if extra_manifests != null ~}
+---
+${extra_manifests}
+%{~ endif ~}

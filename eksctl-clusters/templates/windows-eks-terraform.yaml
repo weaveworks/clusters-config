@@ -1,0 +1,131 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: windows-eks-terraform
+  namespace: default
+  labels:
+    weave.works/template-type: terraform
+  annotations:
+    #templates.weave.works/profiles-enabled: "true"
+    templates.weave.works/profiles-enabled: "false"
+spec:
+  description: Create Windows EKS cluster using Terraform.
+  renderType: templating
+  params:
+    - name: CLUSTER_NAME
+      description: Name of the cluster.
+    - name: CLUSTER_VERSION
+      description: Kubernetes version of your cluster.
+      options: ['1.25', '1.26', '1.27']
+      default: "1.26"
+    - name: AWS_REGION
+      description: AWS region to deploy cluster.
+      options: ['us-east-1','eu-north-1']
+    - name: INSTANCE_TYPE
+      description: Instance type of nodes in cluster.
+      options: ['t3.xlarge', 'm5.xlarge']
+    - name: AMI_TYPE
+      description: Select AMI
+      options: ['WINDOWS_CORE_2022_x86_64', 'WINDOWS_FULL_2022_x86_64']
+      default: "WINDOWS_CORE_2022_x86_64"
+    - name: NODE_GROUP_MIN
+      description: The worker node group minimum nodes
+      options: ['1','2','3']
+      default: "1"
+    - name: NODE_GROUP_MAX
+      description: The worker node group maximum nodes
+      options: ['5','6','7']
+      default: "5"
+    - name: CREATOR_EMAIL
+      description: Email address of the cluster creator
+      default: "mohamed.saeed@weave.works"
+  resourcetemplates:
+    - path: 'eksctl-clusters/clusters/saeed-case/clusters/{{ .params.CLUSTER_NAME }}.yaml'
+      content:
+        - apiVersion: gitops.weave.works/v1alpha1
+          kind: GitopsCluster
+          metadata:
+            name: '{{ .params.CLUSTER_NAME }}'
+            namespace: flux-system
+          spec:
+            secretRef:
+              name: '{{ .params.CLUSTER_NAME }}-kubeconfig'
+        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+          kind: Terraform
+          metadata:
+            name: '{{ .params.CLUSTER_NAME }}-core'
+            namespace: flux-system
+          spec:
+            interval: 1h
+            retryInterval: 20s
+            path: ./eksctl-clusters/terraform/leaf-cluster-templates/windows-eks-tf
+            approvePlan: auto
+            storeReadablePlan: human
+            destroyResourcesOnDeletion: true
+            writeOutputsToSecret:
+              name: '{{ .params.CLUSTER_NAME }}-core-outputs'
+            runnerPodTemplate:
+              spec:
+                envFrom:
+                - secretRef:
+                    name: aws-credentials
+                - secretRef:
+                    name: github-token
+            vars:
+              - name: cluster_name
+                value: '{{ .params.CLUSTER_NAME }}'
+              - name: cluster_version
+                value: '{{ .params.CLUSTER_VERSION }}'
+              - name: region
+                value: '{{ .params.AWS_REGION }}'
+              - name: ami_type
+                value: '{{ .params.AMI_TYPE }}'
+              - name: node_group_min
+                value: '{{ .params.NODE_GROUP_MIN }}'
+              - name: node_group_max
+                value: '{{ .params.NODE_GROUP_MAX }}'
+              - name: instance_type
+                value: '{{ .params.INSTANCE_TYPE }}'
+              - name: creator_email
+                value: '{{ .params.CREATOR_EMAIL }}'
+            sourceRef:
+              kind: GitRepository
+              name: flux-system
+              namespace: flux-system
+        # - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+        #   kind: Terraform
+        #   metadata:
+        #     name: '{{ .params.CLUSTER_NAME }}-config'
+        #     namespace: flux-system
+        #   spec:
+        #     dependsOn:
+        #       - name: '{{ .params.CLUSTER_NAME }}-core'
+        #     interval: 1h
+        #     retryInterval: 20s
+        #     path: ./eksctl-clusters/terraform/leaf-cluster-templates/leaf-cluster-config
+        #     approvePlan: auto
+        #     storeReadablePlan: human
+        #     destroyResourcesOnDeletion: true
+        #     runnerPodTemplate:
+        #       spec:
+        #         envFrom:
+        #         - secretRef:
+        #             name: aws-credentials
+        #         - secretRef:
+        #             name: github-token
+        #     vars:
+        #       - name: cluster_name
+        #         value: '{{ .params.CLUSTER_NAME }}'
+        #       - name: region
+        #         value: '{{ .params.AWS_REGION }}'
+        #       - name: target_path
+        #         value: 'eksctl-clusters/clusters/leaf-clusters/{{ .params.CLUSTER_NAME }}'
+        #     # varsFrom:
+        #     #   - kind: ConfigMap
+        #     #     name: leaf-cluster-config
+        #     #   - kind: Secret
+        #     #     name: leaf-cluster-auth
+        #     sourceRef:
+        #       kind: GitRepository
+        #       name: flux-system
+        #       namespace: flux-system

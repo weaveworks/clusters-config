@@ -1,0 +1,25 @@
+#
+# DO NOT EDIT - This file is managed by Terraform
+#
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: ${name}
+  namespace: ${namespace}
+spec:
+  %{~ if length(depends_on) > 0 ~}
+  dependsOn:
+    %{~ for depends in depends_on ~}
+    - name: ${depends}
+    %{~ endfor ~}
+  %{~ endif ~}
+  interval: 10m0s
+  retryInterval: 1m0s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ${path}
+  prune: true
+  validation: client
+  wait: ${wait}
