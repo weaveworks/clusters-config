@@ -106,7 +106,7 @@ data "github_repository" "this" {
 resource "github_repository_file" "kubeconfig" {
   repository    = data.github_repository.this.name
   branch        = var.branch
-  file          = "eksctl-clusters/clusters/management/secrets/leaf-clusters/${var.cluster_name}.yaml"
+  file          = "eksctl-clusters/clusters/saeed-case/secrets/leaf-clusters/${var.cluster_name}.yaml"
   content       = local.kubeconfig_secret
   commit_email  = var.commit_email
   commit_author = var.commit_author
