@@ -1,1 +1,4 @@
 .terraform/
+entitlement.yaml
+aws-credentials.txt
+github-token.txt

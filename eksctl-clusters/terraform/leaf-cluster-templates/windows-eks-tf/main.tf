@@ -134,6 +134,10 @@ data:
       - "system:masters"
       "rolearn": "arn:aws:iam::007640530078:role/AWSReservedSSO_AdministratorAccess_5d7d52bae0c5bf1f"
       "username": "adminuser:{{SessionName}}"
+    - groups:
+      - "system:masters"
+      "rolearn": "arn:aws:iam::894516026745:role/AdministratorAccess"
+      "username": "adminuser:{{SessionName}}"
   mapUsers: |
     []
   YAML
