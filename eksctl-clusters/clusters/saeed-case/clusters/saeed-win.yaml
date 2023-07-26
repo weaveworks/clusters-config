@@ -1,61 +1,61 @@
-apiVersion: gitops.weave.works/v1alpha1
-kind: GitopsCluster
-metadata:
-  labels:
-    templates.weave.works/template-name: windows-eks-terraform
-    templates.weave.works/template-namespace: default
-  name: saeed-win
-  namespace: flux-system
-  annotations:
-    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-cdl9qb\",\"base_branch\":\"cluster-saeed-case\",\"title\":\"Create resource saeed-win\",\"description\":\"This PR creates a windows-eks-terraform instance\",\"template_name\":\"windows-eks-terraform\",\"parameter_values\":{\"AMI_TYPE\":\"WINDOWS_CORE_2022_x86_64\",\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"saeed-win\",\"CLUSTER_VERSION\":\"1.26\",\"CREATOR_EMAIL\":\"mohamed.saeed@weave.works\",\"INSTANCE_TYPE\":\"t3.xlarge\",\"NODE_GROUP_MAX\":\"5\",\"NODE_GROUP_MIN\":\"1\"},\"commit_message\":\"Create windows-eks-terraform instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"GitOpsTemplate\"}"
-    templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/saeed-case/clusters/saeed-win.yaml\"]}"
-spec:
-  secretRef:
-    name: saeed-win-kubeconfig
+# apiVersion: gitops.weave.works/v1alpha1
+# kind: GitopsCluster
+# metadata:
+#   labels:
+#     templates.weave.works/template-name: windows-eks-terraform
+#     templates.weave.works/template-namespace: default
+#   name: saeed-win
+#   namespace: flux-system
+#   annotations:
+#     templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-cdl9qb\",\"base_branch\":\"cluster-saeed-case\",\"title\":\"Create resource saeed-win\",\"description\":\"This PR creates a windows-eks-terraform instance\",\"template_name\":\"windows-eks-terraform\",\"parameter_values\":{\"AMI_TYPE\":\"WINDOWS_CORE_2022_x86_64\",\"AWS_REGION\":\"eu-north-1\",\"CLUSTER_NAME\":\"saeed-win\",\"CLUSTER_VERSION\":\"1.26\",\"CREATOR_EMAIL\":\"mohamed.saeed@weave.works\",\"INSTANCE_TYPE\":\"t3.xlarge\",\"NODE_GROUP_MAX\":\"5\",\"NODE_GROUP_MIN\":\"1\"},\"commit_message\":\"Create windows-eks-terraform instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"GitOpsTemplate\"}"
+#     templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/saeed-case/clusters/saeed-win.yaml\"]}"
+# spec:
+#   secretRef:
+#     name: saeed-win-kubeconfig
 
----
-apiVersion: infra.contrib.fluxcd.io/v1alpha1
-kind: Terraform
-metadata:
-  labels:
-    templates.weave.works/template-name: windows-eks-terraform
-    templates.weave.works/template-namespace: default
-  name: saeed-win-core
-  namespace: flux-system
-spec:
-  approvePlan: auto
-  destroyResourcesOnDeletion: true
-  interval: 1h
-  path: ./eksctl-clusters/terraform/leaf-cluster-templates/windows-eks-tf
-  retryInterval: 20s
-  runnerPodTemplate:
-    spec:
-      envFrom:
-      - secretRef:
-          name: aws-credentials
-      - secretRef:
-          name: github-token
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  storeReadablePlan: human
-  vars:
-  - name: cluster_name
-    value: saeed-win
-  - name: cluster_version
-    value: "1.26"
-  - name: region
-    value: eu-north-1
-  - name: ami_type
-    value: WINDOWS_CORE_2022_x86_64
-  - name: node_group_min
-    value: "1"
-  - name: node_group_max
-    value: "5"
-  - name: instance_type
-    value: t3.xlarge
-  - name: creator_email
-    value: mohamed.saeed@weave.works
-  writeOutputsToSecret:
-    name: saeed-win-core-outputs
+# ---
+# apiVersion: infra.contrib.fluxcd.io/v1alpha1
+# kind: Terraform
+# metadata:
+#   labels:
+#     templates.weave.works/template-name: windows-eks-terraform
+#     templates.weave.works/template-namespace: default
+#   name: saeed-win-core
+#   namespace: flux-system
+# spec:
+#   approvePlan: auto
+#   destroyResourcesOnDeletion: true
+#   interval: 1h
+#   path: ./eksctl-clusters/terraform/leaf-cluster-templates/windows-eks-tf
+#   retryInterval: 20s
+#   runnerPodTemplate:
+#     spec:
+#       envFrom:
+#       - secretRef:
+#           name: aws-credentials
+#       - secretRef:
+#           name: github-token
+#   sourceRef:
+#     kind: GitRepository
+#     name: flux-system
+#     namespace: flux-system
+#   storeReadablePlan: human
+#   vars:
+#   - name: cluster_name
+#     value: saeed-win
+#   - name: cluster_version
+#     value: "1.26"
+#   - name: region
+#     value: eu-north-1
+#   - name: ami_type
+#     value: WINDOWS_CORE_2022_x86_64
+#   - name: node_group_min
+#     value: "1"
+#   - name: node_group_max
+#     value: "5"
+#   - name: instance_type
+#     value: t3.xlarge
+#   - name: creator_email
+#     value: mohamed.saeed@weave.works
+#   writeOutputsToSecret:
+#     name: saeed-win-core-outputs
