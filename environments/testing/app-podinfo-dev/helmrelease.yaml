@@ -1,0 +1,52 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  annotations:
+    metadata.weave.works/app-url: http://test.helloworld.com/dev/podinfo/
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-ttvw2n\",\"base_branch\":\"cluster-fluxga\",\"title\":\"Create resource test.helloworld.com\",\"description\":\"This PR creates a app-generator instance\",\"template_name\":\"app-generator\",\"parameter_values\":{\"APP_NAME\":\"podinfo\",\"CHART_VERSION\":\"x.x.x\",\"DEV_NAMESPACE\":\"app-podinfo-dev\",\"ENV_GROUP\":\"testing\",\"FQDN\":\"test.helloworld.com\",\"HELM_REPO_URL\":\"https://weavegitops.github.io/application-promotion-podinfo/\",\"PRD_NAMESPACE\":\"app-podinfo-prd\",\"STG_NAMESPACE\":\"app-podinfo-stg\"},\"commit_message\":\"Create app-generator instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"GitOpsTemplate\"}"
+  labels:
+    templates.weave.works/template-name: app-generator
+    templates.weave.works/template-namespace: default
+  name: podinfo
+  namespace: app-podinfo-dev
+spec:
+  chart:
+    spec:
+      chart: podinfo
+      reconcileStrategy: Revision
+      sourceRef:
+        kind: HelmRepository
+        name: podinfo-helm-repo
+      version: x.x.x
+  interval: 2m
+  targetNamespace: app-podinfo-dev
+  values:
+    canary:
+      enabled: true
+      ingress:
+        url: test.helloworld.com/dev/podinfo/
+      loadtester:
+        url: flagger-flagger-loadtester.flagger
+    hpa:
+      enabled: true
+      maxReplicas: 1
+    ingress:
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$1
+        nginx.ingress.kubernetes.io/service-upstream: "true"
+      className: nginx
+      enabled: true
+      hosts:
+      - host: test.helloworld.com
+        paths:
+        - path: /dev/podinfo/?(.*)
+          pathType: Prefix
+        - path: /dev/(api/?.*)
+          pathType: Prefix
+    replicaCount: 1
+    service:
+      enabled: false
+      externalPort: 80
+    ui:
+      color: ""
+      message: Hi, this message is from the Helm values for dev

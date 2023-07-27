@@ -1,0 +1,14 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  labels:
+    templates.weave.works/template-name: app-generator
+    templates.weave.works/template-namespace: default
+  name: podinfo-helm-repo
+  namespace: app-podinfo-dev
+  annotations:
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-ttvw2n\",\"base_branch\":\"cluster-fluxga\",\"title\":\"Create resource test.helloworld.com\",\"description\":\"This PR creates a app-generator instance\",\"template_name\":\"app-generator\",\"parameter_values\":{\"APP_NAME\":\"podinfo\",\"CHART_VERSION\":\"x.x.x\",\"DEV_NAMESPACE\":\"app-podinfo-dev\",\"ENV_GROUP\":\"testing\",\"FQDN\":\"test.helloworld.com\",\"HELM_REPO_URL\":\"https://weavegitops.github.io/application-promotion-podinfo/\",\"PRD_NAMESPACE\":\"app-podinfo-prd\",\"STG_NAMESPACE\":\"app-podinfo-stg\"},\"commit_message\":\"Create app-generator instance\",\"credentials\":{},\"template_namespace\":\"default\",\"template_kind\":\"GitOpsTemplate\"}"
+    templates.weave.works/created-files: "{\"files\":[\"environments/testing/app-podinfo-dev/helmrepo.yaml\",\"environments/testing/app-podinfo-dev/helmrelease.yaml\",\"environments/testing/app-podinfo-stg/helmrepo.yaml\",\"environments/testing/app-podinfo-stg/helmrelease.yaml\",\"environments/testing/app-podinfo-prd/helmrepo.yaml\",\"environments/testing/app-podinfo-prd/helmrelease.yaml\"]}"
+spec:
+  interval: 1m0s
+  url: https://weavegitops.github.io/application-promotion-podinfo/
