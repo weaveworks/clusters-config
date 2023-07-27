@@ -1,0 +1,84 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: eks-blueprint-template
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+  labels:
+    weave.works/template-type: terraform
+spec:
+  description: EKS Blueprint for Webinar Demo
+  params:
+    - name: BLUEPRINT
+      description: select the blueprint you want to deploy
+      options: ['wireguard-with-cilium','external-secrets']
+      default: "wireguard-with-cilium"
+    - name: CLUSTER_NAME
+      description: The cluster name
+      default: "demo-eks-blueprint-cil-wg"
+    - name: AWS_REGION
+      description: the AWS region to deploy the cluster
+      options: ['eu-central-1','us-west2']
+      default: "eu-central-1"
+    - name: KUBERNETES_VERSION
+      description: the kubernetes version for the cluster
+      options: ['1.24','1.25']
+      default: "1.24"
+    - name: CREATOR_EMAIL
+      description: Email address of the creator
+      default: "demo3@weave.works"
+    - name: NODE_GROUP_MIN
+      description: The worker node group minimum nodes
+      options: ['1','2','3']
+      default: "1"
+    - name: NODE_GROUP_MAX
+      description: The worker node group maximum nodes
+      options: ['5','6','7']
+      default: "5"
+    - name: AUTO_APPLY
+      description: Enable TF controller Auto-apply
+      default: "auto"
+    - name: DESTROY
+      description: Enable to destroy the TF resources
+      options: ['false','true']
+      default: "false"
+  resourcetemplates:
+    - path: clusters/management/terraform/eks-bp-${BLUEPRINT}-${CLUSTER_NAME}.yaml
+      content:
+        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+          kind: Terraform
+          metadata:
+            name: eks-bp-${BLUEPRINT}-${CLUSTER_NAME}
+            namespace: flux-system
+          spec:
+            interval: 1h
+            path: examples/${BLUEPRINT}
+            approvePlan: ${AUTO_APPLY}
+            destroy: ${DESTROY}
+            enableInventory: true
+            storeReadablePlan: human
+            vars:
+              - name: cluster_name
+                value: ${CLUSTER_NAME}
+              - name: region
+                value: ${AWS_REGION}
+              - name: kubernetes_version
+                value: ${KUBERNETES_VERSION}
+              - name: creator_email
+                value: ${CREATOR_EMAIL}
+              - name: node_group_min
+                value: ${NODE_GROUP_MIN}
+              - name: node_group_max
+                value: ${NODE_GROUP_MAX}
+              - name: node_group_desired
+                value: 3
+            varsFrom:
+              - kind: Secret
+                name: tf-controller-auth        
+            sourceRef:
+              kind: GitRepository
+              name: eks-blueprints
+              namespace: flux-system

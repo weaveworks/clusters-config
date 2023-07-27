@@ -1,0 +1,38 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: connect-a-cluster
+  namespace: default
+  labels:
+    weave.works/template-type: cluster
+  annotations:
+    templates.weave.works/profiles-enabled: "true"
+    templates.weave.works/kustomizations-enabled: "true"
+    templates.weave.works/credentials-enabled: "true"
+    templates.weave.works/add-common-bases: "true"
+    templates.weave.works/inject-prune-annotation: "true"
+spec:
+  description: Connect a cluster
+  params:
+    - name: CLUSTER_NAME
+      required: true
+      description: This is used for the cluster naming.
+    - name: SECRET_NAME
+      required: true
+      description: The secret that holds the kubeconfig
+    - name: NAMESPACE
+      required: true
+      description: The namespace for the cluster, if a tenant cluster
+      default: "default"
+  resourcetemplates:
+    - content:
+        - apiVersion: gitops.weave.works/v1alpha1
+          kind: GitopsCluster
+          metadata:
+            name: "${CLUSTER_NAME}"
+            namespace: "${NAMESPACE}"
+            labels:
+              weave.works/capi: bootstrap
+          spec:
+            secretRef:
+              name: "${SECRET_NAME}"

@@ -1,0 +1,273 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: app-podinfo-chart-and-pipeline 
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+    templates.weave.works/delimiters: "${{,}}"
+  labels:
+    weave.works/template-type: pipeline
+spec:
+  description: Add podinfo application Helm chart to target cluster for 3 environment namespaces and a pipeline to promote across them
+  renderType: templating
+  params:
+    - name: CLUSTER_NAME
+      description: Target Cluster Name
+    - name: CLUSTER_NAMESPACE
+      description: Target Cluster Namespace
+      default: default
+    - name: ENV_GROUP
+      description: The environment group
+      options: ['demo2','demo3']
+      default: 'demo3'
+    - name: DEV_NAMESPACE
+      description: Dev Namespace
+      default: app-podinfo-dev
+    - name: STG_NAMESPACE
+      description: Stg Namespace
+      default: app-podinfo-stg
+    - name: PRD_NAMESPACE
+      description: Prd Namespace
+      default: app-podinfo-prd
+  resourcetemplates:
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.DEV_NAMESPACE }}/namespace.yaml
+      content:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: ${{ .params.DEV_NAMESPACE }}
+            namespace: ${{ .params.DEV_NAMESPACE }}
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.DEV_NAMESPACE }}/${{ .params.DEV_NAMESPACE }}-flux-system-kustomization.yaml
+      content: 
+        - apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+          kind: Kustomization
+          metadata:
+            name: ${{ .params.DEV_NAMESPACE }}
+            namespace: flux-system
+          spec:
+            interval: 10m0s
+            path: ./environments/${{ .params.ENV_GROUP }}/dev
+            prune: true
+            sourceRef:
+              kind: GitRepository
+              name: application-promotion-podinfo
+              namespace: flux-system
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.DEV_NAMESPACE }}/${{ .params.DEV_NAMESPACE }}-notification.yaml
+      content:
+        - apiVersion: notification.toolkit.fluxcd.io/v1beta1
+          kind: Provider
+          metadata:
+            name: ${{ .params.DEV_NAMESPACE }}-provider
+            namespace: ${{ .params.DEV_NAMESPACE }}
+          spec:
+            address: https://promotions.demo3.weavegitops.com/promotion/${{ .params.CLUSTER_NAMESPACE }}/app-podinfo-${{ .params.CLUSTER_NAME }}/dev
+            type: generic
+          
+        - apiVersion: notification.toolkit.fluxcd.io/v1beta1
+          kind: Alert
+          metadata:
+            name: ${{ .params.DEV_NAMESPACE }}-alert
+            namespace: ${{ .params.DEV_NAMESPACE }}
+          spec:
+            eventSeverity: info
+            eventSources:
+            - kind: HelmRelease
+              name: podinfo
+              namespace: ${{ .params.DEV_NAMESPACE }}
+            exclusionList:
+            - .*error.*
+            - .*failed.*
+            - .*install.*succeeded
+            - .*upgrade.*succeeded
+            - .*install.*has.*started
+            - .*upgrade.*has.*started
+            - .*is.*not.*ready
+            - ^Dependencies.*
+            providerRef:
+              name: ${{ .params.DEV_NAMESPACE }}-provider
+
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.STG_NAMESPACE }}/namespace.yaml
+      content:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: ${{ .params.STG_NAMESPACE }}
+            namespace: ${{ .params.STG_NAMESPACE }}
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.STG_NAMESPACE }}/${{ .params.STG_NAMESPACE }}-flux-system-kustomization.yaml
+      content: 
+        - apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+          kind: Kustomization
+          metadata:
+            name: ${{ .params.STG_NAMESPACE }}
+            namespace: flux-system
+          spec:
+            interval: 10m0s
+            path: ./environments/${{ .params.ENV_GROUP }}/stg
+            prune: true
+            sourceRef:
+              kind: GitRepository
+              name: application-promotion-podinfo
+              namespace: flux-system
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.STG_NAMESPACE }}/${{ .params.STG_NAMESPACE }}-notification.yaml
+      content:
+        - apiVersion: notification.toolkit.fluxcd.io/v1beta1
+          kind: Provider
+          metadata:
+            name: ${{ .params.STG_NAMESPACE }}-provider
+            namespace: ${{ .params.STG_NAMESPACE }}
+          spec:
+            address: https://promotions.demo3.weavegitops.com/promotion/${{ .params.CLUSTER_NAMESPACE }}/app-podinfo-${{ .params.CLUSTER_NAME }}/stg
+            type: generic
+          
+        - apiVersion: notification.toolkit.fluxcd.io/v1beta1
+          kind: Alert
+          metadata:
+            name: ${{ .params.STG_NAMESPACE }}-alert
+            namespace: ${{ .params.STG_NAMESPACE }}
+          spec:
+            eventSeverity: info
+            eventSources:
+            - kind: HelmRelease
+              name: podinfo
+              namespace: ${{ .params.STG_NAMESPACE }}
+            exclusionList:
+            - .*error.*
+            - .*failed.*
+            - .*install.*succeeded
+            - .*upgrade.*succeeded
+            - .*install.*has.*started
+            - .*upgrade.*has.*started
+            - .*is.*not.*ready
+            - ^Dependencies.*
+            providerRef:
+              name: ${{ .params.STG_NAMESPACE }}-provider
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.PRD_NAMESPACE }}/namespace.yaml
+      content:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: ${{ .params.PRD_NAMESPACE }}
+            namespace: ${{ .params.PRD_NAMESPACE }}
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.PRD_NAMESPACE }}/${{ .params.PRD_NAMESPACE }}-flux-system-kustomization.yaml
+      content: 
+        - apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+          kind: Kustomization
+          metadata:
+            name: ${{ .params.PRD_NAMESPACE }}
+            namespace: flux-system
+          spec:
+            interval: 10m0s
+            path: ./environments/${{ .params.ENV_GROUP }}/prd
+            prune: true
+            sourceRef:
+              kind: GitRepository
+              name: application-promotion-podinfo
+              namespace: flux-system
+
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/${{ .params.PRD_NAMESPACE }}/${{ .params.PRD_NAMESPACE }}-notification.yaml
+      content:
+        - apiVersion: notification.toolkit.fluxcd.io/v1beta1
+          kind: Provider
+          metadata:
+            name: ${{ .params.PRD_NAMESPACE }}-provider
+            namespace: ${{ .params.PRD_NAMESPACE}}
+          spec:
+            address: https://promotions.demo3.weavegitops.com/promotion/${{ .params.CLUSTER_NAMESPACE }}/app-podinfo-${{ .params.CLUSTER_NAME }}/prd
+            type: generic
+          
+        - apiVersion: notification.toolkit.fluxcd.io/v1beta1
+          kind: Alert
+          metadata:
+            name: ${{ .params.PRD_NAMESPACE }}-alert
+            namespace: ${{ .params.PRD_NAMESPACE }}
+          spec:
+            eventSeverity: info
+            eventSources:
+            - kind: HelmRelease
+              name: podinfo
+              namespace: ${{ .params.PRD_NAMESPACE }}
+            exclusionList:
+            - .*error.*
+            - .*failed.*
+            - .*install.*succeeded
+            - .*upgrade.*succeeded
+            - .*install.*has.*started
+            - .*upgrade.*has.*started
+            - .*is.*not.*ready
+            - ^Dependencies.*
+            providerRef:
+              name: ${{ .params.PRD_NAMESPACE }}-provider
+
+
+    - path: clusters/management/pipelines/app-podinfo-${{ .params.CLUSTER_NAME }}-${{ .params.CLUSTER_NAMESPACE }}.yaml
+      content:
+        - apiVersion: pipelines.weave.works/v1alpha1
+          kind: Pipeline
+          metadata:
+            name: app-podinfo-${{ .params.CLUSTER_NAME }}
+            namespace: ${{ .params.CLUSTER_NAMESPACE }}
+          spec:
+            appRef:
+              apiVersion: helm.toolkit.fluxcd.io/v2beta1
+              kind: HelmRelease
+              name: podinfo
+            environments:
+            - name: dev
+              targets:
+              - clusterRef:
+                  kind: GitopsCluster
+                  name: ${{ .params.CLUSTER_NAME }}
+                  namespace: ${{ .params.CLUSTER_NAMESPACE }}
+                namespace: ${{ .params.DEV_NAMESPACE }}
+            - name: stg
+              targets:
+              - clusterRef:
+                  kind: GitopsCluster
+                  name: ${{ .params.CLUSTER_NAME }}
+                  namespace: ${{ .params.CLUSTER_NAMESPACE }}
+                namespace: ${{ .params.STG_NAMESPACE }}
+            - name: prd
+              targets:
+              - clusterRef:
+                  kind: GitopsCluster
+                  name: ${{ .params.CLUSTER_NAME }}
+                  namespace: ${{ .params.CLUSTER_NAMESPACE }}
+                namespace: ${{ .params.PRD_NAMESPACE }}
+            promotion:
+              manual: true
+              strategy:
+                pull-request:
+                  baseBranch: main
+                  secretRef:
+                    name: promotion-credentials-app-podinfo-${{ .params.CLUSTER_NAME }}
+                  type: github
+                  url: https://github.com/weavegitops/application-promotion-podinfo
+
+    - path: clusters/management/secrets/promotion-credentials-app-podinfo-${{ .params.CLUSTER_NAME }}-${{ .params.CLUSTER_NAMESPACE }}.yaml
+      content:
+        - apiVersion: external-secrets.io/v1beta1
+          kind: ExternalSecret
+          metadata:
+            name: promotion-credentials-app-podinfo-${{ .params.CLUSTER_NAME }}
+            namespace: ${{ .params.CLUSTER_NAMESPACE }}
+          spec:
+            dataFrom:
+            - extract:
+                key: demo/promotion/github/promotion-credentials
+            refreshInterval: 1h0m0s
+            secretStoreRef:
+              kind: ClusterSecretStore
+              name: aws-secretstore
+            target:
+              creationPolicy: Owner
+              name: promotion-credentials-app-podinfo-${{ .params.CLUSTER_NAME }}

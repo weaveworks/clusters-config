@@ -1,0 +1,40 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: add-helm-repository-to-cluster
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+    templates.weave.works/delimiters: "${{,}}"
+  labels:
+    weave.works/template-type: application
+spec:
+  description: Add a Helm Repository
+  renderType: templating
+  params:
+    - name: CLUSTER_NAME
+      description: Target Cluster Name
+    - name: CLUSTER_NAMESPACE
+      description: Target Cluster Namespace
+      default: default
+    - name: HELM_REPO_NAME
+      description: The name of the Helm Repository Resource
+    - name: HELM_REPO_NAMESPACE 
+      description: The namespace of the Helm Repository Resource
+      default: flux-system
+    - name: HELM_REPO_URL
+      description: the Helm repository URL
+
+  resourcetemplates:
+    - path: clusters/${{ .params.CLUSTER_NAMESPACE }}/${{ .params.CLUSTER_NAME }}/sources/${{ .params.HELM_REPO_NAME }}.yaml
+      content: 
+        - apiVersion: source.toolkit.fluxcd.io/v1beta2
+          kind: HelmRepository
+          metadata:
+            name: ${{ .params.HELM_REPO_NAME }}
+            namespace: ${{ .params.HELM_REPO_NAMESPACE }}
+          spec:
+            interval: 1m0s
+            url: ${{ .params.HELM_REPO_URL }}

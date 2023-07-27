@@ -1,0 +1,168 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: capg-dev
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "true"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "true"
+    templates.weave.works/add-common-bases: "true"
+    templates.weave.works/inject-prune-annotation: "true"
+  labels:
+    weave.works/template-type: cluster
+spec:
+  description: Draft GCE Kubeadm cluster
+  params:
+    - name: CLUSTER_NAME
+      description: The name for this cluster.
+    - name: GCP_REGION
+      description: AWS Region to create cluster
+      options: ['us-central1','us-west1','europe-west1']
+    - name: KUBERNETES_VERSION
+      description: EKS Kubernetes version to use
+      options: ['v1.21.10']
+    - name: WORKER_MACHINE_COUNT
+      description: Number of worker nodes to create.
+    - name: GCP_PROJECT
+      description: GCP Project ID.
+    - name: GCE_IMAGE_NAME
+      description: GCE Image Name to use.
+  resourcetemplates:
+    - content:    
+        - apiVersion: gitops.weave.works/v1alpha1
+          kind: GitopsCluster
+          metadata:
+            name: "${CLUSTER_NAME}"
+            namespace: default 
+            annotations:
+            labels:
+              weave.works/capi: bootstrap
+          spec:
+            capiClusterRef:
+              name: "${CLUSTER_NAME}"
+
+        - apiVersion: cluster.x-k8s.io/v1beta1
+          kind: Cluster
+          metadata:
+            name: ${CLUSTER_NAME}
+            namespace: default
+          spec:
+            clusterNetwork:
+              pods:
+                cidrBlocks:
+                - 192.168.0.0/16
+            controlPlaneRef:
+              apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+              kind: KubeadmControlPlane
+              name: ${CLUSTER_NAME}-control-plane
+            infrastructureRef:
+              apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+              kind: GCPCluster
+              name: ${CLUSTER_NAME}
+
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+          kind: GCPCluster
+          metadata:
+            name: ${CLUSTER_NAME}
+            namespace: default
+          spec:
+            network:
+              name: capg
+            project: ${GCP_PROJECT}
+            region: ${GCP_REGION}
+
+        - apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+          kind: KubeadmControlPlane
+          metadata:
+            name: ${CLUSTER_NAME}-control-plane
+            namespace: default
+          spec:
+            kubeadmConfigSpec:
+              clusterConfiguration:
+                apiServer:
+                  extraArgs:
+                    cloud-provider: gce
+                  timeoutForControlPlane: 20m
+                controllerManager:
+                  extraArgs:
+                    allocate-node-cidrs: "false"
+                    cloud-provider: gce
+              initConfiguration:
+                nodeRegistration:
+                  kubeletExtraArgs:
+                    cloud-provider: gce
+                  name: '{{ ds.meta_data.local_hostname.split(".")[0] }}'
+              joinConfiguration:
+                nodeRegistration:
+                  kubeletExtraArgs:
+                    cloud-provider: gce
+                  name: '{{ ds.meta_data.local_hostname.split(".")[0] }}'
+            machineTemplate:
+              infrastructureRef:
+                apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+                kind: GCPMachineTemplate
+                name: ${CLUSTER_NAME}-control-plane
+            replicas: 3
+            version: ${KUBERNETES_VERSION}
+
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+          kind: GCPMachineTemplate
+          metadata:
+            name: ${CLUSTER_NAME}-control-plane
+            namespace: default
+          spec:
+            template:
+              spec:
+                image: projects/${GCP_PROJECT}/global/images/${GCE_IMAGE_NAME}
+                instanceType: n1-standard-2
+
+        - apiVersion: cluster.x-k8s.io/v1beta1
+          kind: MachineDeployment
+          metadata:
+            name: ${CLUSTER_NAME}-md-0
+            namespace: default
+          spec:
+            clusterName: ${CLUSTER_NAME}
+            replicas: ${WORKER_MACHINE_COUNT}
+            selector:
+              matchLabels: null
+            template:
+              spec:
+                bootstrap:
+                  configRef:
+                    apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+                    kind: KubeadmConfigTemplate
+                    name: ${CLUSTER_NAME}-md-0
+                clusterName: ${CLUSTER_NAME}
+                failureDomain: us-central1-a
+                infrastructureRef:
+                  apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+                  kind: GCPMachineTemplate
+                  name: ${CLUSTER_NAME}-md-0
+                version: ${KUBERNETES_VERSION}
+
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+          kind: GCPMachineTemplate
+          metadata:
+            name: ${CLUSTER_NAME}-md-0
+            namespace: default
+          spec:
+            template:
+              spec:
+                image: projects/${GCP_PROJECT}/global/images/${GCE_IMAGE_NAME}
+                instanceType: n1-standard-2
+
+        - apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          metadata:
+            name: ${CLUSTER_NAME}-md-0
+            namespace: default
+          spec:
+            template:
+              spec:
+                joinConfiguration:
+                  nodeRegistration:
+                    kubeletExtraArgs:
+                      cloud-provider: gce
+                    name: '{{ ds.meta_data.local_hostname.split(".")[0] }}'

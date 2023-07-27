@@ -1,0 +1,135 @@
+---
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: add-workspace
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: 'false'
+    templates.weave.works/kustomizations-enabled: 'false'
+    templates.weave.works/credentials-enabled: 'false'
+  labels:
+    weave.works/template-type: application
+spec:
+  description: Add a tenant workspace with this template
+  params:
+    - name: CLUSTER_NAME
+      description: Target Cluster Name
+      options: ["management","devteam1/devteam1-host25-cluster30","devteam1/devteam1-host51-cluster31","default/policy-demo-cluster23","default/team-shared-host51-cluster27"]
+    - name: NAMESPACE
+      description: Name of Namespace
+  resourcetemplates:
+    - path: "clusters/${CLUSTER_NAME}/tenants/${NAMESPACE}.yaml"
+      content:
+        - apiVersion: v1
+          kind: Namespace
+          metadata:
+            creationTimestamp: null
+            labels:
+              toolkit.fluxcd.io/tenant: ${NAMESPACE}
+            name: ${NAMESPACE}
+        - apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+            creationTimestamp: null
+            labels:
+              toolkit.fluxcd.io/tenant: ${NAMESPACE}
+            name: kustomize-controller
+            namespace: ${NAMESPACE}
+        - apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          metadata:
+            creationTimestamp: null
+            labels:
+              toolkit.fluxcd.io/tenant: ${NAMESPACE}
+            name: ${NAMESPACE}
+            namespace: ${NAMESPACE}
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: cluster-admin
+          subjects:
+          - apiGroup: rbac.authorization.k8s.io
+            kind: User
+            name: gotk:${NAMESPACE}:reconciler
+          - kind: ServiceAccount
+            name: kustomize-controller
+            namespace: ${NAMESPACE}
+        - apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          metadata:
+            creationTimestamp: null
+            name: ${NAMESPACE}-team-role
+            namespace: ${NAMESPACE}
+          rules:
+          - apiGroups:
+            - ""
+            resources:
+            - '*'
+            verbs:
+            - '*'
+          - apiGroups:
+            - extensions
+            resources:
+            - '*'
+            verbs:
+            - '*'
+          - apiGroups:
+            - kustomize.toolkit.fluxcd.io
+            resources:
+            - kustomizations
+            verbs:
+            - get
+            - list
+            - patch
+          - apiGroups:
+            - helm.toolkit.fluxcd.io
+            resources:
+            - helmreleases
+            verbs:
+            - get
+            - list
+            - patch
+          - apiGroups:
+            - source.toolkit.fluxcd.io
+            resources:
+            - buckets
+            - helmcharts
+            - gitrepositories
+            - helmrepositories
+            - ocirepositories
+            verbs:
+            - get
+            - list
+            - patch
+          - apiGroups:
+            - ""
+            resources:
+            - events
+            verbs:
+            - get
+            - watch
+            - list
+          - apiGroups:
+            - pac.weave.works
+            resources:
+            - policies
+            verbs:
+            - watch
+            - get
+            - list
+          - apiGroups:
+            - networking.k8s.io
+            resources:
+            - ingresses
+            verbs:
+            - get
+            - list
+          - apiGroups:
+            - flagger.app
+            resources:
+            - canaries
+            - metrictemplates
+            verbs:
+            - get
+            - list

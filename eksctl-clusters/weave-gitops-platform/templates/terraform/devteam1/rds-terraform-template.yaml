@@ -1,0 +1,90 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: rds-template-devteam1
+  namespace: devteam1
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+  labels:
+    weave.works/template-type: terraform
+spec:
+  description: This is a sample Aurora RDS template for a tenant
+  params:
+    - name: RESOURCE_NAME
+      description: Terraform Controller Resource Name
+      default: "rds-database-demo-devteam1"
+    - name: CLUSTER_IDENTIFIER
+      description: Cluster Identifier (alphanumeric only)
+      default: "rdsdatabasedemodev"
+    - name: DATABASE_NAME
+      description: Database Name
+      default: "rdsdatabasedemodev"
+    - name: DATABASE_ENGINE
+      description: The database engine
+      options:
+        - aurora-mysql
+        - aurora-postgresql
+      default: "aurora-mysql"
+    - name: DATABASE_ENGINE_VERSION
+      description: the database engine version
+      default: "5.7.mysql_aurora.2.11.1"
+    - name: DATABASE_INSTANCE_SIZE
+      description: the database instance size
+      default: "db.t3.small"
+    - name: BACKUP_RETENTION_PERIOD
+      description: Backup Retention Period (number, in days)
+      default: "1"
+    - name: REGION
+      description: Region
+      options:
+        - us-east-1
+        - eu-central-1
+      default: "eu-central-1"
+    - name: DESTROY
+      description: Enable to destroy the TF resources
+      options: ['false','true']
+      default: "false"
+  resourcetemplates:
+    - path: clusters/management/terraform/devteam1/${RESOURCE_NAME}.yaml
+      content:
+        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+          kind: Terraform
+          metadata:
+            name: ${RESOURCE_NAME}
+            namespace: devteam1
+          spec:
+            interval: 1h
+            path: ./terraform/rds
+            approvePlan: auto
+            alwaysCleanupRunnerPod: true
+            destroyResourcesOnDeletion: true
+            destroy: ${DESTROY}
+            enableInventory: true
+            storeReadablePlan: human
+            serviceAccountName: team-podinfo
+            vars:
+              - name: cluster_identifier
+                value: ${CLUSTER_IDENTIFIER}
+              - name: database_name
+                value: ${DATABASE_NAME}
+              - name: backup_retention_period
+                value: ${BACKUP_RETENTION_PERIOD}
+              - name: region
+                value: ${REGION}
+              - name: database_engine
+                value: ${DATABASE_ENGINE}
+              - name: database_engine_version
+                value: ${DATABASE_ENGINE_VERSION}
+              - name: database_instance_size
+                value: ${DATABASE_INSTANCE_SIZE}
+            varsFrom:
+              - kind: Secret
+                name: tf-controller-auth
+              - kind: Secret
+                name: rds-db-creds
+            sourceRef:
+              kind: GitRepository
+              name: flux-system
+              namespace: flux-system

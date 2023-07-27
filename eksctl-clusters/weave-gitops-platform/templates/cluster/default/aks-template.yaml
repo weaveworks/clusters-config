@@ -1,0 +1,187 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: aks-template
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "true"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "true"
+    templates.weave.works/add-common-bases: "true"
+    templates.weave.works/inject-prune-annotation: "true"
+  labels:
+    weave.works/template-type: cluster
+spec:
+  description: AKS Azure Kubernetes Service template
+  params:
+    - name: CLUSTER_NAME
+      description: The name for this cluster. ALL LOWERCASE OR NUMBERS ONLY
+      default: demoaks
+    - name: KUBERNETES_VERSION
+      description: Kubernetes version to use
+      options: ['1.26.3','1.25.6','1.24.10']
+    - name: CONTAINER_NETWORKING 
+      description: Select the CNI plugin to use
+      options: ['azure']
+    - name: WORKER_MACHINE_COUNT
+      description: Number of worker nodes to create.
+    - name: ACCOUNT_ID
+      description: The Azure Account ID
+      default: sademo
+    - name: SUBSCRIPTION_ID
+      description: The Azure Subscription ID
+      default: a1b280f6-5fda-476d-88e9-d39aac2ecbff
+    - name: LOCATION
+      description: The Azure region to use
+      default: westeurope
+    - name: RESOURCE_GROUP_NAME
+      description: The Azure Resource Group Name
+      default: demoaks
+    - name: TIER
+      options: ['Free','Paid']
+      default: Free
+    - name: MACHINE_POOL_0_INSTANCE
+      description: The Instance Type for machine pool 0
+      default: Standard_D2s_v3
+    - name: MACHINE_POOL_0_DISK
+      description: The Disk Size for machine pool 0
+      default: '30'
+    - name: MACHINE_POOL_1_INSTANCE
+      description: The Instance Type for machine pool 1
+      default: Standard_D2s_v4
+    - name: MACHINE_POOL_1_DISK
+      description: The Disk Size for machine pool 1
+      default: '40'
+  charts:
+    items:
+      - chart: cert-manager
+        version: 0.0.8
+        targetNamespace: cert-manager
+        editable: true
+        required: true
+      - chart: ingress-nginx
+        version: 0.0.18
+        targetNamespace: ingress-nginx
+        editable: true
+        required: true
+      - chart: weave-policy-agent
+        version: 0.5.4
+        targetNamespace: policy-system
+        editable: true
+        required: true
+        values:
+          policy-agent:
+            config:
+              AGENT_ENABLE_ADMISSION: "0"
+            accountId: ${ACCOUNT_ID}
+            clusterId: ${CLUSTER_NAME}
+      - chart: prometheus
+        version: 0.0.11
+        targetNamespace: prometheus
+        editable: true
+        required: true
+  resourcetemplates:
+    - content:
+      - apiVersion: gitops.weave.works/v1alpha1
+        kind: GitopsCluster
+        metadata:
+          name: ${CLUSTER_NAME}
+          namespace: default 
+          labels:
+            weave.works/capi: bootstrap
+        spec:
+          capiClusterRef:
+            name: ${CLUSTER_NAME}
+
+      - apiVersion: cluster.x-k8s.io/v1beta1
+        kind: Cluster
+        metadata:
+          name: ${CLUSTER_NAME}
+        spec:
+          clusterNetwork:
+            services:
+              cidrBlocks:
+              - 192.168.0.0/16
+          controlPlaneRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+            kind: AzureManagedControlPlane
+            name: ${CLUSTER_NAME}controlplane
+          infrastructureRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+            kind: AzureManagedCluster
+            name: ${CLUSTER_NAME}
+
+      - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AzureManagedControlPlane
+        metadata:
+          name: ${CLUSTER_NAME}controlplane
+        spec:
+          location: ${LOCATION}
+          resourceGroupName: ${RESOURCE_GROUP_NAME}
+          subscriptionID: ${SUBSCRIPTION_ID}
+          version: v${KUBERNETES_VERSION}
+          networkPolicy: ${CONTAINER_NETWORKING} # or calico
+          networkPlugin: ${CONTAINER_NETWORKING} # or kubenet
+          sku:
+            tier: ${TIER}
+
+      - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AzureManagedCluster
+        metadata:
+          name: ${CLUSTER_NAME}
+
+      - apiVersion: cluster.x-k8s.io/v1beta1
+        kind: MachinePool
+        metadata:
+          name: agentpool0
+        spec:
+          clusterName: ${CLUSTER_NAME}
+          replicas: 2
+          template:
+            spec:
+              bootstrap:
+                dataSecretName: ""
+              clusterName: ${CLUSTER_NAME}
+              infrastructureRef:
+                apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+                kind: AzureManagedMachinePool
+                name: agentpool0
+                namespace: default
+              version: v${KUBERNETES_VERSION}
+
+      - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AzureManagedMachinePool
+        metadata:
+          name: agentpool0
+        spec:
+          mode: System
+          osDiskSizeGB: ${MACHINE_POOL_0_DISK}
+          sku: ${MACHINE_POOL_0_INSTANCE}
+
+      - apiVersion: cluster.x-k8s.io/v1beta1
+        kind: MachinePool
+        metadata:
+          name: agentpool1
+        spec:
+          clusterName: ${CLUSTER_NAME}
+          replicas: 2
+          template:
+            spec:
+              clusterName: ${CLUSTER_NAME}
+              bootstrap:
+                dataSecretName: ""
+              infrastructureRef:
+                apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+                kind: AzureManagedMachinePool
+                name: agentpool1
+                namespace: default
+              version: v${KUBERNETES_VERSION}
+
+      - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AzureManagedMachinePool
+        metadata:
+          name: agentpool1
+        spec:
+          mode: User
+          osDiskSizeGB: ${MACHINE_POOL_1_DISK}
+          sku: ${MACHINE_POOL_1_INSTANCE}

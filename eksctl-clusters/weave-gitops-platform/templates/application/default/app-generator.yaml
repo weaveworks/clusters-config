@@ -1,0 +1,227 @@
+---
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: app-generator
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+    templates.weave.works/delimiters: "${{,}}"
+  labels:
+    weave.works/template-type: application
+spec:
+  description: Add a helmrelease to an environment directory in an application repository
+  renderType: templating
+  params:
+    - name: APP_NAME
+      description: App Name
+      default: podinfo
+    - name: HELM_REPO_URL
+      description: the Helm repository URL
+      default: "https://weavegitops.github.io/application-promotion-podinfo/"
+    - name: CHART_VERSION
+      description: Helm chart version to deploy
+      default: x.x.x
+    - name: ENV_GROUP
+      description: Environment Group Name
+      default: testing
+    - name: DEV_NAMESPACE
+      description: Dev Namespace
+      default: app-podinfo-dev
+    - name: STG_NAMESPACE
+      description: Stg Namespace
+      default: app-podinfo-stg
+    - name: PRD_NAMESPACE
+      description: Prd Namespace
+      default: app-podinfo-prd
+    - name: FQDN
+      description: FQDN to reach the app
+
+  resourcetemplates:
+    - path: environments/${{ .params.ENV_GROUP }}/${{ .params.DEV_NAMESPACE }}/helmrepo.yaml
+      content: 
+        - apiVersion: source.toolkit.fluxcd.io/v1beta2
+          kind: HelmRepository
+          metadata:
+            name: ${{ .params.APP_NAME }}-helm-repo
+            namespace: ${{ .params.DEV_NAMESPACE }}
+          spec:
+            interval: 1m0s
+            url: ${{ .params.HELM_REPO_URL }}
+
+    - path: environments/${{ .params.ENV_GROUP }}/${{ .params.DEV_NAMESPACE }}/helmrelease.yaml
+      content: 
+        - apiVersion: helm.toolkit.fluxcd.io/v2beta1
+          kind: HelmRelease
+          metadata:
+            name: ${{ .params.APP_NAME }}
+            namespace: ${{ .params.DEV_NAMESPACE }}
+            annotations:
+              metadata.weave.works/app-url: http://${{ .params.FQDN }}/dev/${{ .params.APP_NAME }}/
+          spec:
+            interval: 2m
+            chart:
+              spec:
+                chart: ${{ .params.APP_NAME }}
+                reconcileStrategy: Revision
+                sourceRef:
+                  kind: HelmRepository
+                  name: ${{ .params.APP_NAME }}-helm-repo
+                version: ${{ .params.CHART_VERSION }}
+            targetNamespace: ${{ .params.DEV_NAMESPACE }}
+            values:
+              service:
+                enabled: false
+                externalPort: 80
+              ingress:
+                enabled: true
+                className: nginx
+                annotations:
+                  nginx.ingress.kubernetes.io/rewrite-target: /$1
+                  nginx.ingress.kubernetes.io/service-upstream: "true"
+                hosts:
+                  - host: ${{ .params.FQDN }}
+                    paths:
+                      - path: "/dev/${{ .params.APP_NAME }}/?(.*)"
+                        pathType: Prefix
+                      - path: "/dev/(api/?.*)"
+                        pathType: Prefix
+              replicaCount: 1
+              ui:
+                message: "Hi, this message is from the Helm values for dev"
+                color: ""
+              canary:
+                enabled: true
+                loadtester:
+                  url: flagger-flagger-loadtester.flagger
+                ingress:
+                  url: ${{ .params.FQDN }}/dev/${{ .params.APP_NAME }}/
+              hpa:
+                enabled: true
+                maxReplicas: 1
+
+    - path: environments/${{ .params.ENV_GROUP }}/${{ .params.STG_NAMESPACE }}/helmrepo.yaml
+      content: 
+        - apiVersion: source.toolkit.fluxcd.io/v1beta2
+          kind: HelmRepository
+          metadata:
+            name: ${{ .params.APP_NAME }}-helm-repo
+            namespace: ${{ .params.STG_NAMESPACE }}
+          spec:
+            interval: 1m0s
+            url: ${{ .params.HELM_REPO_URL }}
+
+    - path: environments/${{ .params.ENV_GROUP }}/${{ .params.STG_NAMESPACE }}/helmrelease.yaml
+      content: 
+        - apiVersion: helm.toolkit.fluxcd.io/v2beta1
+          kind: HelmRelease
+          metadata:
+            name: ${{ .params.APP_NAME }}
+            namespace: ${{ .params.STG_NAMESPACE }}
+            annotations:
+              metadata.weave.works/app-url: http://${{ .params.FQDN }}/stg/${{ .params.APP_NAME }}/
+          spec:
+            interval: 2m
+            chart:
+              spec:
+                chart: ${{ .params.APP_NAME }}
+                reconcileStrategy: Revision
+                sourceRef:
+                  kind: HelmRepository
+                  name: ${{ .params.APP_NAME }}-helm-repo
+                version: ${{ .params.CHART_VERSION }}
+            targetNamespace: ${{ .params.STG_NAMESPACE }}
+            values:
+              service:
+                enabled: false
+                externalPort: 80
+              ingress:
+                enabled: true
+                className: nginx
+                annotations:
+                  nginx.ingress.kubernetes.io/rewrite-target: /$1
+                  nginx.ingress.kubernetes.io/service-upstream: "true"
+                hosts:
+                  - host: ${{ .params.FQDN }}
+                    paths:
+                      - path: "/stg/${{ .params.APP_NAME }}/?(.*)"
+                        pathType: Prefix
+                      - path: "/stg/(api/?.*)"
+                        pathType: Prefix
+              replicaCount: 1
+              ui:
+                message: "Hi, this message is from the Helm values for stg"
+                color: ""
+              canary:
+                enabled: true
+                loadtester:
+                  url: flagger-flagger-loadtester.flagger
+                ingress:
+                  url: ${{ .params.FQDN }}/stg/${{ .params.APP_NAME }}/
+              hpa:
+                enabled: true
+                maxReplicas: 1
+
+    - path: environments/${{ .params.ENV_GROUP }}/${{ .params.PRD_NAMESPACE }}/helmrepo.yaml
+      content: 
+        - apiVersion: source.toolkit.fluxcd.io/v1beta2
+          kind: HelmRepository
+          metadata:
+            name: ${{ .params.APP_NAME }}-helm-repo
+            namespace: ${{ .params.PRD_NAMESPACE }}
+          spec:
+            interval: 1m0s
+            url: ${{ .params.HELM_REPO_URL }}
+
+    - path: environments/${{ .params.ENV_GROUP }}/${{ .params.PRD_NAMESPACE }}/helmrelease.yaml
+      content: 
+        - apiVersion: helm.toolkit.fluxcd.io/v2beta1
+          kind: HelmRelease
+          metadata:
+            name: ${{ .params.APP_NAME }}
+            namespace: ${{ .params.PRD_NAMESPACE }}
+            annotations:
+              metadata.weave.works/app-url: http://${{ .params.FQDN }}/prd/${{ .params.APP_NAME }}/
+          spec:
+            interval: 2m
+            chart:
+              spec:
+                chart: ${{ .params.APP_NAME }}
+                reconcileStrategy: Revision
+                sourceRef:
+                  kind: HelmRepository
+                  name: ${{ .params.APP_NAME }}-helm-repo
+                version: ${{ .params.CHART_VERSION }}
+            targetNamespace: ${{ .params.PRD_NAMESPACE }}
+            values:
+              service:
+                enabled: false
+                externalPort: 80
+              ingress:
+                enabled: true
+                className: nginx
+                annotations:
+                  nginx.ingress.kubernetes.io/rewrite-target: /$1
+                  nginx.ingress.kubernetes.io/service-upstream: "true"
+                hosts:
+                  - host: ${{ .params.FQDN }}
+                    paths:
+                      - path: "/prd/${{ .params.APP_NAME }}/?(.*)"
+                        pathType: Prefix
+                      - path: "/prd/(api/?.*)"
+                        pathType: Prefix
+              replicaCount: 1
+              ui:
+                message: "Hi, this message is from the Helm values for prd"
+                color: ""
+              canary:
+                enabled: true
+                loadtester:
+                  url: flagger-flagger-loadtester.flagger
+                ingress:
+                  url: ${{ .params.FQDN }}/prd/${{ .params.APP_NAME }}/
+              hpa:
+                enabled: true
+                maxReplicas: 1

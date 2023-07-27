@@ -1,0 +1,68 @@
+---
+apiVersion: templates.weave.works/v1alpha1
+kind: GitOpsTemplate
+metadata:
+  name: deploy-podinfo-chart 
+  namespace: devteam1
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+  labels:
+    weave.works/template-type: application
+spec:
+  description: Add a helm chart with this template
+  params:
+    - name: CLUSTER_NAME
+      description: Target Cluster Name
+      default: management
+    - name: TARGET_NAMESPACE
+      description: Target Namespace
+      default: podinfo
+    - name: CREATE_NAMESPACE
+      description: Create or not Create Namespace
+      options: ['true', 'false']
+      default: "true"
+    - name: HELM_RESOURCE_NAME
+      description: Helm Resource Name
+      default: helmpodinfo
+    - name: HELM_RELEASE_NAMESPACE
+      description: Helm Release Namespace
+      default: flux-system
+    - name: CHART_NAME
+      description: Name of the Chart to install
+      default: podinfo
+    - name: CHART_VERSION
+      description: Version of the helm chart to usp
+      default: 0.0.15
+    - name: FQDN
+      description: FQDN to reach the app
+
+  resourcetemplates:
+    - apiVersion: helm.toolkit.fluxcd.io/v2beta1
+      kind: HelmRelease
+      metadata:
+        name: ${HELM_RESOURCE_NAME}
+        namespace: ${HELM_RELEASE_NAMESPACE}
+        annotations:
+          metadata.weave.works/dashboard.ApplicationURL: http://${FQDN}
+          metadata.weave.works/target.cluster: ${CLUSTER_NAME}
+      spec:
+        chart:
+          spec:
+            chart: ${CHART_NAME}
+            sourceRef:
+              apiVersion: source.toolkit.fluxcd.io/v1beta2
+              kind: HelmRepository
+              name: app-charts
+              namespace: flux-system
+            version: ${CHART_VERSION}
+        interval: 10m0s
+        install: 
+          createNamespace: ${CREATE_NAMESPACE}
+        targetNamespace: ${TARGET_NAMESPACE}
+        values:
+          deployment:
+            image: ghcr.io/stefanprodan/podinfo:6.0.0
+          ingress:
+            host: ${FQDN}

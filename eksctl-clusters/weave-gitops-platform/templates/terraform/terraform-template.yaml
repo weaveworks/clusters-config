@@ -1,0 +1,63 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: tf-controller-source
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+  labels:
+    weave.works/template-type: terraform
+spec:
+  description: Sample Template that will deploy any Terraform from a source Git Repository
+  params:
+    - name: RESOURCE_NAME
+      description: Name of the resource to create
+    - name: NAMESPACE
+      description: Namespace to create the TF controller resources
+      default: "flux-system"
+    - name: GIT_REPO_URL
+      description: URL of the git repository source.
+    - name: TERRAFORM_PATH
+      description: Path to the terraform manifests in the git repository source.
+    - name: DESTROY
+      description: Enable to destroy the TF resources
+      options: ['false','true']
+      default: "false"
+  resourcetemplates:
+    - path: clusters/management/terraform/${NAMESPACE}/${RESOURCE_NAME}.yaml
+      content:
+        - apiVersion: source.toolkit.fluxcd.io/v1beta2
+          kind: GitRepository
+          metadata:
+            name: ${RESOURCE_NAME}-source
+            namespace: ${NAMESPACE}
+          spec:
+            gitImplementation: go-git
+            interval: 1m0s
+            ref:
+              branch: main
+            timeout: 60s
+            url: ${GIT_REPO_URL}
+
+        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+          kind: Terraform
+          metadata:
+            name: ${RESOURCE_NAME}
+            namespace: ${NAMESPACE}
+          spec:
+            interval: 1h
+            path: ${TERRAFORM_PATH}
+            approvePlan: "auto"
+            destroyResourcesOnDeletion: true
+            destroy: ${DESTROY}
+            enableInventory: true
+            storeReadablePlan: human
+            varsFrom:
+              - kind: Secret
+                name: tf-controller-auth        
+            sourceRef:
+              kind: GitRepository
+              name: ${RESOURCE_NAME}-source
+              namespace: ${NAMESPACE}

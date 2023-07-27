@@ -1,0 +1,263 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: lm-edge-nfs
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "true"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "true"
+    templates.weave.works/add-common-bases: "true"
+    templates.weave.works/inject-prune-annotation: "true"
+    templates.weave.works/delimiters: "${{,}}"
+  labels:
+    weave.works/template-type: cluster
+spec:
+  renderType: templating
+  description: Single Host Control Plane with nfs-server for persistent storage
+  params:
+    - name: CLUSTER_NAME
+      description: The name for this cluster. Use NAME-HOST_IP-LAST_OCTET-CONTROL_PLANE-LAST-OCTET
+    - name: KUBERNETES_VERSION
+      description: Kubernetes version to use
+      options: ['1.21.8','1.22.8','1.23.5']
+    - name: CONTROL_PLANE_MACHINE_COUNT
+      description: Number of Control Plane nodes to create.
+      options: ['1']
+    - name: WORKER_MACHINE_COUNT
+      description: Number of worker nodes to create.
+      options: ['1','2','3']
+    - name: CONTROL_PLANE_VIP
+      description: IP for the Kubernetes Endpoint between 172.16.30.20 and 172.16.30.50, must be unique.
+    - name: LOADBALANCER_IP
+      description: Single IP for the Loadbalancer use CONTROL_PLANE_VIP+200, i.e. between 172.16.30.220 and 172.16.30.250, must be unique.
+    - name: HOST_IP
+      description: IP for Bare Metal Host
+      options: ['147.28.139.51','147.28.139.25']
+  charts:
+    items:
+      - chart: cert-manager
+        version: 0.0.8
+        targetNamespace: cert-manager
+        editable: true
+        required: true
+      - chart: ingress-nginx
+        version: 0.0.18
+        targetNamespace: ingress-nginx
+        editable: true
+        required: true
+      - chart: metallb
+        version: 0.0.3
+        targetNamespace: metallb-system
+        editable: false
+        required: true
+        values:
+          metallb:
+            configInline:
+              address-pools:
+                - name: default
+                  protocol: layer2
+                  addresses:
+                  - ${{ .params.LOADBALANCER_IP }}/32
+      - chart: weave-policy-agent
+        version: 0.5.4
+        targetNamespace: policy-system
+        editable: true
+        required: true
+        values:
+          policy-agent:
+            config:
+              AGENT_ENABLE_ADMISSION: "0"
+            accountId: sademo
+            clusterId: ${{ .params.CLUSTER_NAME }}
+      - chart: nfs-server
+        version: 0.0.1
+        targetNamespace: nfs-storage
+        editable: false
+        required: true
+        values:
+          nfs-subdir-external-provisioner:
+            nfs:
+              server: 147.28.139.51
+              path: /nfs
+            storageClass:
+              onDelete: retain
+              reclaimPolicy: Retain
+              archiveOnDelete: false
+              pathPattern: ${{ .params.CLUSTER_NAME }}-${.PVC.namespace}-${.PVC.name}
+      - chart: prometheus
+        version: 0.0.11
+        targetNamespace: prometheus
+        editable: true
+        required: true
+
+  resourcetemplates:
+    - content:
+        - apiVersion: gitops.weave.works/v1alpha1
+          kind: GitopsCluster
+          metadata:
+            name: ${{ .params.CLUSTER_NAME }}
+            namespace: default 
+            annotations:
+             metadata.weave.works/dashboard.grafana: http://${{ .params.LOADBALANCER_IP }}/grafana
+             metadata.weave.works/dashboard.alertmanager: http://${{ .params.LOADBALANCER_IP }}/alertmanager
+            labels:
+              weave.works/capi: bootstrap
+          spec:
+            capiClusterRef:
+              name: ${{ .params.CLUSTER_NAME }}
+
+        - apiVersion: cluster.x-k8s.io/v1beta1
+          kind: Cluster
+          metadata:
+            labels:
+              weave.works/capi: bootstrap
+              cni: cilium
+            name: ${{ .params.CLUSTER_NAME }}
+            namespace: default
+          spec:
+            clusterNetwork:
+              pods:
+                cidrBlocks:
+                - 172.25.0.0/16
+              services:
+                cidrBlocks:
+                - 172.26.0.0/16
+            controlPlaneRef:
+              apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+              kind: KubeadmControlPlane
+              name: ${{ .params.CLUSTER_NAME }}-control-plane
+            infrastructureRef:
+              apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+              kind: MicrovmCluster
+              name: ${{ .params.CLUSTER_NAME }}
+    
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+          kind: MicrovmCluster
+          metadata:
+            name: ${{ .params.CLUSTER_NAME }}
+            namespace: default
+          spec:
+            sshPublicKeys:
+            - user: root
+              authorizedKeys:
+              - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDDsOgtZ7ZY/p04GtWLHHFyri5N07/UNawkGl0Z6AX4Q0xO6t8Zx5mh3N5H5qCLwF98GCUmtOTUUwWxM8LHRJ7TrHP3uqQ7I+ZJ/hmp2qkUmsmgWE/3Ng/LyesixqdLXvPW0uhlbD97miLE89G3ZhXGFocbWbPAm2duhqhQ4z/vNuGRcuSNHjGO/a/7eFiXcJ8eP1goHwwTgg+EUZJwjhFTqyVwuNkOG6HhhLeyToKh6wXfsJGopWa7OBBm061xBq9Ct/Ayp5h42YJvYHuYQPvmMFg9dS/jodz1PTFPDlPb0IRpy7iBZKncFfS0BFz3I+EcsHKw83RxBevDrPHkdiH1LjJyyk+lzkeO1JHu+NkQUqu4RkqVjz9FDByu7wk6pYgXvpqzRBuSfDQU0FGQNFU/8QiFlFchVyC09yioDG4xkBQfwYj0DEgwJTRu4w7FEsTplwtnTYTRlvUD1IkX6fmopdAtaHVnrO4hIH8KTLLkx5ZfIK9UKSKlDNFlfGSm3QU= lutz@dellbook"      
+            controlPlaneEndpoint:
+              host: ${{ .params.CONTROL_PLANE_VIP }}
+              port: 6443
+            placement:
+              staticPool:
+                hosts:
+                - controlplaneAllowed: true
+                  endpoint: ${{ .params.HOST_IP }}:9090
+    
+        - apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+          kind: KubeadmControlPlane
+          metadata:
+            name: ${{ .params.CLUSTER_NAME }}-control-plane
+            namespace: default
+          spec:
+            kubeadmConfigSpec:
+              clusterConfiguration: {}
+              initConfiguration:
+                nodeRegistration:
+                  kubeletExtraArgs:
+                    provider-id: "microvm://{{ ds.meta_data.vm_host }}/{{ ds.meta_data.instance_id }}"
+              joinConfiguration:
+                nodeRegistration:
+                  ignorePreflightErrors:
+                  - DirAvailable--etc-kubernetes-manifests
+                  kubeletExtraArgs:
+                    provider-id: "microvm://{{ ds.meta_data.vm_host }}/{{ ds.meta_data.instance_id }}"
+              preKubeadmCommands:
+              - mkdir -p /etc/kubernetes/manifests && ctr images pull ghcr.io/kube-vip/kube-vip:v0.4.0
+                && ctr run --rm --net-host ghcr.io/kube-vip/kube-vip:v0.4.0 vip /kube-vip manifest
+                pod --arp --interface $(ip -4 -j route list default | jq -r .[0].dev) --address
+                ${{ .params.CONTROL_PLANE_VIP }} --controlplane --leaderElection > /etc/kubernetes/manifests/kube-vip.yaml
+            machineTemplate:
+              infrastructureRef:
+                apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+                kind: MicrovmMachineTemplate
+                name: ${{ .params.CLUSTER_NAME }}-control-plane
+            replicas: ${{ .params.CONTROL_PLANE_MACHINE_COUNT }}
+            version: v${{ .params.KUBERNETES_VERSION }}
+
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+          kind: MicrovmMachineTemplate
+          metadata:
+            name: ${{ .params.CLUSTER_NAME }}-control-plane
+            namespace: default
+          spec:
+            template:
+              spec:
+                kernel:
+                  filename: boot/vmlinux
+                  image: ghcr.io/weavegitops/flintlock-kernel:5.10.77
+                kernelCmdline: {}
+                memoryMb: 2048
+                networkInterfaces:
+                - guestDeviceName: eth1
+                  type: macvtap
+                rootVolume:
+                  id: root
+                  image: ghcr.io/weavegitops/capmvm-kubernetes:${{ .params.KUBERNETES_VERSION }}
+                vcpu: 2
+
+        - apiVersion: cluster.x-k8s.io/v1beta1
+          kind: MachineDeployment
+          metadata:
+            name: ${{ .params.CLUSTER_NAME }}-md-0
+            namespace: default
+          spec:
+            clusterName: ${{ .params.CLUSTER_NAME }}
+            replicas: ${{ .params.WORKER_MACHINE_COUNT }}
+            selector:
+              matchLabels: null
+            template:
+              spec:
+                bootstrap:
+                  configRef:
+                    apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+                    kind: KubeadmConfigTemplate
+                    name: ${{ .params.CLUSTER_NAME }}-md-0
+                clusterName: ${{ .params.CLUSTER_NAME }}
+                infrastructureRef:
+                  apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+                  kind: MicrovmMachineTemplate
+                  name: ${{ .params.CLUSTER_NAME }}-md-0
+                version: v${{ .params.KUBERNETES_VERSION }}
+
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+          kind: MicrovmMachineTemplate
+          metadata:
+            name: ${{ .params.CLUSTER_NAME }}-md-0
+            namespace: default
+          spec:
+            template:
+              spec:
+                kernel:
+                  filename: boot/vmlinux
+                  image: ghcr.io/weavegitops/flintlock-kernel:5.10.77
+                kernelCmdline: {}
+                memoryMb: 2048
+                networkInterfaces:
+                - guestDeviceName: eth1
+                  type: macvtap
+                rootVolume:
+                  id: root
+                  image: ghcr.io/weavegitops/capmvm-kubernetes:${{ .params.KUBERNETES_VERSION }}
+                vcpu: 2
+
+        - apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          metadata:
+            name: ${{ .params.CLUSTER_NAME }}-md-0
+            namespace: default
+          spec:
+            template:
+              spec:
+                joinConfiguration:
+                  nodeRegistration:
+                    kubeletExtraArgs:
+                      provider-id: "microvm://{{ ds.meta_data.vm_host }}/{{ ds.meta_data.instance_id }}"
+

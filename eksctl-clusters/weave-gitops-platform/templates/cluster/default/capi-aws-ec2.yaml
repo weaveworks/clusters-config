@@ -1,0 +1,211 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: aws-ec2-k8s
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "true"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "true"
+    templates.weave.works/add-common-bases: "true"
+    templates.weave.works/inject-prune-annotation: "true"
+  labels:
+    weave.works/template-type: cluster
+spec:
+  description: AWS EC2 cluster
+  params:
+    - name: CLUSTER_NAME
+      description: The name for this cluster.
+    - name: AWS_REGION
+      description: AWS Region to create cluster
+      options: ['eu-central-1','eu-west-2','us-west-2']
+    - name: KUBERNETES_VERSION
+      description: Kubernetes version to use
+      options: ['v1.23.8','v1.24.7','v1.25.3']
+    - name: CONTROL_PLANE_NODES
+      description: Number of worker nodes to create.
+      options: ['1','3']
+    - name: WORKER_MACHINE_COUNT
+      description: Number of worker nodes to create.
+    - name: SSH_KEY_NAME
+      description: The name of an ssh key that exists in the target region. can not be empty.
+      options: ['lutz-aws-fra', 'lutz-ire-key','lutz-org-aws']
+    - name: OWNER_EMAIL
+      description: E-Mail of Cluster Owner
+  charts:
+    items:
+      - chart: cert-manager
+        targetNamespace: cert-manager
+        editable: true
+        required: true
+      - chart: ingress-nginx
+        targetNamespace: ingress-nginx
+        editable: true
+      - chart: weave-policy-agent
+        targetNamespace: policy-system
+        editable: true
+        required: true
+        values:
+          policy-agent:
+            config:
+              AGENT_ENABLE_ADMISSION: "0"
+            accountId: sademo
+            clusterId: ${CLUSTER_NAME}
+  resourcetemplates:
+    - content:
+        - apiVersion: gitops.weave.works/v1alpha1
+          kind: GitopsCluster
+          metadata:
+            name: "${CLUSTER_NAME}"
+            namespace: default
+            labels:
+              weave.works/capi: bootstrap
+              weave.works/cni: cilium
+          spec:
+            capiClusterRef:
+              name: "${CLUSTER_NAME}"
+
+        - apiVersion: cluster.x-k8s.io/v1beta1
+          kind: Cluster
+          metadata:
+            name: ${CLUSTER_NAME}
+            namespace: default
+            labels:
+              weave.works/capi: bootstrap
+              weave.works/cni: cilium 
+          spec:
+            clusterNetwork:
+              pods:
+                cidrBlocks:
+                - 192.168.0.0/16
+            controlPlaneRef:
+              apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+              kind: KubeadmControlPlane
+              name: ${CLUSTER_NAME}-control-plane
+            infrastructureRef:
+              apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+              kind: AWSCluster
+              name: ${CLUSTER_NAME}
+      
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+          kind: AWSCluster
+          metadata:
+            name: ${CLUSTER_NAME}
+            namespace: default
+          spec:
+            network:
+              cni:
+                cniIngressRules:
+                - description: allow all internal tcp 
+                  fromPort: 0 
+                  protocol: tcp
+                  toPort: 65535
+                - description: allow all internal  udp
+                  fromPort: 0
+                  protocol: udp
+                  toPort: 65535
+
+            additionalTags: 
+              creator: ${OWNER_EMAIL}
+              environment: demo3
+              customer: weaveworks-cx
+              deployed: capa
+              projectGid: "99999"
+            region: ${AWS_REGION}
+            sshKeyName: ${SSH_KEY_NAME}
+
+        - apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+          kind: KubeadmControlPlane
+          metadata:
+            name: ${CLUSTER_NAME}-control-plane
+            namespace: default
+          spec:
+            kubeadmConfigSpec:
+              clusterConfiguration:
+                apiServer:
+                  extraArgs:
+                    cloud-provider: aws
+                controllerManager:
+                  extraArgs:
+                    cloud-provider: aws
+              initConfiguration:
+                nodeRegistration:
+                  kubeletExtraArgs:
+                    cloud-provider: aws
+                  name: '{{ ds.meta_data.local_hostname }}'
+              joinConfiguration:
+                nodeRegistration:
+                  kubeletExtraArgs:
+                    cloud-provider: aws
+                  name: '{{ ds.meta_data.local_hostname }}'
+            machineTemplate:
+              infrastructureRef:
+                apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+                kind: AWSMachineTemplate
+                name: ${CLUSTER_NAME}-control-plane
+            replicas: ${CONTROL_PLANE_NODES}
+            version: ${KUBERNETES_VERSION}
+
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+          kind: AWSMachineTemplate
+          metadata:
+            name: ${CLUSTER_NAME}-control-plane
+            namespace: default
+          spec:
+            template:
+              spec:
+                iamInstanceProfile: control-plane.cluster-api-provider-aws.sigs.k8s.io
+                instanceType: t3.large
+                sshKeyName: ${SSH_KEY_NAME}
+                publicIP: true
+
+        - apiVersion: cluster.x-k8s.io/v1beta1
+          kind: MachineDeployment
+          metadata:
+            name: ${CLUSTER_NAME}-md-0
+            namespace: default
+          spec:
+            clusterName: ${CLUSTER_NAME}
+            replicas: ${WORKER_MACHINE_COUNT}
+            selector:
+              matchLabels: null
+            template:
+              spec:
+                bootstrap:
+                  configRef:
+                    apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+                    kind: KubeadmConfigTemplate
+                    name: ${CLUSTER_NAME}-md-0
+                clusterName: ${CLUSTER_NAME}
+                infrastructureRef:
+                  apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+                  kind: AWSMachineTemplate
+                  name: ${CLUSTER_NAME}-md-0
+                version: ${KUBERNETES_VERSION}
+
+        - apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+          kind: AWSMachineTemplate
+          metadata:
+            name: ${CLUSTER_NAME}-md-0
+            namespace: default
+          spec:
+            template:
+              spec:
+                iamInstanceProfile: nodes.cluster-api-provider-aws.sigs.k8s.io
+                instanceType: t3.medium
+                sshKeyName: ${SSH_KEY_NAME} 
+                publicIP: true
+        
+        - apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          metadata:
+            name: ${CLUSTER_NAME}-md-0
+            namespace: default
+          spec:
+            template:
+              spec:
+                joinConfiguration:
+                  nodeRegistration:
+                    kubeletExtraArgs:
+                      cloud-provider: aws
+                    name: '{{ ds.meta_data.local_hostname }}'

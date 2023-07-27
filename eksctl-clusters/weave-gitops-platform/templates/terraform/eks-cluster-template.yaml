@@ -1,0 +1,105 @@
+apiVersion: templates.weave.works/v1alpha2
+kind: GitOpsTemplate
+metadata:
+  name: eks-cluster-template
+  namespace: default
+  annotations:
+    templates.weave.works/profiles-enabled: "false"
+    templates.weave.works/kustomizations-enabled: "false"
+    templates.weave.works/credentials-enabled: "false"
+  labels:
+    weave.works/template-type: terraform
+spec:
+  description: EKS Cluster Terraform Template
+  params:
+    - name: CLUSTER_NAME
+      description: EKS Cluster Name
+      default: "demo3-eks-cluster-1"
+    - name: REGION
+      description: The EKS Cluster Region
+      options:
+        - us-west-2
+        - eu-central-1
+      default: "us-west-2"
+    - name: CLUSTER_VERSION
+      description: EKS Cluster version
+      default: "1.26"
+    - name: DESTROY
+      description: Enable to destroy the TF resources
+      options: ['false','true']
+      default: "false"
+  resourcetemplates:
+    - path: clusters/management/terraform/default/${CLUSTER_NAME}.yaml
+      content:
+        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+          kind: Terraform
+          metadata:
+            name: ${CLUSTER_NAME}
+            namespace: flux-system
+          spec:
+            interval: 1h
+            path: ./terraform/eks
+            approvePlan: auto
+            alwaysCleanupRunnerPod: true
+            destroyResourcesOnDeletion: true
+            destroy: ${DESTROY}
+            enableInventory: true
+            storeReadablePlan: human
+            dependsOn:
+              - name: ${CLUSTER_NAME}-vpc
+            vars:
+              - name: name
+                value: ${CLUSTER_NAME}
+              - name: region
+                value: ${REGION}
+              - name: eks_cluster_version
+                value: ${CLUSTER_VERSION}
+              - name: github_org
+                value: weavegitops
+              - name: github_repository
+                value: demo3-repo
+            varsFrom:
+              - kind: Secret
+                name: tf-controller-auth
+              - kind: Secret
+                name: my-pat
+            sourceRef:
+              kind: GitRepository
+              name: flux-system
+              namespace: flux-system
+        - apiVersion: infra.contrib.fluxcd.io/v1alpha1
+          kind: Terraform
+          metadata:
+            name: ${CLUSTER_NAME}-vpc
+            namespace: flux-system
+          spec:
+            interval: 1h
+            path: ./terraform/eks
+            approvePlan: auto
+            alwaysCleanupRunnerPod: true
+            destroyResourcesOnDeletion: true
+            destroy: ${DESTROY}
+            enableInventory: true
+            storeReadablePlan: human
+            targets:
+              - module.vpc
+            vars:
+              - name: name
+                value: ${CLUSTER_NAME}
+              - name: region
+                value: ${REGION}
+              - name: eks_cluster_version
+                value: ${CLUSTER_VERSION}
+              - name: github_org
+                value: weavegitops
+              - name: github_repository
+                value: demo3-repo
+            varsFrom:
+              - kind: Secret
+                name: tf-controller-auth
+              - kind: Secret
+                name: my-pat
+            sourceRef:
+              kind: GitRepository
+              name: flux-system
+              namespace: flux-system
