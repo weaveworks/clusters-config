@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 2m0s
-  path: ./weave-gitops-platform/templates/application
+  path: ./eksctl-clusters/weave-gitops-platform/templates/application
   prune: true
   wait: true
   timeout: 5m
