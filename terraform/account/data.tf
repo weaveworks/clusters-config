@@ -47,7 +47,10 @@ data "aws_iam_policy_document" "github_trust_policy" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:weaveworks/clusters-config:*"]
+      values = [
+        "repo:weaveworks/clusters-config:*",
+        "repo:weaveworks/playwright-tests:*",
+      ]
     }
   }
 }
