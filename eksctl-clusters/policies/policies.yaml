@@ -208,7 +208,7 @@ spec:
   - name: policy
     type: string
     required: true
-    value: Always
+    value: IfNotPresent
   - name: exclude_namespace
     type: array
     required: true
