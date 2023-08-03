@@ -17,5 +17,5 @@ spec:
       CLUSTER_NAME: fluxga
       BRANCH_NAME: cluster-fluxga
       #      CHART_REPO: https://charts.dev.wkp.weave.works/releases/charts-v3
-      CHART_REPO: https://charts.dev.wkp.weave.works/dev/branches/update-oss-version
+      CHART_REPO: https://charts.dev.wkp.weave.works/dev/branches/track-released-oss
 
