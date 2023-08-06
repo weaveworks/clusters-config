@@ -13,4 +13,3 @@ spec:
     name: flux-system
   path: ./eksctl-clusters/clusters/${CLUSTER_NAME}/capi-templates
   prune: true
-  validation: client
