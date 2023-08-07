@@ -11,4 +11,3 @@ spec:
     name: flux-system
   path: ./eksctl-clusters/apps/flagger
   prune: true
-  validation: client
