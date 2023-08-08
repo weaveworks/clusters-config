@@ -1,0 +1,16 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  creationTimestamp: null
+  name: test-profile
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: charts/external-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: elcatalog
+    namespace: default
+  targetNamespace: flux-system
+status: {}
