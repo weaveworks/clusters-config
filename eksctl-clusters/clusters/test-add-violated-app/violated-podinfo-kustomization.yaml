@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: violated-podinfo
+  namespace: default
+spec:
+  interval: 10m
+  targetNamespace: default
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./eksctl-clusters/clusters/test-add-violated-app/violated-podinfo
+  prune: true
+  timeout: 1m
