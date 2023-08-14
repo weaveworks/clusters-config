@@ -9,6 +9,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   path: ./eksctl-clusters/clusters/test-add-violated-app/violated-podinfo
   prune: true
   timeout: 1m
