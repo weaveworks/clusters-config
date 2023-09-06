@@ -36,7 +36,7 @@ usage() {
 
 defaults(){
   export MAIN_BRANCH="main"
-  export CLUSTER_VERSION="1.24"
+  export CLUSTER_VERSION="1.27"
   export WW_MODE="core"
   export ENABLE_FLAGGER="false"
   export ENABLE_POLICIES="false"
