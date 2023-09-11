@@ -23,7 +23,7 @@ spec:
     config:
       accountId: ""
       admission:
-        enabled: true
+        enabled: false
         sinks:
           k8sEventsSink:
             enabled: true
