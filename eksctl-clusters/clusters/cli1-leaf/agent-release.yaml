@@ -31,7 +31,7 @@ spec:
         enabled: true
         sinks:
           k8sEventsSink:
-          enabled: true
+            enabled: true
       clusterId: ""
     excludeNamespaces:
     - kube-system
