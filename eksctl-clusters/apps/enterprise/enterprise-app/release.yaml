@@ -53,11 +53,6 @@ spec:
       enabled: false
     enablePipelines: true
     enableTerraformUI: true
-    policy-agent:
-      enabled: true
-      config:
-        accountId: "${CLUSTER_NAME}-user"
-        clusterId: "${CLUSTER_NAME}"
     pipeline-controller:
       promotion:
         service:
