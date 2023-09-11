@@ -1,0 +1,31 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: policy-config-more-than-one-card
+spec:
+  config:
+    weave.policies.container-image-pull-policy:
+      parameters:
+        policy: Always
+    weave.policies.container-prohibit-image-tag:
+      parameters:
+        exclude_namespace: test-namespace
+    weave.policies.container-running-as-root:
+      parameters:
+        exclude_label_key: test_key
+    weave.policies.container-running-as-user:
+      parameters:
+        uid: 1
+    weave.policies.containers-minimum-replica-count:
+      parameters:
+        replica_count: 2
+  match:
+    apps:
+    - kind: HelmRelease
+      name: dex
+      namespace: dex
+    - kind: Kustomization
+      name: common
+      namespace: flux-system
+status: {}
