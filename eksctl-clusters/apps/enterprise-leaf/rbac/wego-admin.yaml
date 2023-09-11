@@ -21,7 +21,8 @@ metadata:
   name: wego-admin-cluster-role
 rules:
   - apiGroups: [""]
-    resources: ["secrets", "pods"]
+    resources:
+      ["secrets", "pods", "namespaces", "serviceaccounts", "configmaps"]
     verbs: ["get", "list"]
   - apiGroups: ["apps"]
     resources: ["deployments", "replicasets"]
@@ -33,11 +34,40 @@ rules:
     resources: ["helmreleases"]
     verbs: ["get", "list", "patch"]
   - apiGroups: ["source.toolkit.fluxcd.io"]
-    resources: ["buckets", "helmcharts", "gitrepositories", "helmrepositories", "ocirepositories"]
+    resources:
+      [
+        "buckets",
+        "helmcharts",
+        "gitrepositories",
+        "helmrepositories",
+        "ocirepositories",
+      ]
     verbs: ["get", "list", "patch"]
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["get", "watch", "list"]
   - apiGroups: ["pac.weave.works"]
-    resources: ["policies"]
+    resources: ["policies", "policyconfigs"]
     verbs: ["get", "list"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings"]
+    verbs: ["get", "list"]
+  - apiGroups: ["external-secrets.io"]
+    resources:
+      - externalsecrets
+      - clusterexternalsecrets
+      - secretstores
+      - clustersecretstores
+    verbs: ["get", "list", "udpate", "patch"]
+  - apiGroups:
+      - templates.weave.works
+    resources:
+      - gitopssets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
