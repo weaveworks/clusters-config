@@ -9,7 +9,7 @@ env:
   CLUSTERCTL_VERSION: "v1.2.3"
   CLUSTER_AWS_ADM_VERSION: "v1.5.0"
   EKSCTL_VERSION: "v0.144.0"
-  FLUX_VERSION: "v2.0.0-rc.5"
+  FLUX_VERSION: "v2.1.0"
 
 jobs:
   provision-cluster:
