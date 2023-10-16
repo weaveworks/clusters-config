@@ -6,9 +6,9 @@ unset CD_PATH
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_DIR}" || exit 1
 
-CLUSTER_NAME=${1:-demo-01}}
+CLUSTER_NAME=${1:-demo-01}
 
-cp -r "${SCRIPT_DIR}/../weave-gitops-enterprise/tools/dev-resources" "${SCRIPT_DIR}/eksctl-clusters/clusters/demo-01/tilt-dev-resources"
+rsync -av "${SCRIPT_DIR}/../weave-gitops-enterprise/tools/dev-resources/" "${SCRIPT_DIR}/eksctl-clusters/clusters/demo-01/tilt-dev-resources"
 
 # rm the base which is the password
 rm "${SCRIPT_DIR}/eksctl-clusters/clusters/demo-01/tilt-dev-resources/base.yaml"
