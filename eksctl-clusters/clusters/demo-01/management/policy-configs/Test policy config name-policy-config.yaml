@@ -1,0 +1,34 @@
+apiVersion: pac.weave.works/v2beta2
+kind: PolicyConfig
+metadata:
+  creationTimestamp: null
+  name: Test policy config name
+spec:
+  config:
+    weave.policies.containers-minimum-replica-count-acceptance-test:
+      parameters:
+        replica_count: 5
+    weave.policies.containers-read-only-root-filesystem-acceptance-test:
+      parameters:
+        exclude_namespace:
+        - kube-system
+        - wego-system
+        - test-systems
+    weave.policies.containers-running-with-privilege-escalation:
+      parameters:
+        allow_privilege_escalation: true
+        exclude_label_key: Label key
+        exclude_namespaces:
+        - kube-systems
+  match:
+    apps:
+    - kind: HelmRelease
+      name: podinfo
+      namespace: dev-github
+    - kind: HelmRelease
+      name: kube-prometheus-stack
+      namespace: monitoring
+    - kind: HelmRelease
+      name: dex
+      namespace: dex
+status: {}
