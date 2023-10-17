@@ -2,7 +2,7 @@ apiVersion: pac.weave.works/v2beta2
 kind: PolicyConfig
 metadata:
   creationTimestamp: null
-  name: Test policy config name
+  name: test policy config name
 spec:
   config:
     weave.policies.containers-minimum-replica-count-acceptance-test:
