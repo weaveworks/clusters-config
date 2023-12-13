@@ -1,0 +1,51 @@
+apiVersion: gitops.weave.works/v1alpha1
+kind: GitopsCluster
+metadata:
+  labels:
+    templates.weave.works/template-name: vcluster-template-development
+    templates.weave.works/template-namespace: default
+    weave.works/capi: bootstrap
+  name: testali857989
+  namespace: default
+  annotations:
+    templates.weave.works/create-request: "{\"repository_url\":\"https://github.com/weaveworks/clusters-config\",\"head_branch\":\"wge-create-branch-bw762j\",\"base_branch\":\"cluster-demo-01\",\"title\":\"Create resource testali857989\",\"description\":\"This PR creates a vcluster-template-development instance\",\"name\":\"vcluster-template-development\",\"parameter_values\":{\"CLUSTER_NAME\":\"testali857989\",\"KUBERNETES_VERSION\":\"1.23.3\",\"NAMESPACE\":\"default\"},\"commit_message\":\"Create vcluster-template-development instance\",\"credentials\":{},\"namespace\":\"default\",\"template_kind\":\"GitOpsTemplate\"}"
+    templates.weave.works/created-files: "{\"files\":[\"eksctl-clusters/clusters/demo-01/clusters/default/testali857989.yaml\"]}"
+spec:
+  capiClusterRef:
+    name: testali857989
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  labels:
+    templates.weave.works/template-name: vcluster-template-development
+    templates.weave.works/template-namespace: default
+  name: testali857989
+  namespace: default
+spec:
+  controlPlaneRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+    kind: VCluster
+    name: testali857989
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+    kind: VCluster
+    name: testali857989
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: VCluster
+metadata:
+  labels:
+    templates.weave.works/template-name: vcluster-template-development
+    templates.weave.works/template-namespace: default
+  name: testali857989
+  namespace: default
+spec:
+  helmRelease:
+    values: |
+      syncer:
+        extraArgs:
+          - "--tls-san=testali857989.default.svc"
+  kubernetesVersion: 1.23.3
